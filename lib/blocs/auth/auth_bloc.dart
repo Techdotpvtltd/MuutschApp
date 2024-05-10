@@ -92,8 +92,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             name: event.name,
             email: event.email,
             password: event.password,
-            confirmPassword: event.confirmPassword,
-            phoenNumber: event.phoneNumber,
           );
           emit(AuthStateRegistered());
         } on AppException catch (e) {

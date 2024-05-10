@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/auth/change_password.dart';
-import 'package:musch/pages/auth/login_page.dart';
 import 'package:musch/pages/home/my_eventss.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
@@ -15,6 +15,11 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_event.dart';
+import '../../blocs/auth/auth_state.dart';
+import '../../utils/dialogs/dialogs.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isDrawer;
@@ -31,6 +36,18 @@ class _ProfilePageState extends State<ProfilePage> {
   List<bool> faqs = [false, false, false, false, false];
   bool status4 = false;
   // int current = 0;
+
+  void trigegrLogoutEvent(AuthBloc bloc) {
+    CustomDialogs().alertBox(
+      title: "Logout Action",
+      message: "Are you sure to logout this account?",
+      negativeTitle: "No",
+      positiveTitle: "Yes",
+      onPositivePressed: () {
+        bloc.add(AuthEventPerformLogout());
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(height: 5.h),
                       gradientButton("Log Out",
                           font: 17, txtColor: MyColors.white, ontap: () {
-                        Get.offAll(LoginPage());
+                        trigegrLogoutEvent(context.read<AuthBloc>());
                         // _.loginUser();
                       },
                           width: 90,

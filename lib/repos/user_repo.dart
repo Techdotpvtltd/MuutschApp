@@ -13,7 +13,6 @@ import '../models/user_model.dart';
 import '../utils/constants/firebase_collections.dart';
 import '../web_services/query_model.dart';
 import '../web_services/storage_services.dart';
-import 'validations/data_validations.dart';
 
 class UserRepo {
   /// This class is used to get data/ request from user business layer and send
@@ -66,7 +65,6 @@ class UserRepo {
     required String uid,
     required String name,
     required String email,
-    required String phoneNumber,
     String? avatarUrl,
   }) async {
     try {
@@ -78,7 +76,6 @@ class UserRepo {
         uid: uid,
         name: name,
         email: email,
-        phoneNumber: phoneNumber,
         createdAt: DateTime.now(),
         avatar: avatarUrl ?? "",
       );
@@ -97,48 +94,30 @@ class UserRepo {
 
   //  Update user Profile ====================================
   Future<UserModel> update({
-    required String name,
-    required String email,
-    required String phone,
-    String? imagePath,
+    required UserModel user,
   }) async {
     try {
-      await DataValidation.updateUser(
-        name: name,
-        email: email,
-        phone: phone,
-      );
-
-      /// There is no user profile
-      if (_userModel == null) {
-        final UserModel model = UserModel(
-          uid: FirebaseAuth.instance.currentUser?.uid ?? "",
-          name: name,
-          email: email,
-          phoneNumber: phone,
-          createdAt: DateTime.now(),
-          avatar: imagePath ?? "",
-        );
-        await FirestoreService().saveWithDocId(
-          path: FIREBASE_COLLECTION_USER,
-          docId: model.uid,
-          data: model.toMap(),
-        );
-        _userModel = model;
-        return _userModel!;
-      }
-      final UserModel updatedModel = _userModel!.copyWith(
-        name: name,
-        email: email,
-        avatar: imagePath,
-        phoneNumber: phone,
-      );
+      // /// There is no user profile
+      // if (_userModel == null) {
+      //   final UserModel model = UserModel(
+      //     uid:
+      //     name: name,
+      //     email: email,
+      //     createdAt: DateTime.now(),
+      //     avatar: imagePath ?? "",
+      //   );
+      //   await FirestoreService().saveWithDocId(
+      //     path: FIREBASE_COLLECTION_USER,
+      //     docId: model.uid,
+      //     data: model.toMap(),
+      //   );
+      //   _userModel = model;
+      //   return _userModel!;
+      // }
 
       await FirestoreService().updateWithDocId(
-          path: FIREBASE_COLLECTION_USER,
-          docId: updatedModel.uid,
-          data: updatedModel.toMap());
-      _userModel = updatedModel;
+          path: FIREBASE_COLLECTION_USER, docId: user.uid, data: user.toMap());
+      _userModel = user;
       return _userModel!;
     } catch (e) {
       debugPrint(e.toString());

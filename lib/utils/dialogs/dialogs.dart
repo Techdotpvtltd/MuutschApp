@@ -31,8 +31,8 @@ class CustomDialogs {
     required Widget bottomWidget,
     bool barrierDismissible = true,
     int maxSubLines = 3,
-    Color iconColor = AppTheme.primaryColor2,
-    Color titleColor = AppTheme.primaryColor2,
+    Color iconColor = AppTheme.primaryColor1,
+    Color titleColor = AppTheme.primaryColor1,
   }) {
     showDialog(
       context: navKey.currentContext!,

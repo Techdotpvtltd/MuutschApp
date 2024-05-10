@@ -48,7 +48,7 @@ class RoundedButton extends StatelessWidget {
         backgroundColor: MaterialStatePropertyAll(
           withBorderOnly
               ? Colors.transparent
-              : buttonColor ?? AppTheme.primaryColor2,
+              : buttonColor ?? AppTheme.primaryColor1,
         ),
       ),
       child: isLoading

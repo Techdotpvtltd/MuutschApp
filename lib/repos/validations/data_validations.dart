@@ -44,9 +44,9 @@ class DataValidation {
   static Future<void> createUser({
     String? name,
     String? password,
-    String? confirmPassword,
+    // String? confirmPassword,
     String? email,
-    String? phone,
+    // String? phone,
   }) async {
     if (name == null || name == "") {
       throw AuthExceptionFullNameRequired();
@@ -60,9 +60,9 @@ class DataValidation {
       throw AuthExceptionInvalidEmail();
     }
 
-    if (phone == null || phone == "") {
-      throw AuthExceptionRequiredPhone();
-    }
+    // if (phone == null || phone == "") {
+    //   throw AuthExceptionRequiredPhone();
+    // }
 
     if (password == null || password == "") {
       throw AuthExceptionPasswordRequired();
@@ -72,13 +72,13 @@ class DataValidation {
       throw AuthExceptionWeekPassword();
     }
 
-    if (confirmPassword == null || confirmPassword == "") {
-      throw AuthExceptionConfirmPasswordRequired();
-    }
+    // if (confirmPassword == null || confirmPassword == "") {
+    //   throw AuthExceptionConfirmPasswordRequired();
+    // }
 
-    if (confirmPassword != password) {
-      throw AuthExceptionConfirmPasswordDoesntMatching();
-    }
+    // if (confirmPassword != password) {
+    //   throw AuthExceptionConfirmPasswordDoesntMatching();
+    // }
   }
 
   static Future<void> updateUser({
