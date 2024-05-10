@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:musch/config/colors.dart';
+
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/home/home_drawer.dart';
-import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
@@ -168,4 +166,3 @@ class NotificationScreen extends StatelessWidget {
     );
   }
 }
-

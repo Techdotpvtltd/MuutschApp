@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "977913445059",
+    "project_id": "muutsche",
+    "storage_bucket": "muutsche.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977913445059:android:b35796ef2da62570410076",
+        "android_client_info": {
+          "package_name": "com.mk.muutsch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy_vXnD7EnjDhv2RNnzi0tnPrGeYa7Egs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

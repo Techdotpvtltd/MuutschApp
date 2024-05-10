@@ -36,7 +36,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
 
   final double carouselItemMargin = 4;
 
-  int _position = 0;
+  int position = 0;
   late PageController _pageController;
 
   Widget imageSlider(int position) {
@@ -108,7 +108,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                             itemCount: cards.length,
                             onPageChanged: (int position) {
                               setState(() {
-                                _position = position;
+                                position = position;
                                 currentPage = position;
                               });
                               setState(() {});

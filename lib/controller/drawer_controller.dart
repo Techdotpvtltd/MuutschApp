@@ -4,7 +4,6 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:musch/controller/nav_controller.dart';
 
 class MyDrawerController extends GetxController {
-  @override
   final zoomDrawerController = ZoomDrawerController();
   bool open = false;
   void toggleDrawer() {
