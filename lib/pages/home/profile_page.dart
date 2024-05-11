@@ -18,6 +18,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
+import '../../blocs/user/user_bloc.dart';
+import '../../blocs/user/user_state.dart';
 import '../../models/user_model.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
@@ -119,37 +121,45 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(18.0),
-                            child: Row(
-                              children: [
-                                AvatarWidget(
-                                  height: 60,
-                                  width: 60,
-                                  backgroundColor: Colors.black,
-                                  avatarUrl: user.avatar,
-                                ),
-                                SizedBox(width: 4.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      text_widget(
-                                        user.name,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      SizedBox(height: 0.5.h),
-                                      text_widget(
-                                        user.email,
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                      ),
-                                    ],
+                            child:
+                                BlocSelector<UserBloc, UserState, UserModel?>(
+                                    selector: (state) {
+                              return state is UserStateProfileUpdated
+                                  ? UserRepo().currentUser
+                                  : null;
+                            }, builder: (context, statedData) {
+                              return Row(
+                                children: [
+                                  AvatarWidget(
+                                    height: 60,
+                                    width: 60,
+                                    backgroundColor: Colors.black,
+                                    avatarUrl: (statedData ?? user).avatar,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  SizedBox(width: 4.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        text_widget(
+                                          (statedData ?? user).name,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        SizedBox(height: 0.5.h),
+                                        text_widget(
+                                          (statedData ?? user).email,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
                           ),
                         ),
                       ),

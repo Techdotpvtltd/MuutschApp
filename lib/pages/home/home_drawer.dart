@@ -18,6 +18,9 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../repos/user_repo.dart';
+import '../../widgets/avatar_widget.dart';
+
 List titles = [
   "Home",
   "Profile",
@@ -60,89 +63,104 @@ class _HomeDrawerState extends State<HomeDrawer> {
           _.closeDrawer();
         },
         child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Color(0xfff2f2f2),
-            body: Builder(builder: (context) {
-              return Stack(children: [
-                Positioned.fill(
-                    child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Image.asset(
-                    "assets/images/shape2.png",
-                    height: 25.h,
-                    fit: BoxFit.fill,
-                  ),
-                )),
-                ZoomDrawer(
-                    disableDragGesture: true,
-                    controller: _.zoomDrawerController,
-                    menuScreen: DrawerScreen(setIndex: (index) {
-                      setState(() {
-                        currentIndex = index;
-                        _.open = false;
-                      });
-                    }),
-                    mainScreen: Builder(builder: (context) {
-                      return currentScreen();
-                    }),
-                    borderRadius: 30,
-                    // style: DrawerStyle.style2,
-                    showShadow: true,
-                    angle: -0,
-                    slideWidth: 290,
-                    shadowLayer1Color: Colors.grey.shade200,
-                    // slideHeight: 0,
-                    menuBackgroundColor: Colors.transparent),
-                _.open
-                    ? Positioned.fill(
-                        child: SafeArea(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Color(0xfff2f2f2),
+          body: Builder(
+            builder: (context) {
+              return Stack(
+                children: [
+                  Positioned.fill(
+                      child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Image.asset(
+                      "assets/images/shape2.png",
+                      height: 25.h,
+                      fit: BoxFit.fill,
+                    ),
+                  )),
+                  ZoomDrawer(
+                      disableDragGesture: true,
+                      controller: _.zoomDrawerController,
+                      menuScreen: DrawerScreen(setIndex: (index) {
+                        setState(() {
+                          currentIndex = index;
+                          _.open = false;
+                        });
+                      }),
+                      mainScreen: Builder(builder: (context) {
+                        return currentScreen();
+                      }),
+                      borderRadius: 30,
+                      // style: DrawerStyle.style2,
+                      showShadow: true,
+                      angle: -0,
+                      slideWidth: 290,
+                      shadowLayer1Color: Colors.grey.shade200,
+                      // slideHeight: 0,
+                      menuBackgroundColor: Colors.transparent),
+                  _.open
+                      ? Positioned.fill(
+                          child: SafeArea(
                             child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(children: [
-                                        InkWell(
-                                            onTap: () {
-                                              _.closeDrawer();
-                                            },
-                                            child: const Icon(
-                                                Icons
-                                                    .arrow_back_ios_new_rounded,
-                                                color: Colors.black)),
-                                        SizedBox(width: 2.w),
-                                        text_widget(
-                                          "Setting",
-                                          fontSize: 18.sp,
-                                        ),
-                                        const Spacer(),
-                                      ]),
-                                      SizedBox(height: 3.h),
-                                      Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                CircleAvatar(
-                                                    radius: 4.h,
-                                                    backgroundColor:
-                                                        MyColors.primary,
-                                                    backgroundImage: AssetImage(
-                                                        "assets/images/girl.png")),
-                                                SizedBox(height: 1.h),
-                                                text_widget("Amber Bajh",
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w600)
-                                              ]))
-                                    ]))))
-                    : const SizedBox(),
-              ]);
-            })),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(children: [
+                                    InkWell(
+                                        onTap: () {
+                                          _.closeDrawer();
+                                        },
+                                        child: const Icon(
+                                            Icons.arrow_back_ios_new_rounded,
+                                            color: Colors.black)),
+                                    SizedBox(width: 2.w),
+                                    text_widget(
+                                      "Setting",
+                                      fontSize: 18.sp,
+                                    ),
+                                    const Spacer(),
+                                  ]),
+                                  SizedBox(height: 3.h),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0),
+                                    child: SizedBox(
+                                      width: 100,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          AvatarWidget(
+                                            height: 80,
+                                            width: 80,
+                                            backgroundColor: Colors.black,
+                                            avatarUrl:
+                                                UserRepo().currentUser.avatar,
+                                          ),
+                                          SizedBox(height: 1.h),
+                                          text_widget(
+                                            UserRepo().currentUser.name,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -274,7 +292,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                                         child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     vertical:
                                                                         6.0),
                                                             child: Container(
