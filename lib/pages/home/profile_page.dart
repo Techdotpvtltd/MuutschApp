@@ -18,7 +18,6 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
-import '../../blocs/auth/auth_state.dart';
 import '../../utils/dialogs/dialogs.dart';
 
 class ProfilePage extends StatefulWidget {

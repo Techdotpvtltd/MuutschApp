@@ -2,7 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-<key>NSCameraUsageDescription</key>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app requires access to your location in order to capture your exact location.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app requires access to your location in order to capture your exact location.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires access to your location in order to capture your exact location.</string>
+	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to the camera in order to capture images for your profile.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library in order to upload images for your profile.</string>

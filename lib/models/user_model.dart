@@ -60,6 +60,7 @@ class UserModel {
       isActived: isActived ?? this.isActived,
       children: children ?? this.children,
       numberOfChildren: numOfChildren ?? numberOfChildren,
+      location: location ?? this.location,
     );
   }
 
