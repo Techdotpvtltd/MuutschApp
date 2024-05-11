@@ -38,6 +38,7 @@ class AuthRepo {
     required String name,
     required String email,
     required String password,
+    required String role,
     // required String confirmPassword,
     // required String phoenNumber,
   }) async {
@@ -58,6 +59,7 @@ class AuthRepo {
         uid: userCredential.user?.uid ?? "",
         name: name,
         email: email,
+        role: role,
         // phoneNumber: phoenNumber,
       );
     } catch (e) {
@@ -123,7 +125,8 @@ class AuthRepo {
                 uid: user.uid,
                 name: user.displayName ?? "",
                 avatarUrl: user.photoURL,
-                email: user.email ?? "");
+                email: user.email ?? "",
+                role: 'user');
             _fetchOrCreateUser();
           } else {
             throw throwAppException(e: e);

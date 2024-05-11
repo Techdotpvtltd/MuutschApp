@@ -24,11 +24,13 @@ class AuthEventRegistering extends AuthEvent {
   final String name;
   final String email;
   final String password;
+  final bool isUser;
   // final String confirmPassword;
   AuthEventRegistering({
     required this.name,
     required this.email,
     required this.password,
+    required this.isUser,
     // required this.confirmPassword,
   });
 }

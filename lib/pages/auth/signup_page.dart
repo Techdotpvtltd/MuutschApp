@@ -27,16 +27,23 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   bool isLoading = false;
+  bool? isUser;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   void triggerSignupEvent(AuthBloc bloc) {
+    if (isUser == null) {
+      CustomDialogs().errorBox(message: "Please select user type.");
+      return;
+    }
     bloc.add(
       AuthEventRegistering(
-          name: nameController.text,
-          email: emailController.text,
-          password: passwordController.text),
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        isUser: isUser!,
+      ),
     );
   }
 
@@ -170,6 +177,39 @@ class _SignupPageState extends State<SignupPage> {
                           isPrefix: true,
                         ),
                         SizedBox(height: 4.h),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            text_widget("Sign up as: "),
+                            Row(
+                              children: [
+                                Radio(
+                                  value: isUser ?? false,
+                                  groupValue: true,
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        isUser = true;
+                                      },
+                                    );
+                                  },
+                                ),
+                                text_widget("User", fontSize: 16.0),
+                                Radio(
+                                  value: isUser == false,
+                                  groupValue: true,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isUser = false;
+                                    });
+                                  },
+                                ),
+                                text_widget("Business", fontSize: 16.0),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3.h),
                         gradientButton("Next",
                             font: 17,
                             txtColor: MyColors.white,

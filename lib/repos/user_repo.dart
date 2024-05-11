@@ -66,6 +66,7 @@ class UserRepo {
     required String name,
     required String email,
     String? avatarUrl,
+    required String role,
   }) async {
     try {
       if (uid == "") {
@@ -77,6 +78,7 @@ class UserRepo {
         name: name,
         email: email,
         createdAt: DateTime.now(),
+        role: role,
         avatar: avatarUrl ?? "",
       );
 

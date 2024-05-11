@@ -77,6 +77,7 @@ class UserModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'isActived': true,
       'numOfChildren': numberOfChildren,
+      'role': role,
       'location': location?.toMap(),
       'children': children?.map((e) => e.toMap()).toList(),
       'interests': interests,
