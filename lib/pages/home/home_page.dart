@@ -11,6 +11,8 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../repos/user_repo.dart';
+import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
 
 class HomePage extends StatefulWidget {
@@ -67,6 +69,8 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () {
                                   Get.to(NotificationScreen(isDrawer: false));
                                 },
+
+                                /// Profile Widget
                                 child: Image.asset(
                                   "assets/nav/d3.png",
                                   color: Colors.white,
@@ -76,11 +80,13 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 width: 1.5.w,
                               ),
-                              CircleAvatar(
-                                radius: 2.5.h,
-                                backgroundColor: MyColors.primary,
-                                backgroundImage:
-                                    AssetImage("assets/images/girl.png"),
+
+                              /// Profile Widget
+                              AvatarWidget(
+                                height: 40,
+                                width: 40,
+                                backgroundColor: Colors.black,
+                                avatarUrl: UserRepo().currentUser.avatar,
                               ),
                             ],
                           ),

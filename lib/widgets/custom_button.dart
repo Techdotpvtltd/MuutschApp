@@ -15,31 +15,39 @@ Widget gradientButton(
   double font = 0,
   double height = 0,
   double width = 0,
+  bool isLoading = false,
 }) {
   return InkWell(
     onTap: () {
-      if (ontap != null) {
+      if (ontap != null && !isLoading) {
         ontap();
       }
     },
     child: Container(
-        width: width.w,
-        height: height == 0 ? 6.3.h : height.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: isColor ? clr : Colors.transparent,
-          border: isColor
-              ? null
-              : Border.all(
-                  color: bColor ?? MyColors.primary, width: bWidth ?? 1),
-        ),
-        child: Center(
-          child: Text(title,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+      width: width.w,
+      height: height == 0 ? 6.3.h : height.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: isColor ? clr : Colors.transparent,
+        border: isColor
+            ? null
+            : Border.all(color: bColor ?? MyColors.primary, width: bWidth ?? 1),
+      ),
+      child: Center(
+        child: isLoading
+            ? CircularProgressIndicator(
+                color: Colors.white,
+              )
+            : Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
                   fontSize: font == 0 ? 17.sp : font.sp,
                   fontWeight: FontWeight.w500,
-                  color: txtColor)),
-        )),
+                  color: txtColor,
+                ),
+              ),
+      ),
+    ),
   );
 }

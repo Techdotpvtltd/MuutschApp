@@ -7,8 +7,8 @@ import '../../../../config/colors.dart';
 
 class Bubble extends StatelessWidget {
   Bubble(this.me, this.index, {Key? key, this.voice = false}) : super(key: key);
-  bool me, voice;
-  int index;
+  final bool me, voice;
+  final int index;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -127,8 +127,8 @@ class Bubble extends StatelessWidget {
 class Bubble2 extends StatelessWidget {
   Bubble2(this.me, this.index, {Key? key, this.voice = false})
       : super(key: key);
-  bool me, voice;
-  int index;
+  final bool me, voice;
+  final int index;
 
   @override
   Widget build(BuildContext context) => Container(
