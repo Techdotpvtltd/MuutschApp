@@ -17,6 +17,7 @@ import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../utils/dialogs/loaders.dart';
+import 'dart:io' show Platform;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -270,9 +271,26 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         children: [
                           Spacer(),
-                          Image.asset("assets/nav/apple.png", height: 6.h),
+                          Visibility(
+                            visible: Platform.isIOS,
+                            child: InkWell(
+                              onTap: () {
+                                triggerAppleLogin(context.read<AuthBloc>());
+                              },
+                              child: Image.asset(
+                                "assets/nav/apple.png",
+                                height: 6.h,
+                              ),
+                            ),
+                          ),
                           SizedBox(width: 4.w),
-                          Image.asset("assets/nav/google.png", height: 6.h),
+                          InkWell(
+                            onTap: () {
+                              triggerGoogleLogin(context.read<AuthBloc>());
+                            },
+                            child: Image.asset("assets/nav/google.png",
+                                height: 6.h),
+                          ),
                           Spacer(),
                         ],
                       ),

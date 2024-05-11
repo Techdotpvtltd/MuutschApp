@@ -15,6 +15,8 @@ import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../utils/dialogs/dialogs.dart';
+import '../home/home_drawer.dart';
+import 'dart:io' show Platform;
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -38,13 +40,27 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  void triggerAppleLogin(AuthBloc bloc) {
+    bloc.add(AuthEventAppleLogin());
+  }
+
+  void triggerGoogleLogin(AuthBloc bloc) {
+    bloc.add(AuthEventGoogleLogin());
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthStateRegisterFailure ||
             state is AuthStateRegistered ||
-            state is AuthStateRegistering) {
+            state is AuthStateRegistering ||
+            state is AuthStateAppleLoggedIn ||
+            state is AuthStateGoogleLoggedIn ||
+            state is AuthStateLogging ||
+            state is AuthStateLoggedIn ||
+            state is AuthStateLoginFailure ||
+            state is AuthStateGoogleLogging) {
           setState(() {
             isLoading = state.isLoading;
           });
@@ -55,6 +71,18 @@ class _SignupPageState extends State<SignupPage> {
 
           if (state is AuthStateRegistered) {
             Get.to(AboutChildren());
+          }
+
+          if (state is AuthStateLoginFailure) {
+            if (state.exception.errorCode != null) {
+              CustomDialogs().errorBox(message: state.exception.message);
+            }
+          }
+
+          if (state is AuthStateLoggedIn ||
+              state is AuthStateAppleLoggedIn ||
+              state is AuthStateGoogleLoggedIn) {
+            Get.offAll(const HomeDrawer());
           }
         }
       },
@@ -207,9 +235,26 @@ class _SignupPageState extends State<SignupPage> {
                         Row(
                           children: [
                             Spacer(),
-                            Image.asset("assets/nav/apple.png", height: 6.h),
+                            Visibility(
+                              visible: Platform.isIOS,
+                              child: InkWell(
+                                onTap: () {
+                                  triggerAppleLogin(context.read<AuthBloc>());
+                                },
+                                child: Image.asset(
+                                  "assets/nav/apple.png",
+                                  height: 6.h,
+                                ),
+                              ),
+                            ),
                             SizedBox(width: 4.w),
-                            Image.asset("assets/nav/google.png", height: 6.h),
+                            InkWell(
+                              onTap: () {
+                                triggerGoogleLogin(context.read<AuthBloc>());
+                              },
+                              child: Image.asset("assets/nav/google.png",
+                                  height: 6.h),
+                            ),
                             Spacer(),
                           ],
                         ),

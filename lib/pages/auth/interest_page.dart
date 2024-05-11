@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
-import 'package:musch/pages/home/home_drawer.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
