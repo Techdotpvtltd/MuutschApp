@@ -18,11 +18,13 @@ class UserEventUpdateProfile extends UserEvent {
   final List<ChildModel>? children;
   final UserLocationModel? location;
   final int? numberOfChildren;
+  final List<String>? interests;
 
   UserEventUpdateProfile({
     this.children,
     this.location,
     this.numberOfChildren,
     this.avatar,
+    this.interests,
   });
 }

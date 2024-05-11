@@ -19,10 +19,11 @@ class UserModel {
   final String avatar;
   final DateTime createdAt;
   final String? role;
-  bool? isActived;
-  int? numberOfChildren;
-  List<ChildModel>? children;
-  UserLocationModel? location;
+  final bool? isActived;
+  final int? numberOfChildren;
+  final List<ChildModel>? children;
+  final UserLocationModel? location;
+  final List<String>? interests;
 
   UserModel({
     required this.uid,
@@ -35,6 +36,7 @@ class UserModel {
     this.children,
     this.location,
     this.numberOfChildren,
+    this.interests,
   });
 
   UserModel copyWith({
@@ -50,6 +52,7 @@ class UserModel {
     int? numOfChildren,
     List<ChildModel>? children,
     UserLocationModel? location,
+    List<String>? interests,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -61,6 +64,7 @@ class UserModel {
       children: children ?? this.children,
       numberOfChildren: numOfChildren ?? numberOfChildren,
       location: location ?? this.location,
+      interests: interests ?? this.interests,
     );
   }
 
@@ -75,6 +79,7 @@ class UserModel {
       'numOfChildren': numberOfChildren,
       'location': location?.toMap(),
       'children': children?.map((e) => e.toMap()).toList(),
+      'interests': interests,
     };
   }
 
@@ -96,12 +101,17 @@ class UserModel {
           : null,
       createdAt: (map['createdAt'] as Timestamp? ?? Timestamp.now()).toDate(),
       isActived: (map['isActived'] as bool? ?? false),
+      interests: map['interests'] != null
+          ? (map['interests'] as List<dynamic>)
+              .map((e) => e.toString())
+              .toList()
+          : null,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, email: $email, avatar: $avatar, createdAt: $createdAt, isActived: $isActived, numberOfChildren: $numberOfChildren, children: ${children.toString()}, location: ${location.toString()})';
+    return 'UserModel(uid: $uid, name: $name, email: $email, avatar: $avatar, createdAt: $createdAt, isActived: $isActived, numberOfChildren: $numberOfChildren, children: ${children.toString()}, location: ${location.toString()}, interests: $interests)';
   }
 
   @override
