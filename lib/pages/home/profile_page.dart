@@ -18,7 +18,10 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
+import '../../models/user_model.dart';
+import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
+import '../../widgets/avatar_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isDrawer;
@@ -34,6 +37,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   List<bool> faqs = [false, false, false, false, false];
   bool status4 = false;
+  final UserModel user = UserRepo().currentUser;
+
   // int current = 0;
 
   void trigegrLogoutEvent(AuthBloc bloc) {
@@ -53,11 +58,13 @@ class _ProfilePageState extends State<ProfilePage> {
     return Stack(
       children: [
         Positioned.fill(
-            child: Image.asset(
-          "assets/nav/dp.png",
-          // height: 20.h,
-          fit: BoxFit.fill,
-        )),
+          /// Background
+          child: Image.asset(
+            "assets/nav/dp.png",
+            // height: 20.h,
+            fit: BoxFit.fill,
+          ),
+        ),
         Scaffold(
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
@@ -114,11 +121,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             padding: const EdgeInsets.all(18.0),
                             child: Row(
                               children: [
-                                CircleAvatar(
-                                  radius: 3.5.h,
-                                  backgroundColor: MyColors.background,
-                                  backgroundImage:
-                                      AssetImage("assets/images/girl.png"),
+                                AvatarWidget(
+                                  height: 60,
+                                  width: 60,
+                                  backgroundColor: Colors.black,
+                                  avatarUrl: user.avatar,
                                 ),
                                 SizedBox(width: 4.w),
                                 Expanded(
@@ -126,12 +133,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      text_widget("Arslan Goursi",
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600),
+                                      text_widget(
+                                        user.name,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                       SizedBox(height: 0.5.h),
                                       text_widget(
-                                        "arslangoursi123@gmail.com",
+                                        user.email,
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w400,
                                         color: Colors.white,

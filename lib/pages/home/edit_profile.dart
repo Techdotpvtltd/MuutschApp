@@ -7,6 +7,10 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../models/user_model.dart';
+import '../../repos/user_repo.dart';
+import '../../widgets/avatar_widget.dart';
+
 class EditProfile extends StatefulWidget {
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -16,6 +20,20 @@ class _EditProfileState extends State<EditProfile> {
   List<bool> faqs = [false, false, false, false, false];
   bool status4 = false;
   int current = 0;
+  final UserModel user = UserRepo().currentUser;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController.text = user.name;
+    emailController.text = user.email;
+    locationController.text = user.location?.address ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,26 +73,23 @@ class _EditProfileState extends State<EditProfile> {
                   Center(
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: MyColors.primary,
-                          radius: 5.7.h,
-                          backgroundImage: AssetImage('assets/images/girl.png'),
+                        AvatarWidget(
+                          backgroundColor: Colors.black,
+                          avatarUrl: user.avatar,
                         ),
-                        Positioned.fill(
-                            child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Image.asset(
-                            "assets/icons/cam1.png",
-                            height: 3.h,
-                          ),
-                        ))
+                        // Positioned(
+                        //   child: Image.asset(
+                        //     "assets/icons/cam1.png",
+                        //     height: 3.h,
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
                   SizedBox(height: 2.h),
                   Center(
                     child: text_widget(
-                      "Irene foks",
+                      user.name,
                       fontSize: 17.8.sp,
                     ),
                   ),
@@ -85,14 +100,17 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   SizedBox(height: 1.h),
 
-                  textFieldWithPrefixSuffuxIconAndHintText("Hammad Habbib",
-                      // controller: _.password,
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: true,
-                      suffixIcon: "assets/icons/edit.png"),
+                  textFieldWithPrefixSuffuxIconAndHintText(
+                    user.name,
+                    // controller: _.password,
+                    controller: nameController,
+                    fillColor: Colors.white,
+                    mainTxtColor: Colors.black,
+                    radius: 12,
+                    bColor: Colors.transparent,
+                    isSuffix: true,
+                    suffixIcon: "assets/icons/edit.png",
+                  ),
 
                   SizedBox(height: 3.h),
                   text_widget(
@@ -101,30 +119,17 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   SizedBox(height: 1.h),
 
-                  textFieldWithPrefixSuffuxIconAndHintText("sddmnbhr@gmail.com",
-                      // controller: _.password,
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: true,
-                      suffixIcon: "assets/icons/edit.png"),
-                  SizedBox(height: 3.h),
-                  text_widget(
-                    "Password",
-                    fontSize: 15.6.sp,
+                  textFieldWithPrefixSuffuxIconAndHintText(
+                    user.email,
+                    // controller: _.password,
+                    fillColor: Colors.white,
+                    mainTxtColor: Colors.black,
+                    radius: 12,
+                    bColor: Colors.transparent,
+                    isSuffix: true,
+                    suffixIcon: "assets/icons/edit.png",
                   ),
-                  SizedBox(height: 1.h),
-
-                  textFieldWithPrefixSuffuxIconAndHintText("***********",
-                      // controller: _.password,
-                      obsecure: true,
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: true,
-                      suffixIcon: "assets/icons/edit.png"),
+                  SizedBox(height: 3.h),
 
                   SizedBox(height: 3.h),
                   text_widget(
@@ -133,7 +138,8 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   SizedBox(height: 1.h),
 
-                  textFieldWithPrefixSuffuxIconAndHintText("New York",
+                  textFieldWithPrefixSuffuxIconAndHintText(
+                      user.location?.city ?? "",
                       // controller: _.password,
                       fillColor: Colors.white,
                       mainTxtColor: Colors.black,
