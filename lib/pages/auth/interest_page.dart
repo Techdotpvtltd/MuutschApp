@@ -10,12 +10,13 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_event.dart';
 import '../../blocs/user/user_state.dart';
+import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
 import 'login_page.dart';
 
 class InterestPage extends StatefulWidget {
-  const InterestPage({super.key});
-
+  const InterestPage({super.key, this.isComingFromSignup = true});
+  final bool isComingFromSignup;
   @override
   State<InterestPage> createState() => _InterestPageState();
 }
@@ -50,6 +51,22 @@ class _InterestPageState extends State<InterestPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    selectedInterests = UserRepo().currentUser.interests ?? [];
+
+    if (selectedInterests.isNotEmpty) {
+      selectedInterests.forEach((a) {
+        final index = txt1.indexWhere(
+            (element) => element.toString().toLowerCase() == a.toLowerCase());
+        if (index > -1) {
+          current2.add(index);
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
       listener: (context, state) {
@@ -65,6 +82,10 @@ class _InterestPageState extends State<InterestPage> {
           }
 
           if (state is UserStateProfileUpdated) {
+            if (!widget.isComingFromSignup) {
+              Get.back();
+              return;
+            }
             CustomDialogs().successBox(
               message:
                   "We've sent you an email verification link to email. Please verify your email by clicking the link before logging in.",
@@ -143,16 +164,13 @@ class _InterestPageState extends State<InterestPage> {
                                         if (current2.contains(index)) {
                                           setState(() {
                                             current2.remove(index);
-                                            selectedInterests.remove(txt1[index]
-                                                .toString()
-                                                .toLowerCase());
+                                            selectedInterests
+                                                .remove(txt1[index]);
                                           });
                                         } else {
                                           setState(() {
                                             current2.add(index);
-                                            selectedInterests.add(txt1[index]
-                                                .toString()
-                                                .toLowerCase());
+                                            selectedInterests.add(txt1[index]);
                                           });
                                         }
                                       },
@@ -184,7 +202,7 @@ class _InterestPageState extends State<InterestPage> {
                       ),
                       SizedBox(height: 5.h),
                       gradientButton(
-                        "Next",
+                        widget.isComingFromSignup ? "Next" : 'Save',
                         isLoading: isLoading,
                         font: 16,
                         txtColor: MyColors.white,

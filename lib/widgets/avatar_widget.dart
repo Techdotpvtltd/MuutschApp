@@ -56,7 +56,7 @@ class _AvatarWidgetState extends State<AvatarWidget> {
             visible: widget.onEditPressed != null,
             child: Positioned(
               right: 0,
-              bottom: -6,
+              bottom: -2,
               child: IconButton(
                 onPressed: () {
                   if (widget.onEditPressed != null) {
