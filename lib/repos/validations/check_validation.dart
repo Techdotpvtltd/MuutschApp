@@ -30,11 +30,6 @@ class CheckVaidation {
           message: "Please Enter Event name.", errorCode: 1);
     }
 
-    if (images.isEmpty) {
-      throw DataExceptionRequiredField(
-          message: "Please upload at least 1 image");
-    }
-
     if (maxPersons == "" || maxPersons == null) {
       throw DataExceptionRequiredField(
           message:
@@ -47,6 +42,11 @@ class CheckVaidation {
 
     if (dateTime == null) {
       throw DataExceptionRequiredField(message: "Please select date and time.");
+    }
+
+    if (images.isEmpty) {
+      throw DataExceptionRequiredField(
+          message: "Please upload at least 1 image");
     }
   }
 

@@ -12,6 +12,7 @@ import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
 import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
+import '../../utils/utils.dart';
 import 'event_state.dart';
 import 'events_event.dart';
 
@@ -35,10 +36,16 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
             }
           }
 
+          final DateTime? mergedDateTime =
+              Util.mergeDateTime(dateTime: event.date, time: event.time);
           emit(EventStateCreating(loadingText: 'Ready Event...'));
           final EventModel model = await EventRepo().createEvent(
               eventTitle: event.title,
               imageUrls: uploadedImageUrls,
+              dateTime: mergedDateTime,
+              maxPersons: event.maxPersons,
+              description: event.description,
+              location: event.eventLocation,
               userId: userId,
               uuid: eventId);
           emit(EventStateCreated(event: model));

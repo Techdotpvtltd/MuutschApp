@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../config/colors.dart';
+import '../utils/constants/constants.dart';
 
 Widget gradientButton(
   String title, {
@@ -33,20 +34,21 @@ Widget gradientButton(
             ? null
             : Border.all(color: bColor ?? MyColors.primary, width: bWidth ?? 1),
       ),
-      child: Center(
-        child: isLoading
-            ? CircularProgressIndicator(
-                color: Colors.white,
-              )
-            : Text(
-                title,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: font == 0 ? 17.sp : font.sp,
-                  fontWeight: FontWeight.w500,
-                  color: txtColor,
-                ),
-              ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (isLoading) CircularProgressIndicator(color: Colors.white),
+          if (isLoading) gapW10,
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: font == 0 ? 17.sp : font.sp,
+              fontWeight: FontWeight.w500,
+              color: txtColor,
+            ),
+          ),
+        ],
       ),
     ),
   );

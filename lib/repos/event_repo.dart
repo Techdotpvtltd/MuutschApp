@@ -39,11 +39,12 @@ class EventRepo {
   }) async {
     try {
       await CheckVaidation.onCreateEvent(
-          images: imageUrls,
-          title: eventTitle,
-          dateTime: dateTime,
-          location: location,
-          maxPersons: maxPersons);
+        images: imageUrls,
+        title: eventTitle,
+        dateTime: dateTime,
+        location: location,
+        maxPersons: maxPersons,
+      );
 
       final EventModel event = EventModel(
         id: uuid,
@@ -53,6 +54,7 @@ class EventRepo {
         title: eventTitle,
         dateTime: dateTime!,
         location: location!,
+        description: description,
         maxPersons: int.tryParse(maxPersons!) ?? 0,
       );
       final Map<String, dynamic> mapped = await FirestoreService()

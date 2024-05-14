@@ -20,7 +20,7 @@ class EventsEventCreate extends EventsEvent {
   final TimeOfDay? time;
   final LocationModel? eventLocation;
   final String? description;
-  final int? maxPersons;
+  final String? maxPersons;
 
   EventsEventCreate({
     required this.imageUrls,
