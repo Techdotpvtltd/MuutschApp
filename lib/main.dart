@@ -39,20 +39,22 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return ResponsiveSizer(builder: (context, orientation, screenType) {
-      return MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => AuthBloc()),
-          BlocProvider(create: (context) => UserBloc()),
-          BlocProvider(create: (context) => EventBloc()),
-        ],
-        child: GetMaterialApp(
-          navigatorKey: navKey,
-          debugShowCheckedModeBanner: false,
-          home: SplashScreen(),
-        ),
-      );
-    });
+    return ResponsiveSizer(
+      builder: (context, orientation, screenType) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => AuthBloc()),
+            BlocProvider(create: (context) => UserBloc()),
+            BlocProvider(create: (context) => EventBloc()),
+          ],
+          child: GetMaterialApp(
+            navigatorKey: navKey,
+            debugShowCheckedModeBanner: false,
+            home: SplashScreen(),
+          ),
+        );
+      },
+    );
   }
 }
 

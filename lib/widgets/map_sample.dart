@@ -6,11 +6,10 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MapCard extends StatefulWidget {
   final bool isPin;
-  const MapCard({Key? key, required this.isPin})
-      : super(
-          key: key,
-        );
+  const MapCard({Key? key, required this.isPin, this.defaultLocation})
+      : super(key: key);
 
+  final LatLng? defaultLocation;
   @override
   State<MapCard> createState() => MapCardState();
 }
@@ -24,8 +23,9 @@ class MapCardState extends State<MapCard> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  static final CameraPosition _kGooglePlex = const CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
+  late final CameraPosition _kGooglePlex = CameraPosition(
+    target:
+        widget.defaultLocation ?? LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
 

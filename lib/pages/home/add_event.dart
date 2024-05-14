@@ -6,14 +6,17 @@ import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/utils/extensions/date_extension.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/map_sample.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
+import 'package:place_picker/place_picker.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../models/location_model.dart';
 import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/image_collection_widget.dart';
@@ -24,30 +27,61 @@ class AddEvent extends StatefulWidget {
 }
 
 class _AddEventState extends State<AddEvent> {
-  Time _time = Time(hour: 11, minute: 30, second: 20);
+  Time selectedTime = Time.fromTimeOfDay(TimeOfDay.now(), 0);
   final TextEditingController titleController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+  DateTime now = DateTime.now();
+
+  LocationModel? selectedLocation;
 
   void onTimeChanged(Time newTime) {
     setState(() {
-      _time = newTime;
+      selectedTime = newTime;
+      timeController.text = newTime.format(context);
     });
   }
 
-  DateTime selectedDate = DateTime.now();
+  void pickLocation() async {
+    setState(() {
+      selectedLocation = null;
+    });
+    final LocationResult result = await Get.to(
+      PlacePicker(
+        "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
+        defaultLocation: (selectedLocation?.latitude != null &&
+                selectedLocation?.longitude != null)
+            ? LatLng(selectedLocation!.latitude, selectedLocation!.longitude)
+            : null,
+      ),
+    );
+
+    selectedLocation = LocationModel(
+      address: result.formattedAddress,
+      city: result.city?.name,
+      country: result.country?.name,
+      latitude: result.latLng?.latitude ?? 0,
+      longitude: result.latLng?.longitude ?? 0,
+    );
+
+    setState(() {
+      locationController.text = selectedLocation?.address ?? "";
+    });
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        firstDate: now,
+        lastDate: now.add(Duration(days: 182))); // 6 months only
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+        dateController.text = picked.dateToString("dd-MM-yyyy");
       });
     }
   }
@@ -164,7 +198,7 @@ class _AddEventState extends State<AddEvent> {
                             showPicker(
                               showSecondSelector: false,
                               context: context,
-                              value: _time,
+                              value: selectedTime,
                               iosStylePicker: true,
                               onChange: onTimeChanged,
                               minuteInterval: TimePickerInterval.FIVE,
@@ -205,23 +239,33 @@ class _AddEventState extends State<AddEvent> {
                   fontSize: 15.6.sp,
                 ),
                 SizedBox(height: 1.h),
-                textFieldWithPrefixSuffuxIconAndHintText(
-                  "New York",
-                  fillColor: Colors.white,
-                  mainTxtColor: Colors.black,
-                  radius: 12,
-                  bColor: Colors.transparent,
-                  isSuffix: false,
-                  suffixIcon: "assets/icons/edit.png",
-                ),
-                SizedBox(height: 2.h),
-                Card(
-                  elevation: 3,
-                  child: SizedBox(
-                    height: 25.h,
-                    child: MapCard(isPin: true),
+                InkWell(
+                  onTap: () {
+                    pickLocation();
+                  },
+                  child: textFieldWithPrefixSuffuxIconAndHintText(
+                    "Select Location",
+                    controller: locationController,
+                    fillColor: Colors.white,
+                    mainTxtColor: Colors.black,
+                    radius: 12,
+                    bColor: Colors.transparent,
+                    enable: false,
                   ),
                 ),
+                if (selectedLocation != null) SizedBox(height: 2.h),
+                if (selectedLocation != null)
+                  Card(
+                    elevation: 3,
+                    child: SizedBox(
+                      height: 25.h,
+                      child: MapCard(
+                        isPin: true,
+                        defaultLocation: LatLng(selectedLocation?.latitude ?? 0,
+                            selectedLocation?.longitude ?? 0),
+                      ),
+                    ),
+                  ),
                 SizedBox(height: 2.h),
                 text_widget(
                   "Description",
