@@ -3,10 +3,8 @@ import 'dart:developer';
 import 'package:day_night_time_picker/lib/constants.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/map_sample.dart';
@@ -119,88 +117,17 @@ class _AddEventState extends State<AddEvent> {
                       onClickCard: (index) {},
                     ),
                   ),
-                  // GridView.count(
-                  //   crossAxisCount: 2,
-                  //   crossAxisSpacing: 10.0,
-                  //   mainAxisSpacing: 10.0,
-                  //   shrinkWrap: true,
-                  //   childAspectRatio: 1.2,
-                  //   children: List.generate(
-                  //     4,
-                  //     (index) {
-                  //       return index == 3
-                  //           ? Image.asset(
-                  //               "assets/icons/upload.png",
-                  //               fit: BoxFit.fill,
-                  //             )
-                  //           : ClipRRect(
-                  //               borderRadius: BorderRadius.circular(12),
-                  //               child: Image.asset(
-                  //                 "assets/images/ii1.png",
-                  //                 height: 10.h,
-                  //                 width: Get.width,
-                  //                 fit: BoxFit.fill,
-                  //               ),
-                  //             );
-                  //     },
-                  //   ),
-                  // ),
                   text_widget(
                     "Event Title",
                     fontSize: 15.6.sp,
                   ),
                   SizedBox(height: 1.h),
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        "Select Event Title",
-                        style: GoogleFonts.poppins(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF676767),
-                        ),
-                      ),
-                      items: attributes
-                          .map(
-                            (String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: GoogleFonts.workSans(
-                                  fontSize: 14.sp,
-                                  color: MyColors.primary,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          selectedValue = value!;
-                        });
-                      },
-                      buttonStyleData: ButtonStyleData(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        height: 6.5.h,
-                        width: 100.w,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        elevation: 0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
-                        ),
-                      ),
-                      iconStyleData: IconStyleData(
-                        icon: Icon(Remix.arrow_down_s_line, size: 3.4.h),
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(height: 40),
-                    ),
+                  textFieldWithPrefixSuffuxIconAndHintText(
+                    "Enter event title",
+                    fillColor: Colors.white,
+                    mainTxtColor: Colors.black,
+                    radius: 12,
+                    bColor: Colors.transparent,
                   ),
                   SizedBox(height: 2.h),
                   Row(
