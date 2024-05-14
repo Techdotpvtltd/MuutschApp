@@ -1,138 +1,268 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/utils/extensions/date_extension.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/map_sample.dart';
 import 'package:musch/widgets/text_widget.dart';
+import 'package:place_picker/place_picker.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class EventView extends StatelessWidget {
-  const EventView({super.key});
+import '../../blocs/event/event_bloc.dart';
+import '../../blocs/event/event_state.dart';
+import '../../blocs/event/events_event.dart';
+import '../../models/event_model.dart';
+import '../../utils/dialogs/dialogs.dart';
+import '../../widgets/custom_network_image.dart';
+
+class EventView extends StatefulWidget {
+  const EventView({super.key, this.event, this.isFromMyEvents = false});
+  final EventModel? event;
+  final bool isFromMyEvents;
+  @override
+  State<EventView> createState() => _EventViewState();
+}
+
+class _EventViewState extends State<EventView> {
+  late final EventModel? event = widget.event;
+  bool isDeleting = false;
+
+  void triggerDeleteEvent(EventBloc bloc) {
+    bloc.add(EventsEventDelete(eventId: event!.id));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xffF2F2F2),
-      body: SafeArea(
-        bottom: false,
-        child: SingleChildScrollView(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 22.0, vertical: 0),
+    return BlocListener<EventBloc, EventState>(
+      listener: (context, state) {
+        if (state is EventStateDeleteFailure ||
+            state is EventStateDeleted ||
+            state is EventStateDeteing) {
+          setState(() {
+            isDeleting = state.isLoading;
+          });
+        }
+
+        if (state is EventStateDeleteFailure) {
+          CustomDialogs().errorBox(message: state.exception.message);
+        }
+
+        if (state is EventStateDeleted) {
+          CustomDialogs().successBox(
+            message: "Event deleted successfully.",
+            positiveTitle: "Go back",
+            onPositivePressed: () {
+              Get.back();
+            },
+            barrierDismissible: false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Color(0xffF2F2F2),
+        body: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Icon(
-                            Remix.arrow_left_s_line,
-                            color: Colors.black,
-                            size: 4.h,
-                          )),
-                      SizedBox(width: 3.w),
-                      text_widget(
-                        "Events Detail",
-                        fontSize: 19.sp,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 2.h),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: Image.asset(
-                      "assets/images/eimg.png",
-                      height: 38.h,
-                      width: 100.w,
-                      fit: BoxFit.fill,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 22.0, vertical: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Icon(
+                              Remix.arrow_left_s_line,
+                              color: Colors.black,
+                              size: 4.h,
+                            )),
+                        SizedBox(width: 3.w),
+                        text_widget(
+                          "Events Detail",
+                          fontSize: 19.sp,
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Row(
-                    children: [
+                    SizedBox(height: 2.h),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: SizedBox(
+                        height: 38.h,
+                        width: 100.w,
+                        child: CustomNetworkImage(
+                          imageUrl: event?.imageUrls.first ?? "",
+                          backgroundColor: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Row(
+                      children: [
+                        text_widget(
+                          event?.title ?? "",
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        Spacer(),
+                        text_widget(
+                          "Joined: 0/${event?.maxPersons}",
+                          fontSize: 13.6.sp,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1.h),
+                    Row(
+                      children: [
+                        Image.asset("assets/icons/d2.png", height: 1.8.h),
+                        SizedBox(width: 2.w),
+                        text_widget(
+                          (event?.dateTime ?? DateTime.now())
+                              .dateToString('dd MMMM, yyyy'),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        SizedBox(width: 6.w),
+                        Image.asset("assets/icons/cl.png", height: 1.8.h),
+                        SizedBox(width: 2.w),
+                        text_widget(
+                          (event?.dateTime ?? DateTime.now())
+                              .dateToString('hh:mm a'),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ],
+                    ),
+                    if (event?.description != "" || event?.description == null)
+                      SizedBox(height: 3.h),
+                    if (event?.description != "" || event?.description == null)
                       text_widget(
-                        "Business meetup",
-                        fontSize: 20.sp,
+                        "Description",
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                       ),
-                      Spacer(),
-                      text_widget("Joined: 23/40",
-                          fontSize: 13.6.sp, fontWeight: FontWeight.w300),
-                    ],
-                  ),
-                  SizedBox(height: 1.h),
-                  Row(
-                    children: [
-                      Image.asset("assets/icons/d2.png", height: 1.8.h),
-                      SizedBox(width: 2.w),
-                      text_widget("10th July, 2024",
-                          fontSize: 14.sp, fontWeight: FontWeight.w300),
-                      SizedBox(width: 6.w),
-                      Image.asset("assets/icons/cl.png", height: 1.8.h),
-                      SizedBox(width: 2.w),
-                      text_widget("6:30PM",
-                          fontSize: 14.sp, fontWeight: FontWeight.w300),
-                    ],
-                  ),
-                  SizedBox(height: 3.h),
-                  text_widget("Description",
-                      fontSize: 16.sp, fontWeight: FontWeight.w600),
-                  SizedBox(height: 0.5.h),
-                  text_widget(
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled.",
-                    fontSize: 14.6.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xff8A8A8A),
-                  ),
-                  SizedBox(height: 3.h),
-                  Row(
-                    children: [
-                      text_widget("Location",
-                          fontSize: 16.sp, fontWeight: FontWeight.w600),
-                    ],
-                  ),
-                  SizedBox(height: 0.5.h),
-                  Row(
-                    children: [
-                      Image.asset(
-                        "assets/icons/p4.png",
-                        height: 1.7.h,
+                    if (event?.description != "" || event?.description == null)
+                      SizedBox(height: 0.5.h),
+                    if (event?.description != "" || event?.description == null)
+                      text_widget(
+                        event?.description ?? "",
+                        fontSize: 14.6.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(
+                          0xff8A8A8A,
+                        ),
                       ),
-                      SizedBox(width: 2.w),
-                      text_widget("Chicago, IL United States",
-                          fontSize: 15.6.sp, fontWeight: FontWeight.w300),
-                    ],
-                  ),
-                  SizedBox(height: 3.h),
-                  Card(
-                    elevation: 3,
-                    child: SizedBox(
-                      height: 25.h,
-                      child: MapCard(isPin: true),
+                    SizedBox(height: 3.h),
+                    Row(
+                      children: [
+                        text_widget(
+                          "Location",
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 4.h),
-                  gradientButton("Join Event",
-                      font: 17, txtColor: MyColors.white, ontap: () {
-                    // _.loginUser();
-                  },
-                      width: 90,
-                      height: 6.6,
-                      isColor: true,
-                      clr: MyColors.primary),
-                  SizedBox(height: 10.h),
-                ],
+                    SizedBox(height: 0.5.h),
+                    Row(
+                      children: [
+                        Image.asset(
+                          "assets/icons/p4.png",
+                          height: 1.7.h,
+                        ),
+                        SizedBox(width: 2.w),
+                        Flexible(
+                          child: text_widget(
+                            event?.location.address ?? "",
+                            fontSize: 15.6.sp,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 3.h),
+                    Card(
+                      elevation: 3,
+                      child: SizedBox(
+                        height: 25.h,
+                        child: MapCard(
+                          isPin: true,
+                          defaultLocation: LatLng(event?.location.latitude ?? 0,
+                              event?.location.longitude ?? 0),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    widget.isFromMyEvents
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: gradientButton(
+                                  "Delete",
+                                  isLoading: isDeleting,
+                                  font: 15.5,
+                                  txtColor: MyColors.primary,
+                                  ontap: () {
+                                    CustomDialogs().deleteBox(
+                                      title: "Delete Event Confirmation",
+                                      message:
+                                          "Are you sure to delete this ${event?.title} event? This Process will not be undo.",
+                                      onPositivePressed: () {
+                                        triggerDeleteEvent(
+                                            context.read<EventBloc>());
+                                      },
+                                    );
+                                  },
+                                  width: 90,
+                                  height: 6,
+                                  isColor: false,
+                                  clr: MyColors.primary,
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              Expanded(
+                                child: gradientButton(
+                                  "Edit",
+                                  font: 15.5,
+                                  txtColor: MyColors.white,
+                                  ontap: () {
+                                    // _.loginUser();
+                                  },
+                                  width: 90,
+                                  height: 6,
+                                  isColor: true,
+                                  clr: MyColors.primary,
+                                ),
+                              ),
+                            ],
+                          )
+                        : gradientButton(
+                            "Join Event",
+                            font: 17,
+                            txtColor: MyColors.white,
+                            ontap: () {
+                              // _.loginUser();
+                            },
+                            width: 90,
+                            height: 6.6,
+                            isColor: true,
+                            clr: MyColors.primary,
+                          ),
+                    SizedBox(height: 10.h),
+                  ],
+                ),
               ),
-            ),
-          ],
-        )),
+            ],
+          )),
+        ),
       ),
     );
   }

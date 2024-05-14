@@ -13,20 +13,21 @@ import '../models/event_model.dart';
 import '../models/location_model.dart';
 import '../utils/constants/firebase_collections.dart';
 import '../web_services/firestore_services.dart';
+import '../web_services/query_model.dart';
 import '../web_services/storage_services.dart';
 import 'validations/check_validation.dart';
 
 class EventRepo {
-  // ===========================Singleton Instance================================
-  static final EventRepo _instance = EventRepo._internal();
-  EventRepo._internal();
-  factory EventRepo() => _instance;
+  // // ===========================Singleton Instance================================
+  // static final EventRepo _instance = EventRepo._internal();
+  // EventRepo._internal();
+  // factory EventRepo() => _instance;
 
-  // ===========================Properties================================
-  List<EventModel> _events = [];
-  List<EventModel> get events => _events;
+  // // ===========================Properties================================
+  // List<EventModel> _events = [];
+  // List<EventModel> get events => _events;
 
-  // ===========================API Methods================================
+  // ===========================Mutable API Methods================================
   Future<EventModel> createEvent({
     required String eventTitle,
     required List<String> imageUrls,
@@ -68,6 +69,16 @@ class EventRepo {
     }
   }
 
+  /// Delete Event
+  Future<void> deleteEvent({required String eventId}) async {
+    try {
+      await FirestoreService()
+          .delete(collection: FIREBASE_COLLECTION_EVENTS, docId: eventId);
+    } catch (e) {
+      throw throwAppException(e: e);
+    }
+  }
+
   /// Upload Images
   Future<String?> uploadImage(
       {required String imageUrl, required String eventId}) async {
@@ -80,6 +91,23 @@ class EventRepo {
     } catch (e) {
       log("[debug uploadImageError] ${e.toString}");
       return null;
+    }
+  }
+
+  // ===========================Immutable APIs================================
+  Future<List<EventModel>> fetchEvents({String? withUserId}) async {
+    try {
+      final List<QueryModel> queries = [];
+      if (withUserId != null) {
+        queries.add(QueryModel(
+            field: 'createdBy', value: withUserId, type: QueryType.isEqual));
+      }
+      final List<Map<String, dynamic>> data = await FirestoreService()
+          .fetchWithMultipleConditions(
+              collection: FIREBASE_COLLECTION_EVENTS, queries: queries);
+      return data.map((e) => EventModel.fromMap(e)).toList();
+    } catch (e) {
+      throw throwAppException(e: e);
     }
   }
 }

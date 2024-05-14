@@ -21,20 +21,24 @@ Widget eventWidget({bool isEvent = false}) {
         child: Row(
           children: [
             ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  "assets/images/ii1.png",
-                  height: 8.5.h,
-                  width: 10.h,
-                  fit: BoxFit.cover,
-                )),
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                "assets/images/ii1.png",
+                height: 8.5.h,
+                width: 10.h,
+                fit: BoxFit.cover,
+              ),
+            ),
             SizedBox(width: 3.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  text_widget("Party With Friends",
-                      fontSize: 16.sp, fontWeight: FontWeight.w600),
+                  text_widget(
+                    "Party With Friends",
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                   SizedBox(height: 0.5.h),
                   Row(
                     children: [
@@ -44,16 +48,21 @@ Widget eventWidget({bool isEvent = false}) {
                       ),
                       SizedBox(width: 1.w),
                       Expanded(
-                        child: text_widget("456 Park Avenue, New York",
-                            fontSize: 12.8.sp, fontWeight: FontWeight.w300),
+                        child: text_widget(
+                          "456 Park Avenue, New York",
+                          fontSize: 12.8.sp,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
                     ],
                   ),
                   SizedBox(height: 0.8.h),
-                  text_widget("Created by: Hammad Habib",
-                      fontSize: 12.2.sp,
-                      color: MyColors.primary,
-                      fontWeight: FontWeight.w600)
+                  text_widget(
+                    "Created by: Hammad Habib",
+                    fontSize: 12.2.sp,
+                    color: MyColors.primary,
+                    fontWeight: FontWeight.w600,
+                  )
                 ],
               ),
             ),
@@ -63,7 +72,11 @@ Widget eventWidget({bool isEvent = false}) {
                 color: MyColors.primary,
                 borderRadius: BorderRadius.circular(50),
               ),
-              child: text_widget("Join", color: Colors.white, fontSize: 14.sp),
+              child: text_widget(
+                "Join",
+                color: Colors.white,
+                fontSize: 14.sp,
+              ),
             ),
           ],
         ),

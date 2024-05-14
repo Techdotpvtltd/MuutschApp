@@ -35,8 +35,13 @@ class EventsEventCreate extends EventsEvent {
 
 /// Fetch Events
 
-class EventsEventFetch extends EventsEvent {
-  final String byUserId;
+class EventsEventFetchOwn extends EventsEvent {
+  EventsEventFetchOwn();
+}
 
-  EventsEventFetch({required this.byUserId});
+/// Deleting Event
+class EventsEventDelete extends EventsEvent {
+  final String eventId;
+
+  EventsEventDelete({required this.eventId});
 }

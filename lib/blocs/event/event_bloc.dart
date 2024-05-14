@@ -54,5 +54,33 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
         }
       },
     );
+
+    /// Fetch Own Event
+
+    on<EventsEventFetchOwn>(
+      (event, emit) async {
+        try {
+          final String userId = UserRepo().currentUser.uid;
+          emit(EventStateFetching());
+          final List<EventModel> events =
+              await EventRepo().fetchEvents(withUserId: userId);
+          emit(EventStateFetched(events: events));
+        } on AppException catch (e) {
+          emit(EventStateFetchFailure(exception: e));
+        }
+      },
+    );
+
+    on<EventsEventDelete>(
+      (event, emit) async {
+        try {
+          emit(EventStateDeteing());
+          await EventRepo().deleteEvent(eventId: event.eventId);
+          emit(EventStateDeleted(eventId: event.eventId));
+        } on AppException catch (e) {
+          emit(EventStateDeleteFailure(exception: e));
+        }
+      },
+    );
   }
 }

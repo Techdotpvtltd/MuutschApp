@@ -5,7 +5,6 @@ import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_clean_calendar/date_utils.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/utils/extensions/date_extension.dart';
@@ -24,7 +23,6 @@ import '../../blocs/event/events_event.dart';
 import '../../models/location_model.dart';
 import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
-import '../../utils/utils.dart';
 import '../../widgets/image_collection_widget.dart';
 
 class AddEvent extends StatefulWidget {

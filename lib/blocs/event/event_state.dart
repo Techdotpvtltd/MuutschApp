@@ -63,4 +63,25 @@ class EventStateFetchFailure extends EventState {
   EventStateFetchFailure({required this.exception});
 }
 
-class EventStateFetched extends EventState {}
+class EventStateFetched extends EventState {
+  final List<EventModel> events;
+
+  EventStateFetched({required this.events});
+}
+
+// ===========================Delete Event States================================
+
+class EventStateDeteing extends EventState {
+  EventStateDeteing({super.isLoading = true});
+}
+
+class EventStateDeleteFailure extends EventState {
+  final AppException exception;
+  EventStateDeleteFailure({required this.exception});
+}
+
+class EventStateDeleted extends EventState {
+  final String eventId;
+
+  EventStateDeleted({required this.eventId});
+}
