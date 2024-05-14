@@ -33,7 +33,7 @@ class _EditProfileState extends State<EditProfile> {
   final UserModel user = UserRepo().currentUser;
   String? selectedAvatar;
   List<String> interests = [];
-  UserLocationModel? location;
+  LocationModel? location;
   bool isLoading = false;
 
   final TextEditingController nameController = TextEditingController();
@@ -65,7 +65,7 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
 
-    location = UserLocationModel(
+    location = LocationModel(
       address: result.formattedAddress,
       city: result.city?.name,
       country: result.country?.name,

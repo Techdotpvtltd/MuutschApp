@@ -1,7 +1,9 @@
 import '../../exceptions/auth_exceptions.dart';
+import '../../exceptions/data_exceptions.dart';
+import '../../models/location_model.dart';
 import '../../utils/utils.dart';
 
-class DataValidation {
+class CheckVaidation {
   static Future<void> loginUser({String? email, String? password}) async {
     if (email == null || email == "") {
       throw AuthExceptionEmailRequired();
@@ -16,16 +18,35 @@ class DataValidation {
     }
   }
 
-  static Future<void> createList(
-      {String? title, required List<String> categories}) async {
-    if (title == "" || title == null) {
-      throw AuthExceptionRequiredField(
-          message: "Please Enter list name.", errorCode: 1);
+  static Future<void> onCreateEvent({
+    required String title,
+    required List<String> images,
+    DateTime? dateTime,
+    LocationModel? location,
+    String? maxPersons,
+  }) async {
+    if (title == "") {
+      throw DataExceptionRequiredField(
+          message: "Please Enter Event name.", errorCode: 1);
     }
 
-    if (categories.isEmpty) {
-      throw AuthExceptionRequiredField(
-          message: "Please select at least 1 category");
+    if (images.isEmpty) {
+      throw DataExceptionRequiredField(
+          message: "Please upload at least 1 image");
+    }
+
+    if (maxPersons == "" || maxPersons == null) {
+      throw DataExceptionRequiredField(
+          message:
+              "Please add the value of maximum persons can join the event.");
+    }
+
+    if (location == null) {
+      throw DataExceptionRequiredField(message: "Please select location");
+    }
+
+    if (dateTime == null) {
+      throw DataExceptionRequiredField(message: "Please select date and time.");
     }
   }
 
@@ -41,7 +62,7 @@ class DataValidation {
     }
   }
 
-  static Future<void> createUser({
+  static Future<void> onCreateUser({
     String? name,
     String? password,
     // String? confirmPassword,

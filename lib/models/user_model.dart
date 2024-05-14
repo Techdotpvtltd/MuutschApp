@@ -22,7 +22,7 @@ class UserModel {
   final bool? isActived;
   final int? numberOfChildren;
   final List<ChildModel>? children;
-  final UserLocationModel? location;
+  final LocationModel? location;
   final List<String>? interests;
 
   UserModel({
@@ -51,7 +51,7 @@ class UserModel {
     bool? isActived,
     int? numOfChildren,
     List<ChildModel>? children,
-    UserLocationModel? location,
+    LocationModel? location,
     List<String>? interests,
   }) {
     return UserModel(
@@ -93,7 +93,7 @@ class UserModel {
       role: map['role'] as String?,
       numberOfChildren: map['numOfChildren'] as int? ?? 0,
       location: map['location'] != null
-          ? UserLocationModel.fromMap((map['location']))
+          ? LocationModel.fromMap((map['location']))
           : null,
       children: map['children'] != null
           ? (map['children'] as List<dynamic>)

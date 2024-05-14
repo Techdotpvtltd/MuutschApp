@@ -65,7 +65,7 @@ class _AllowLocationState extends State<AllowLocation> {
       "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
     ));
 
-    final UserLocationModel userLocation = UserLocationModel(
+    final LocationModel userLocation = LocationModel(
         address: result.formattedAddress,
         city: result.city?.name,
         country: result.country?.name,
@@ -74,7 +74,7 @@ class _AllowLocationState extends State<AllowLocation> {
     triggerUpdateProfileEvent(context.read<UserBloc>(), userLocation);
   }
 
-  void triggerUpdateProfileEvent(UserBloc bloc, UserLocationModel model) {
+  void triggerUpdateProfileEvent(UserBloc bloc, LocationModel model) {
     bloc.add(UserEventUpdateProfile(location: model));
   }
 

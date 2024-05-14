@@ -25,6 +25,11 @@ class AddEvent extends StatefulWidget {
 
 class _AddEventState extends State<AddEvent> {
   Time _time = Time(hour: 11, minute: 30, second: 20);
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController timeController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   void onTimeChanged(Time newTime) {
     setState(() {
@@ -47,15 +52,6 @@ class _AddEventState extends State<AddEvent> {
     }
   }
 
-  String? selectedValue;
-  List<String> attributes = [
-    "Marriage Event",
-    "Private Party",
-    "Club",
-    "Cruise Party"
-  ];
-  bool status4 = false;
-  int current = 0;
   final List<String> images = [];
 
   @override
@@ -64,76 +60,76 @@ class _AddEventState extends State<AddEvent> {
       backgroundColor: Color(0xfff2f2f2).withOpacity(0.94),
       body: SingleChildScrollView(
         child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 22.0, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: Icon(
-                          Remix.arrow_left_s_line,
-                          color: Colors.black,
-                          size: 3.8.h,
-                        ),
-                      ),
-                      SizedBox(width: 3.w),
-                      text_widget(
-                        "Create Event",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18.sp,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 3.h),
-                  SizedBox(
-                    width: SCREEN_WIDTH,
-                    height: SCREEN_HEIGHT * 0.40,
-                    child: ImageCollectionWidget(
-                      height: SCREEN_HEIGHT * 0.35,
-                      images: images,
-                      onClickUploadImage: (file) {
-                        setState(() {
-                          images.add(file.path);
-                        });
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Get.back();
                       },
-                      onClickDeleteButton: (index) {
-                        CustomDialogs().deleteBox(
-                          title: "Remove Image",
-                          message: 'Are you sure to remove this image?',
-                          onPositivePressed: () {
-                            setState(() {
-                              images.removeAt(index);
-                            });
-                          },
-                        );
-                      },
-                      onClickCard: (index) {},
+                      child: Icon(
+                        Remix.arrow_left_s_line,
+                        color: Colors.black,
+                        size: 3.8.h,
+                      ),
                     ),
+                    SizedBox(width: 3.w),
+                    text_widget(
+                      "Create Event",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18.sp,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 3.h),
+                SizedBox(
+                  width: SCREEN_WIDTH,
+                  height: SCREEN_HEIGHT * 0.40,
+                  child: ImageCollectionWidget(
+                    height: SCREEN_HEIGHT * 0.35,
+                    images: images,
+                    onClickUploadImage: (file) {
+                      setState(() {
+                        images.add(file.path);
+                      });
+                    },
+                    onClickDeleteButton: (index) {
+                      CustomDialogs().deleteBox(
+                        title: "Remove Image",
+                        message: 'Are you sure to remove this image?',
+                        onPositivePressed: () {
+                          setState(() {
+                            images.removeAt(index);
+                          });
+                        },
+                      );
+                    },
+                    onClickCard: (index) {},
                   ),
-                  text_widget(
-                    "Event Title",
-                    fontSize: 15.6.sp,
-                  ),
-                  SizedBox(height: 1.h),
-                  textFieldWithPrefixSuffuxIconAndHintText(
-                    "Enter event title",
-                    fillColor: Colors.white,
-                    mainTxtColor: Colors.black,
-                    radius: 12,
-                    bColor: Colors.transparent,
-                  ),
-                  SizedBox(height: 2.h),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: InkWell(
+                ),
+                text_widget(
+                  "Event Title",
+                  fontSize: 15.6.sp,
+                ),
+                SizedBox(height: 1.h),
+                textFieldWithPrefixSuffuxIconAndHintText(
+                  "Enter event title",
+                  controller: titleController,
+                  fillColor: Colors.white,
+                  mainTxtColor: Colors.black,
+                  radius: 12,
+                  bColor: Colors.transparent,
+                ),
+                SizedBox(height: 2.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
                         onTap: () {
                           _selectDate(context);
                         },
@@ -147,6 +143,7 @@ class _AddEventState extends State<AddEvent> {
                             SizedBox(height: 1.h),
                             textFieldWithPrefixSuffuxIconAndHintText(
                               "Select Date",
+                              controller: dateController,
                               enable: false,
                               fillColor: Colors.white,
                               mainTxtColor: Colors.black,
@@ -157,10 +154,11 @@ class _AddEventState extends State<AddEvent> {
                             ),
                           ],
                         ),
-                      )),
-                      SizedBox(width: 2.w),
-                      Expanded(
-                          child: InkWell(
+                      ),
+                    ),
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: InkWell(
                         onTap: () {
                           Navigator.of(context).push(
                             showPicker(
@@ -186,6 +184,7 @@ class _AddEventState extends State<AddEvent> {
                             SizedBox(height: 1.h),
                             textFieldWithPrefixSuffuxIconAndHintText(
                               "Select Time",
+                              controller: timeController,
                               enable: false,
                               fillColor: Colors.white,
                               mainTxtColor: Colors.black,
@@ -196,57 +195,65 @@ class _AddEventState extends State<AddEvent> {
                             ),
                           ],
                         ),
-                      ))
-                    ],
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 2.h),
+                text_widget(
+                  "Location",
+                  fontSize: 15.6.sp,
+                ),
+                SizedBox(height: 1.h),
+                textFieldWithPrefixSuffuxIconAndHintText(
+                  "New York",
+                  fillColor: Colors.white,
+                  mainTxtColor: Colors.black,
+                  radius: 12,
+                  bColor: Colors.transparent,
+                  isSuffix: false,
+                  suffixIcon: "assets/icons/edit.png",
+                ),
+                SizedBox(height: 2.h),
+                Card(
+                  elevation: 3,
+                  child: SizedBox(
+                    height: 25.h,
+                    child: MapCard(isPin: true),
                   ),
-                  SizedBox(height: 2.h),
-                  text_widget(
-                    "Location",
-                    fontSize: 15.6.sp,
-                  ),
-                  SizedBox(height: 1.h),
-                  textFieldWithPrefixSuffuxIconAndHintText("New York",
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: false,
-                      suffixIcon: "assets/icons/edit.png"),
-                  SizedBox(height: 2.h),
-                  Card(
-                    elevation: 3,
-                    child: SizedBox(
-                      height: 25.h,
-                      child: MapCard(isPin: true),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  text_widget(
-                    "Description",
-                    fontSize: 15.6.sp,
-                  ),
-                  SizedBox(height: 1.h),
-                  textFieldWithPrefixSuffuxIconAndHintText("Write Here",
-                      line: 5,
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: false,
-                      suffixIcon: "assets/icons/edit.png"),
-                  SizedBox(height: 4.h),
-                  gradientButton("Create Event",
-                      font: 17,
-                      txtColor: MyColors.white,
-                      ontap: () {},
-                      width: 90,
-                      height: 6.6,
-                      isColor: true,
-                      clr: MyColors.primary),
-                  SizedBox(height: 10.h),
-                ],
-              ),
-            )),
+                ),
+                SizedBox(height: 2.h),
+                text_widget(
+                  "Description",
+                  fontSize: 15.6.sp,
+                ),
+                SizedBox(height: 1.h),
+                textFieldWithPrefixSuffuxIconAndHintText(
+                  "Write Here",
+                  line: 5,
+                  fillColor: Colors.white,
+                  mainTxtColor: Colors.black,
+                  radius: 12,
+                  bColor: Colors.transparent,
+                  isSuffix: false,
+                  suffixIcon: "assets/icons/edit.png",
+                ),
+                SizedBox(height: 4.h),
+                gradientButton(
+                  "Create Event",
+                  font: 17,
+                  txtColor: MyColors.white,
+                  ontap: () {},
+                  width: 90,
+                  height: 6.6,
+                  isColor: true,
+                  clr: MyColors.primary,
+                ),
+                SizedBox(height: 10.h),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

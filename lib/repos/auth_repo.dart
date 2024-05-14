@@ -7,7 +7,7 @@ import '../exceptions/exception_parsing.dart';
 import '../utils/utils.dart';
 import '../web_services/firebase_auth_serivces.dart';
 import 'user_repo.dart';
-import 'validations/data_validations.dart';
+import 'validations/check_validation.dart';
 
 class AuthRepo {
   int userFetchFailureCount = 0;
@@ -16,7 +16,7 @@ class AuthRepo {
       {required String withEmail, required String withPassword}) async {
     try {
       // Make Validation
-      await DataValidation.loginUser(email: withEmail, password: withPassword);
+      await CheckVaidation.loginUser(email: withEmail, password: withPassword);
       final _ = await FirebaseAuthService()
           .login(withEmail: withEmail, withPassword: withPassword);
       await UserRepo().fetch();
@@ -44,7 +44,7 @@ class AuthRepo {
   }) async {
     try {
       /// Make validation
-      await DataValidation.createUser(
+      await CheckVaidation.onCreateUser(
         name: name,
         email: email,
         password: password,

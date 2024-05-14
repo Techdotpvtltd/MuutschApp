@@ -68,7 +68,7 @@ class DataExceptionUnknown extends DataException {
 
 class DataExceptionRequiredField extends DataException {
   DataExceptionRequiredField(
-      {super.message = "Field Required.", required super.errorCode});
+      {super.message = "Field Required.", super.errorCode});
 }
 
 class DataExceptionSubscriptionRequired extends DataException {

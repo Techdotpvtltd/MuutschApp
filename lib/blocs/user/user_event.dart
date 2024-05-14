@@ -16,7 +16,7 @@ abstract class UserEvent {}
 class UserEventUpdateProfile extends UserEvent {
   final String? avatar;
   final List<ChildModel>? children;
-  final UserLocationModel? location;
+  final LocationModel? location;
   final int? numberOfChildren;
   final List<String>? interests;
   final String? name;

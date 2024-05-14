@@ -10,6 +10,7 @@ import 'package:musch/pages/auth/splash_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'blocs/auth/auth_bloc.dart';
+import 'blocs/event/event_bloc.dart';
 import 'blocs/user/user_bloc.dart';
 import 'manager/app_bloc_observer.dart';
 
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => UserBloc()),
+          BlocProvider(create: (context) => EventBloc()),
         ],
         child: GetMaterialApp(
           navigatorKey: navKey,
