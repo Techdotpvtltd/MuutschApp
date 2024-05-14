@@ -229,10 +229,10 @@ class _EditProfileState extends State<EditProfile> {
                   SizedBox(height: 1.h),
 
                   textFieldWithPrefixSuffuxIconAndHintText(
-                    "Enter email",
-                    controller: emailController,
+                    user.email != "" ? user.email : "Enter email",
                     fillColor: Colors.white,
                     mainTxtColor: Colors.black,
+                    enable: user.email == "",
                     radius: 12,
                     bColor: Colors.transparent,
                   ),

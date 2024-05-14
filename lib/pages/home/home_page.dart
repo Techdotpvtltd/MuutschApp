@@ -14,6 +14,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../repos/user_repo.dart';
 import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
+import 'edit_profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -56,14 +57,14 @@ class _HomePageState extends State<HomePage> {
                           Row(
                             children: [
                               InkWell(
-                                  onTap: () {
-                                    Get.find<MyDrawerController>()
-                                        .toggleDrawer();
-                                  },
-                                  child: Image.asset(
-                                    "assets/images/logo.png",
-                                    height: 5.h,
-                                  )),
+                                onTap: () {
+                                  Get.find<MyDrawerController>().toggleDrawer();
+                                },
+                                child: Image.asset(
+                                  "assets/images/logo.png",
+                                  height: 5.h,
+                                ),
+                              ),
                               Spacer(),
                               InkWell(
                                 onTap: () {
@@ -82,11 +83,16 @@ class _HomePageState extends State<HomePage> {
                               ),
 
                               /// Profile Widget
-                              AvatarWidget(
-                                height: 40,
-                                width: 40,
-                                backgroundColor: Colors.black,
-                                avatarUrl: UserRepo().currentUser.avatar,
+                              InkWell(
+                                onTap: () {
+                                  Get.to(EditProfile());
+                                },
+                                child: AvatarWidget(
+                                  height: 40,
+                                  width: 40,
+                                  backgroundColor: Colors.black,
+                                  avatarUrl: UserRepo().currentUser.avatar,
+                                ),
                               ),
                             ],
                           ),
@@ -180,11 +186,13 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () {
                                   Get.to(AllEvents());
                                 },
-                                child: text_widget("View All",
-                                    fontSize: 14.sp,
-                                    color: MyColors.primary,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: MyColors.primary),
+                                child: text_widget(
+                                  "View All",
+                                  fontSize: 14.sp,
+                                  color: MyColors.primary,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: MyColors.primary,
+                                ),
                               ),
                             ],
                           ),

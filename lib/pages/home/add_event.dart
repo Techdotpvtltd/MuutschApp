@@ -16,6 +16,10 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../utils/constants/constants.dart';
+import '../../utils/dialogs/dialogs.dart';
+import '../../widgets/image_collection_widget.dart';
+
 class AddEvent extends StatefulWidget {
   @override
   State<AddEvent> createState() => _AddEventState();
@@ -54,6 +58,7 @@ class _AddEventState extends State<AddEvent> {
   ];
   bool status4 = false;
   int current = 0;
+  final List<String> images = [];
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +76,15 @@ class _AddEventState extends State<AddEvent> {
                   Row(
                     children: [
                       InkWell(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Icon(
-                            Remix.arrow_left_s_line,
-                            color: Colors.black,
-                            size: 3.8.h,
-                          )),
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Icon(
+                          Remix.arrow_left_s_line,
+                          color: Colors.black,
+                          size: 3.8.h,
+                        ),
+                      ),
                       SizedBox(width: 3.w),
                       text_widget(
                         "Create Event",
@@ -88,31 +94,57 @@ class _AddEventState extends State<AddEvent> {
                     ],
                   ),
                   SizedBox(height: 3.h),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10.0,
-                    mainAxisSpacing: 10.0,
-                    shrinkWrap: true,
-                    childAspectRatio: 1.2,
-                    children: List.generate(
-                      4,
-                      (index) {
-                        return index == 3
-                            ? Image.asset(
-                                "assets/icons/upload.png",
-                                fit: BoxFit.fill,
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  "assets/images/ii1.png",
-                                  height: 10.h,
-                                  width: Get.width,
-                                  fit: BoxFit.fill,
-                                ));
+                  SizedBox(
+                    width: SCREEN_WIDTH,
+                    height: SCREEN_HEIGHT * 0.40,
+                    child: ImageCollectionWidget(
+                      height: SCREEN_HEIGHT * 0.35,
+                      images: images,
+                      onClickUploadImage: (file) {
+                        setState(() {
+                          images.add(file.path);
+                        });
                       },
+                      onClickDeleteButton: (index) {
+                        CustomDialogs().deleteBox(
+                          title: "Remove Image",
+                          message: 'Are you sure to remove this image?',
+                          onPositivePressed: () {
+                            setState(() {
+                              images.removeAt(index);
+                            });
+                          },
+                        );
+                      },
+                      onClickCard: (index) {},
                     ),
                   ),
+                  // GridView.count(
+                  //   crossAxisCount: 2,
+                  //   crossAxisSpacing: 10.0,
+                  //   mainAxisSpacing: 10.0,
+                  //   shrinkWrap: true,
+                  //   childAspectRatio: 1.2,
+                  //   children: List.generate(
+                  //     4,
+                  //     (index) {
+                  //       return index == 3
+                  //           ? Image.asset(
+                  //               "assets/icons/upload.png",
+                  //               fit: BoxFit.fill,
+                  //             )
+                  //           : ClipRRect(
+                  //               borderRadius: BorderRadius.circular(12),
+                  //               child: Image.asset(
+                  //                 "assets/images/ii1.png",
+                  //                 height: 10.h,
+                  //                 width: Get.width,
+                  //                 fit: BoxFit.fill,
+                  //               ),
+                  //             );
+                  //     },
+                  //   ),
+                  // ),
                   text_widget(
                     "Event Title",
                     fontSize: 15.6.sp,
