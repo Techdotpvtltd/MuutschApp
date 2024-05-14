@@ -267,8 +267,8 @@ class _EditProfileState extends State<EditProfile> {
                         fontSize: 15.6.sp,
                       ),
                       IconButton(
-                        onPressed: () async {
-                          await Get.to(InterestPage(isComingFromSignup: false));
+                        onPressed: () {
+                          Get.to(InterestPage(isComingFromSignup: false));
 
                           setState(() {
                             interests = UserRepo().currentUser.interests ?? [];

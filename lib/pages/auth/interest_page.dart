@@ -84,6 +84,7 @@ class _InterestPageState extends State<InterestPage> {
           if (state is UserStateProfileUpdated) {
             if (!widget.isComingFromSignup) {
               Get.back();
+              Get.back();
               return;
             }
             CustomDialogs().successBox(

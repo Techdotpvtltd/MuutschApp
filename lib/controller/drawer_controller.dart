@@ -22,7 +22,6 @@ class MyDrawerController extends GetxController {
   int active = 0;
 
   void closeDrawer() {
-    print("Close drawer");
     Timer(const Duration(microseconds: 800), () {
       open = false;
       Get.find<NavController>().isVisible = true;
@@ -31,6 +30,5 @@ class MyDrawerController extends GetxController {
       update();
     });
     zoomDrawerController.close?.call();
-    update();
   }
 }
