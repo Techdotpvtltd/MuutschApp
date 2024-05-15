@@ -9,6 +9,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import '../exceptions/exception_parsing.dart';
 import '../models/event_model.dart';
@@ -140,11 +141,14 @@ class EventRepo {
         queries.add(QueryModel(
             field: 'createdBy', value: withUserId, type: QueryType.isEqual));
       }
+      queries.add(
+          QueryModel(field: 'createdAt', value: true, type: QueryType.orderBy));
       final List<Map<String, dynamic>> data = await FirestoreService()
           .fetchWithMultipleConditions(
               collection: FIREBASE_COLLECTION_EVENTS, queries: queries);
       return data.map((e) => EventModel.fromMap(e)).toList();
     } catch (e) {
+      debugPrint(e.toString());
       throw throwAppException(e: e);
     }
   }
