@@ -16,6 +16,7 @@ import '../../blocs/event/events_event.dart';
 import '../../models/event_model.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/custom_network_image.dart';
+import 'add_event.dart';
 
 class EventView extends StatefulWidget {
   const EventView({super.key, this.event, this.isFromMyEvents = false});
@@ -26,7 +27,7 @@ class EventView extends StatefulWidget {
 }
 
 class _EventViewState extends State<EventView> {
-  late final EventModel? event = widget.event;
+  late EventModel? event = widget.event;
   bool isDeleting = false;
 
   void triggerDeleteEvent(EventBloc bloc) {
@@ -37,27 +38,35 @@ class _EventViewState extends State<EventView> {
   Widget build(BuildContext context) {
     return BlocListener<EventBloc, EventState>(
       listener: (context, state) {
+        /// Update Event States
+        if (state is EventStateUpdated) {
+          setState(() {
+            event = state.updatedEvent;
+          });
+        }
+
+        /// Delete Event States
         if (state is EventStateDeleteFailure ||
             state is EventStateDeleted ||
             state is EventStateDeteing) {
           setState(() {
             isDeleting = state.isLoading;
           });
-        }
 
-        if (state is EventStateDeleteFailure) {
-          CustomDialogs().errorBox(message: state.exception.message);
-        }
+          if (state is EventStateDeleteFailure) {
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
 
-        if (state is EventStateDeleted) {
-          CustomDialogs().successBox(
-            message: "Event deleted successfully.",
-            positiveTitle: "Go back",
-            onPositivePressed: () {
-              Get.back();
-            },
-            barrierDismissible: false,
-          );
+          if (state is EventStateDeleted) {
+            CustomDialogs().successBox(
+              message: "Event deleted successfully.",
+              positiveTitle: "Go back",
+              onPositivePressed: () {
+                Get.back();
+              },
+              barrierDismissible: false,
+            );
+          }
         }
       },
       child: Scaffold(
@@ -234,7 +243,7 @@ class _EventViewState extends State<EventView> {
                                   font: 15.5,
                                   txtColor: MyColors.white,
                                   ontap: () {
-                                    // _.loginUser();
+                                    Get.to(AddEvent(event: event));
                                   },
                                   width: 90,
                                   height: 6,

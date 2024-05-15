@@ -85,3 +85,21 @@ class EventStateDeleted extends EventState {
 
   EventStateDeleted({required this.eventId});
 }
+
+// ===========================Update Event States================================
+
+class EventStateUpdating extends EventState {
+  EventStateUpdating({super.isLoading = true, super.loadingText});
+}
+
+class EventStateUpdateFailure extends EventState {
+  final AppException exception;
+
+  EventStateUpdateFailure({required this.exception});
+}
+
+class EventStateUpdated extends EventState {
+  final EventModel updatedEvent;
+
+  EventStateUpdated({required this.updatedEvent});
+}

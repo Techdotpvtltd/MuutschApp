@@ -6,6 +6,7 @@
 // Description:
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:place_picker/uuid.dart';
 
 import '../../exceptions/app_exceptions.dart';
@@ -71,6 +72,7 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
       },
     );
 
+    /// Delete Events Event
     on<EventsEventDelete>(
       (event, emit) async {
         try {
@@ -79,6 +81,62 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
           emit(EventStateDeleted(eventId: event.eventId));
         } on AppException catch (e) {
           emit(EventStateDeleteFailure(exception: e));
+        }
+      },
+    );
+
+    /// Udpate Events Event
+    on<EventsEventUpdate>(
+      (event, emit) async {
+        try {
+          /// Already Uploaded File URLs
+          final List<String> alreadyUploadedImageUrls = [];
+
+          /// New Selected images File URLs
+          final List<String> selectedImageUrls = [];
+          for (final String url in event.imageUrls) {
+            if (url.isURL) {
+              alreadyUploadedImageUrls.add(url);
+            } else {
+              selectedImageUrls.add(url);
+            }
+          }
+          for (int i = 0; i < selectedImageUrls.length; i++) {
+            emit(EventStateUploadingImages(loadingText: "Uploading image $i"));
+            final String? downloadedUrl = await EventRepo().uploadImage(
+                imageUrl: event.imageUrls[i], eventId: event.eventId);
+            if (downloadedUrl != null) {
+              alreadyUploadedImageUrls.add(downloadedUrl);
+              emit(EventStateUploadedImages(loadingText: "Uploaded image $i"));
+              continue;
+            }
+          }
+
+          ////////////////
+
+          final DateTime? mergedDateTime =
+              Util.mergeDateTime(dateTime: event.date, time: event.time);
+          emit(EventStateUpdating(loadingText: "Updating Event..."));
+          await EventRepo().updateEvent(
+            eventTitle: event.title,
+            imageUrls: alreadyUploadedImageUrls,
+            dateTime: mergedDateTime,
+            maxPersons: event.maxPersons,
+            description: event.description,
+            location: event.eventLocation,
+            uuid: event.eventId,
+          );
+          final EventModel updatedEvent = event.oldEvent.copyWith(
+            title: event.title,
+            imageUrls: alreadyUploadedImageUrls,
+            dateTime: mergedDateTime,
+            maxPersons: int.tryParse(event.maxPersons ?? "0") ?? 0,
+            description: event.description,
+            location: event.eventLocation,
+          );
+          emit(EventStateUpdated(updatedEvent: updatedEvent));
+        } on AppException catch (e) {
+          emit(EventStateUpdateFailure(exception: e));
         }
       },
     );

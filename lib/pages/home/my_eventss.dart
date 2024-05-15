@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/pages/home/add_event.dart';
-import 'package:musch/pages/home/edit_event.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
@@ -44,16 +43,32 @@ class _MyEventsState extends State<MyEvents> {
   Widget build(BuildContext context) {
     return BlocListener<EventBloc, EventState>(
       listener: (context, state) {
+        /// Update Event States
+        if (state is EventStateUpdated) {
+          final int index = events
+              .indexWhere((element) => element.id == state.updatedEvent.id);
+          if (index > -1) {
+            setState(() {
+              events[index] = state.updatedEvent;
+            });
+          }
+        }
+
+        /// Created Event States
         if (state is EventStateCreated) {
           setState(() {
             events.insert(0, state.event);
           });
         }
+
+        /// Deleted Events States
         if (state is EventStateDeleted) {
           setState(() {
             events.removeWhere((element) => element.id == state.eventId);
           });
         }
+
+        /// Fetching Events States
         if (state is EventStateFetching ||
             state is EventStateFetched ||
             state is EventStateFetchFailure) {

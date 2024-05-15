@@ -8,6 +8,8 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../exceptions/exception_parsing.dart';
 import '../models/event_model.dart';
 import '../models/location_model.dart';
@@ -74,6 +76,42 @@ class EventRepo {
     try {
       await FirestoreService()
           .delete(collection: FIREBASE_COLLECTION_EVENTS, docId: eventId);
+    } catch (e) {
+      throw throwAppException(e: e);
+    }
+  }
+
+  /// Update Event
+  Future<void> updateEvent({
+    required String eventTitle,
+    required List<String> imageUrls,
+    required String uuid,
+    DateTime? dateTime,
+    LocationModel? location,
+    String? description,
+    String? maxPersons,
+  }) async {
+    try {
+      await CheckVaidation.onCreateEvent(
+        images: imageUrls,
+        title: eventTitle,
+        dateTime: dateTime,
+        location: location,
+        maxPersons: maxPersons,
+      );
+
+      await FirestoreService().updateWithDocId(
+        path: FIREBASE_COLLECTION_EVENTS,
+        docId: uuid,
+        data: {
+          'imageUrls': imageUrls,
+          'title': eventTitle,
+          'dateTime': Timestamp.fromDate(dateTime!),
+          'location': location?.toMap(),
+          'description': description,
+          'maxPersons': int.tryParse(maxPersons ?? "0") ?? 0,
+        },
+      );
     } catch (e) {
       throw throwAppException(e: e);
     }

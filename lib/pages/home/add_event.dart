@@ -20,12 +20,17 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
+import '../../models/event_model.dart';
 import '../../models/location_model.dart';
 import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/image_collection_widget.dart';
 
 class AddEvent extends StatefulWidget {
+  final EventModel? event;
+
+  const AddEvent({super.key, this.event});
+
   @override
   State<AddEvent> createState() => _AddEventState();
 }
@@ -37,12 +42,36 @@ class _AddEventState extends State<AddEvent> {
   final TextEditingController timeController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
   DateTime? selectedDate;
   DateTime now = DateTime.now();
   bool isLoading = false;
   String? loadingText;
-
+  late final EventModel? event = widget.event;
+  bool isEditEvent = false;
   LocationModel? selectedLocation;
+  List<String> images = [];
+
+  void checkAndFillData() {
+    isEditEvent = event != null;
+    if (event != null) {
+      titleController.text = event!.title;
+      dateController.text = event!.dateTime.dateToString('dd-MM-yyyy');
+      timeController.text = event!.dateTime.dateToString('hh:mm a');
+      locationController.text = event!.location.address ?? "";
+      descriptionController.text = event!.description ?? "";
+      selectedLocation = event!.location;
+      images = event!.imageUrls;
+      selectedDate = event!.dateTime.onlyDate();
+      selectedTime = Time.fromTimeOfDay(event!.dateTime.onlyTime(), 0);
+    }
+  }
+
+  @override
+  void initState() {
+    checkAndFillData();
+    super.initState();
+  }
 
   void onTimeChanged(Time newTime) {
     setState(() {
@@ -92,6 +121,22 @@ class _AddEventState extends State<AddEvent> {
     );
   }
 
+  void triggerUpdateEventEvent(EventBloc bloc) {
+    bloc.add(
+      EventsEventUpdate(
+        imageUrls: images,
+        title: titleController.text,
+        eventLocation: selectedLocation,
+        date: selectedDate,
+        time: selectedTime,
+        description: descriptionController.text,
+        maxPersons: "40",
+        eventId: event?.id ?? "",
+        oldEvent: event!,
+      ),
+    );
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -106,8 +151,6 @@ class _AddEventState extends State<AddEvent> {
     }
   }
 
-  final List<String> images = [];
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<EventBloc, EventState>(
@@ -117,7 +160,10 @@ class _AddEventState extends State<AddEvent> {
             state is EventStateCreateFailure ||
             state is EventStateUploadedImages ||
             state is EventStateUploadingImages ||
-            state is EventStateUploadImgaesFailure) {
+            state is EventStateUploadImgaesFailure ||
+            state is EventStateUpdating ||
+            state is EventStateUpdateFailure ||
+            state is EventStateUpdated) {
           setState(() {
             isLoading = state.isLoading;
             loadingText = state.loadingText;
@@ -130,6 +176,20 @@ class _AddEventState extends State<AddEvent> {
           if (state is EventStateCreated) {
             CustomDialogs().successBox(
                 message: "Event created successfully.",
+                positiveTitle: "Go Back",
+                onPositivePressed: () {
+                  Get.back();
+                },
+                barrierDismissible: false);
+          }
+
+          if (state is EventStateUpdateFailure) {
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+
+          if (state is EventStateUpdated) {
+            CustomDialogs().successBox(
+                message: "Event updated successfully.",
                 positiveTitle: "Go Back",
                 onPositivePressed: () {
                   Get.back();
@@ -163,7 +223,7 @@ class _AddEventState extends State<AddEvent> {
                       ),
                       SizedBox(width: 3.w),
                       text_widget(
-                        "Create Event",
+                        isEditEvent ? "Update Event" : "Create Event",
                         fontWeight: FontWeight.w600,
                         fontSize: 18.sp,
                       ),
@@ -336,12 +396,18 @@ class _AddEventState extends State<AddEvent> {
                   ),
                   SizedBox(height: 4.h),
                   gradientButton(
-                    isLoading ? loadingText ?? "" : "Create Event",
+                    isLoading
+                        ? loadingText ?? ""
+                        : isEditEvent
+                            ? "Update Event"
+                            : "Create Event",
                     isLoading: isLoading,
                     font: 17,
                     txtColor: MyColors.white,
                     ontap: () {
-                      triggerCreateEventEvent(context.read<EventBloc>());
+                      isEditEvent
+                          ? triggerUpdateEventEvent(context.read<EventBloc>())
+                          : triggerCreateEventEvent(context.read<EventBloc>());
                     },
                     width: 90,
                     height: 6.6,

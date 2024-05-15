@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../models/event_model.dart';
 import '../../models/location_model.dart';
 
 abstract class EventsEvent {}
@@ -44,4 +45,28 @@ class EventsEventDelete extends EventsEvent {
   final String eventId;
 
   EventsEventDelete({required this.eventId});
+}
+
+/// Update Events
+class EventsEventUpdate extends EventsEvent {
+  final List<String> imageUrls;
+  final String title;
+  final DateTime? date;
+  final TimeOfDay? time;
+  final LocationModel? eventLocation;
+  final String? description;
+  final String? maxPersons;
+  final String eventId;
+  final EventModel oldEvent;
+  EventsEventUpdate({
+    required this.imageUrls,
+    required this.title,
+    required this.date,
+    required this.time,
+    required this.eventLocation,
+    required this.description,
+    required this.maxPersons,
+    required this.eventId,
+    required this.oldEvent,
+  });
 }
