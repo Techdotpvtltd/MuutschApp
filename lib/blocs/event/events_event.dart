@@ -36,9 +36,35 @@ class EventsEventCreate extends EventsEvent {
 
 /// Fetch Events
 
-class EventsEventFetchOwn extends EventsEvent {
-  EventsEventFetchOwn();
+class EventsEventFetchOwn extends EventsEvent {}
+
+class EventsEventFetchAll extends EventsEvent {}
+
+class EventsEventFilter extends EventsEvent {
+  final String? searchText;
+  final LocationModel? location;
+  final int? minDistance;
+  final int? maxDistance;
+
+  EventsEventFilter({
+    this.searchText,
+    this.location,
+    this.minDistance,
+    this.maxDistance,
+  });
 }
+
+/// Filter Events
+
+class EventsEventApplyFilter extends EventsEvent {
+  final String? searchText;
+  final LocationModel? location;
+  final RangeValues? values;
+
+  EventsEventApplyFilter({this.searchText, this.location, this.values});
+}
+
+class EventsEventClearFilter extends EventsEvent {}
 
 /// Deleting Event
 class EventsEventDelete extends EventsEvent {

@@ -18,6 +18,8 @@ import 'event_state.dart';
 import 'events_event.dart';
 
 class EventBloc extends Bloc<EventsEvent, EventState> {
+  final List<EventModel> events = [];
+
   EventBloc() : super(EventStateInitial()) {
     /// Create Events
     on<EventsEventCreate>(
@@ -62,13 +64,29 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
       (event, emit) async {
         try {
           final String userId = UserRepo().currentUser.uid;
-          emit(EventStateFetching());
+          emit(EventStateOwnFetching());
           final List<EventModel> events =
-              await EventRepo().fetchEvents(withUserId: userId);
-          emit(EventStateFetched(events: events));
+              await EventRepo().fetchEventsWith(withUserId: userId);
+          emit(EventStateOwnFetched(events: events));
         } on AppException catch (e) {
-          emit(EventStateFetchFailure(exception: e));
+          emit(EventStateOwnFetchFailure(exception: e));
         }
+      },
+    );
+
+    /// Filter Events
+    on<EventsEventFilter>(
+      (event, emit) {
+        List<EventModel> filteredEvents = List.from(events);
+        if (event.searchText != null) {
+          filteredEvents = filteredEvents
+              .where((element) => element.title
+                  .toLowerCase()
+                  .contains(event.searchText!.toLowerCase()))
+              .toList();
+        }
+
+        emit(EventStateFetchedFiltered(events: filteredEvents));
       },
     );
 
@@ -140,5 +158,51 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
         }
       },
     );
+
+    /// Fetch All Data Event
+    on<EventsEventFetchAll>(
+      (event, emit) async {
+        if (events.isNotEmpty) {
+          /// Avoid call api if data is already fetched
+          emit(EventStateFetched(events: events));
+        } else {
+          /// called api for first time
+          emit(EventStateFetching());
+          await EventRepo().fetchAllEvents(
+            onError: (exception) {
+              emit(EventStateFetchFailure(exception: exception));
+            },
+            onEventRecieved: (event) {
+              final int index =
+                  events.indexWhere((element) => element.id == event.id);
+              if (index > -1) {
+                events[index] = event;
+              } else {
+                events.add(event);
+              }
+              events.sort((a, b) => b.createdAt.millisecondsSinceEpoch
+                  .compareTo(a.createdAt.millisecondsSinceEpoch));
+              emit(EventStateFetched(events: events));
+            },
+            onAllGet: () {
+              emit(EventStateFetchedAll(events: events));
+            },
+          );
+        }
+      },
+    );
+
+    /// Apply Filter Event
+    on<EventsEventApplyFilter>(
+      (event, emit) => emit(
+        EventStateApplyFilter(
+            searchText: event.searchText,
+            location: event.location,
+            values: event.values),
+      ),
+    );
+
+    /// clear Filter Event
+    on<EventsEventClearFilter>((event, emit) => emit(EventStateClearFilter()));
   }
 }

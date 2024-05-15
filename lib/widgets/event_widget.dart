@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
-import 'package:musch/pages/home/event_detail.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-Widget eventWidget({bool isEvent = false}) {
+import 'custom_network_image.dart';
+
+Widget eventWidget({
+  bool isEvent = false,
+  required String title,
+  required String imageUrl,
+  required String address,
+  required String eventId,
+  required VoidCallback onClickEvent,
+  required VoidCallback onClickJoinButton,
+}) {
   return InkWell(
-    onTap: () {
-      Get.to(EventView());
-    },
+    onTap: onClickEvent,
     child: Container(
       decoration: isEvent
           ? BoxDecoration(
@@ -22,11 +28,10 @@ Widget eventWidget({bool isEvent = false}) {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                "assets/images/ii1.png",
+              child: SizedBox(
                 height: 8.5.h,
                 width: 10.h,
-                fit: BoxFit.cover,
+                child: CustomNetworkImage(imageUrl: imageUrl),
               ),
             ),
             SizedBox(width: 3.w),
@@ -35,7 +40,7 @@ Widget eventWidget({bool isEvent = false}) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   text_widget(
-                    "Party With Friends",
+                    title,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
@@ -49,8 +54,9 @@ Widget eventWidget({bool isEvent = false}) {
                       SizedBox(width: 1.w),
                       Expanded(
                         child: text_widget(
-                          "456 Park Avenue, New York",
+                          address,
                           fontSize: 12.8.sp,
+                          maxline: 1,
                           fontWeight: FontWeight.w300,
                         ),
                       ),

@@ -5,8 +5,11 @@
 // Date:        14-05-24 15:31:39 -- Tuesday
 // Description:
 
+import 'package:flutter/material.dart';
+
 import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
+import '../../models/location_model.dart';
 
 abstract class EventState {
   final bool isLoading;
@@ -54,6 +57,22 @@ class EventStateCreated extends EventState {
 
 // ===========================Fetch Event States================================
 
+class EventStateOwnFetching extends EventState {
+  EventStateOwnFetching({super.isLoading = true});
+}
+
+class EventStateOwnFetchFailure extends EventState {
+  final AppException exception;
+  EventStateOwnFetchFailure({required this.exception});
+}
+
+class EventStateOwnFetched extends EventState {
+  final List<EventModel> events;
+
+  EventStateOwnFetched({required this.events});
+}
+
+///                     ========================================
 class EventStateFetching extends EventState {
   EventStateFetching({super.isLoading = true});
 }
@@ -67,6 +86,18 @@ class EventStateFetched extends EventState {
   final List<EventModel> events;
 
   EventStateFetched({required this.events});
+}
+
+class EventStateFetchedAll extends EventState {
+  final List<EventModel> events;
+
+  EventStateFetchedAll({required this.events});
+}
+
+class EventStateFetchedFiltered extends EventState {
+  final List<EventModel> events;
+
+  EventStateFetchedFiltered({required this.events});
 }
 
 // ===========================Delete Event States================================
@@ -103,3 +134,15 @@ class EventStateUpdated extends EventState {
 
   EventStateUpdated({required this.updatedEvent});
 }
+
+// ===========================Filter States================================
+
+class EventStateApplyFilter extends EventState {
+  final String? searchText;
+  final LocationModel? location;
+  final RangeValues? values;
+
+  EventStateApplyFilter({this.searchText, this.location, this.values});
+}
+
+class EventStateClearFilter extends EventState {}

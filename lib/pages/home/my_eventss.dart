@@ -69,18 +69,18 @@ class _MyEventsState extends State<MyEvents> {
         }
 
         /// Fetching Events States
-        if (state is EventStateFetching ||
-            state is EventStateFetched ||
-            state is EventStateFetchFailure) {
+        if (state is EventStateOwnFetching ||
+            state is EventStateOwnFetched ||
+            state is EventStateOwnFetchFailure) {
           setState(() {
             isLoading = state.isLoading;
           });
 
-          if (state is EventStateFetchFailure) {
+          if (state is EventStateOwnFetchFailure) {
             CustomDialogs().errorBox(message: state.exception.message);
           }
 
-          if (state is EventStateFetched) {
+          if (state is EventStateOwnFetched) {
             setState(() {
               events = state.events;
             });

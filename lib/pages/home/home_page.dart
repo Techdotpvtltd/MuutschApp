@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
@@ -11,10 +12,16 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../blocs/event/event_bloc.dart';
+import '../../blocs/event/event_state.dart';
+import '../../blocs/event/events_event.dart';
+import '../../models/event_model.dart';
 import '../../repos/user_repo.dart';
+import '../../utils/constants/constants.dart';
 import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
 import 'edit_profile.dart';
+import 'event_detail.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +31,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<EventModel> events = [];
+
+  void triggerFetchAllEvents(EventBloc bloc) {
+    bloc.add(EventsEventFetchAll());
+  }
+
+  @override
+  void initState() {
+    triggerFetchAllEvents(context.read<EventBloc>());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -168,40 +187,71 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     SizedBox(height: 3.h),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25.0, vertical: 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              text_widget(
-                                "Nearby Events",
-                                color: Colors.black,
-                                fontSize: 17.5.sp,
-                              ),
-                              Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  Get.to(AllEvents());
-                                },
-                                child: text_widget(
-                                  "View All",
-                                  fontSize: 14.sp,
-                                  color: MyColors.primary,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: MyColors.primary,
+                    BlocListener<EventBloc, EventState>(
+                      listener: (context, state) {
+                        if (state is EventStateFetched) {
+                          setState(() {
+                            events = state.events.take(5).toList();
+                          });
+                        }
+                        if (state is EventStateFetchFailure ||
+                            state is EventStateFetchedAll ||
+                            state is EventStateFetching) {
+                          if (state is EventStateFetchedAll) {
+                            setState(() {
+                              events = state.events.take(5).toList();
+                            });
+                          }
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25.0, vertical: 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                text_widget(
+                                  "Nearby Events",
+                                  color: Colors.black,
+                                  fontSize: 17.5.sp,
                                 ),
+                                Spacer(),
+                                InkWell(
+                                  onTap: () {
+                                    Get.to(AllEvents());
+                                  },
+                                  child: text_widget(
+                                    "View All",
+                                    fontSize: 14.sp,
+                                    color: MyColors.primary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: MyColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            gapH20,
+                            for (final EventModel event in events)
+                              Column(
+                                children: [
+                                  eventWidget(
+                                    title: event.title,
+                                    address:
+                                        "${event.location.city}, ${event.location.country}",
+                                    eventId: event.id,
+                                    imageUrl: event.imageUrls.first,
+                                    onClickEvent: () {
+                                      Get.to(EventView(event: event));
+                                    },
+                                    onClickJoinButton: () {},
+                                  ),
+                                  gapH16,
+                                ],
                               ),
-                            ],
-                          ),
-                          SizedBox(height: 3.h),
-                          eventWidget(),
-                          SizedBox(height: 2.h),
-                          eventWidget(),
-                          SizedBox(height: 8.h),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],

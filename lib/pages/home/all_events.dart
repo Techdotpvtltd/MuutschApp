@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/pages/home/event_detail.dart';
@@ -10,6 +11,13 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../blocs/event/event_bloc.dart';
+import '../../blocs/event/event_state.dart';
+import '../../blocs/event/events_event.dart';
+import '../../models/event_model.dart';
+import '../../models/location_model.dart';
+import '../../utils/dialogs/dialogs.dart';
+import '../../widgets/custom_network_image.dart';
 import '../../widgets/text_field.dart';
 
 class AllEvents extends StatefulWidget {
@@ -21,180 +29,322 @@ class AllEvents extends StatefulWidget {
 
 class _AllEventsState extends State<AllEvents> {
   bool isGrid = false;
+  List<EventModel> events = [];
+  bool isLoading = false;
+  String? searchText;
+  LocationModel? location;
+  RangeValues? rangeValues;
+
+  final TextEditingController searchController = TextEditingController();
+
+  void triggerFetchAllEvents(EventBloc bloc) {
+    bloc.add(EventsEventFetchAll());
+  }
+
+  void triggerFilteredEvent(EventBloc bloc) {
+    bloc.add(EventsEventFilter(searchText: searchText));
+  }
+
+  @override
+  void initState() {
+    triggerFetchAllEvents(context.read<EventBloc>());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusManager.instance.primaryFocus!.unfocus();
+    return BlocListener<EventBloc, EventState>(
+      listener: (context, state) {
+        /// Filter States
+        if (state is EventStateApplyFilter) {
+          if (state.searchText != null) {
+            setState(() {
+              searchText = state.searchText;
+              searchController.text = searchText ?? "";
+            });
+          }
+          location = state.location;
+          rangeValues = state.values;
+          triggerFilteredEvent(context.read<EventBloc>());
+        }
+
+        if (state is EventStateClearFilter) {
+          searchText = null;
+          setState(() {
+            searchController.clear();
+          });
+          location = null;
+          rangeValues = null;
+          triggerFilteredEvent(context.read<EventBloc>());
+        }
+
+        /// Fetch Data States
+        if (state is EventStateFetchedFiltered) {
+          setState(() {
+            events = state.events;
+          });
+        }
+
+        if (state is EventStateFetched) {
+          setState(() {
+            events = state.events;
+          });
+        }
+        if (state is EventStateFetchFailure ||
+            state is EventStateFetchedAll ||
+            state is EventStateFetching) {
+          setState(() {
+            isLoading = state.isLoading;
+          });
+
+          if (state is EventStateFetchFailure) {
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+
+          if (state is EventStateFetchedAll) {
+            setState(() {
+              events = state.events;
+            });
+          }
+        }
       },
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                height: 20.h,
-                color: Color(0xffBD9691),
-              ),
-              Expanded(
+      child: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus!.unfocus();
+        },
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Container(
+                  height: 20.h,
+                  color: Color(0xffBD9691),
+                ),
+                Expanded(
                   child: Container(
-                color: Color(0xfff2f2f2),
-              ))
-            ],
-          ),
-          Positioned.fill(
-            child: SafeArea(
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                body: SingleChildScrollView(
-                  child: Padding(
+                    color: Color(0xfff2f2f2),
+                  ),
+                )
+              ],
+            ),
+            Positioned.fill(
+              child: SafeArea(
+                child: Scaffold(
+                  backgroundColor: Colors.transparent,
+                  body: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 8),
+                      horizontal: 20.0,
+                      vertical: 8,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             InkWell(
-                                onTap: () {
-                                  Get.back();
-                                },
-                                child: Icon(Remix.arrow_left_s_line,
-                                    color: Colors.white, size: 4.h)),
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: Icon(
+                                Remix.arrow_left_s_line,
+                                color: Colors.white,
+                                size: 4.h,
+                              ),
+                            ),
                             SizedBox(width: 2.w),
-                            text_widget("All Events",
-                                color: Colors.white, fontSize: 18.sp),
+                            text_widget(
+                              "All Events",
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                            ),
                             Spacer(),
                             isGrid
                                 ? InkWell(
                                     onTap: () {
-                                      setState(() {
-                                        isGrid = false;
-                                      });
+                                      setState(
+                                        () {
+                                          isGrid = false;
+                                        },
+                                      );
                                     },
-                                    child: Image.asset("assets/icons/list.png",
-                                        height: 2.5.h))
+                                    child: Image.asset(
+                                      "assets/icons/list.png",
+                                      height: 2.5.h,
+                                    ),
+                                  )
                                 : InkWell(
                                     onTap: () {
-                                      setState(() {
-                                        isGrid = true;
-                                      });
+                                      setState(
+                                        () {
+                                          isGrid = true;
+                                        },
+                                      );
                                     },
-                                    child: Image.asset("assets/icons/grid.png",
-                                        height: 2.5.h)),
+                                    child: Image.asset(
+                                      "assets/icons/grid.png",
+                                      height: 2.5.h,
+                                    ),
+                                  ),
                             SizedBox(width: 4.w),
                             InkWell(
-                                onTap: () {
-                                  Get.to(FilterScreen());
-                                },
-                                child: Image.asset("assets/icons/filter.png",
-                                    height: 2.5.h)),
+                              onTap: () {
+                                Get.to(
+                                  FilterScreen(
+                                    searchText: searchText,
+                                    location: location,
+                                    rangeValues: rangeValues,
+                                  ),
+                                );
+                              },
+                              child: Image.asset(
+                                "assets/icons/filter.png",
+                                height: 2.5.h,
+                              ),
+                            ),
                             SizedBox(width: 4.w),
                           ],
                         ),
                         SizedBox(height: 5.h),
                         textFieldWithPrefixSuffuxIconAndHintText(
                           "Search Event",
-                          // controller: _.password,
+                          controller: searchController,
                           fillColor: Colors.white,
                           isPrefix: true,
                           prefixIcon: "assets/nav/s1.png",
                           mainTxtColor: Colors.black,
                           radius: 12,
                           bColor: Colors.transparent,
+                          onSubmitted: (value) {
+                            searchText = value;
+                            triggerFilteredEvent(context.read<EventBloc>());
+                          },
                         ),
                         SizedBox(height: 4.h),
-                        isGrid
-                            ? GridView.count(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 10.0,
-                                mainAxisSpacing: 10.0,
-                                shrinkWrap: true,
-                                childAspectRatio: 0.8,
-                                children: List.generate(
-                                  4,
-                                  (index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        Get.to(EventView());
-                                      },
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: Image.asset(
-                                                "assets/images/ii1.png",
-                                                height: 10.h,
-                                                width: Get.width,
-                                                fit: BoxFit.cover,
-                                              )),
-                                          SizedBox(height: 1.h),
-                                          text_widget("Party With Friends",
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w600),
-                                          SizedBox(height: 0.5.h),
-                                          Row(
-                                            children: [
-                                              Image.asset(
-                                                "assets/images/p2.png",
-                                                height: 1.4.h,
-                                              ),
-                                              SizedBox(width: 1.w),
-                                              Expanded(
-                                                child: text_widget(
-                                                    "456 Park Avenue, New York",
-                                                    fontSize: 12.8.sp,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 0.8.h),
-                                          text_widget(
-                                              "Created by: Hammad Habib",
-                                              fontSize: 12.2.sp,
-                                              color: MyColors.primary,
-                                              fontWeight: FontWeight.w600),
-                                          SizedBox(height: 1.4.h),
-                                          gradientButton("Join Event",
-                                              font: 15,
-                                              txtColor: MyColors.white,
-                                              ontap: () {
-                                            // _.loginUser();
-                                          },
-                                              width: 90,
-                                              height: 3.5,
-                                              isColor: true,
-                                              clr: MyColors.primary),
-                                        ],
+                        isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : events.isEmpty
+                                ? Expanded(
+                                    child: Center(
+                                      child: Text("No events"),
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: GridView.count(
+                                      crossAxisCount: isGrid ? 2 : 1,
+                                      crossAxisSpacing: 10.0,
+                                      mainAxisSpacing: 10.0,
+                                      shrinkWrap: true,
+                                      childAspectRatio: isGrid ? 0.8 : 3.3,
+                                      children: List.generate(
+                                        events.length,
+                                        (index) {
+                                          final EventModel event =
+                                              events[index];
+                                          return InkWell(
+                                            onTap: () {
+                                              Get.to(EventView(event: event));
+                                            },
+                                            child: isGrid
+                                                ? Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        child: SizedBox(
+                                                          height: 10.h,
+                                                          width: Get.width,
+                                                          child:
+                                                              CustomNetworkImage(
+                                                            imageUrl: event
+                                                                .imageUrls
+                                                                .first,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 1.h),
+                                                      text_widget(
+                                                        event.title,
+                                                        fontSize: 16.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                      SizedBox(height: 0.5.h),
+                                                      Row(
+                                                        children: [
+                                                          Image.asset(
+                                                            "assets/images/p2.png",
+                                                            height: 1.4.h,
+                                                          ),
+                                                          SizedBox(width: 1.w),
+                                                          Flexible(
+                                                            child: text_widget(
+                                                              "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
+                                                              maxline: 1,
+                                                              fontSize: 12.8.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 0.8.h),
+                                                      text_widget(
+                                                        "Created by: Hammad Habib",
+                                                        fontSize: 12.2.sp,
+                                                        color: MyColors.primary,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                      SizedBox(height: 1.4.h),
+                                                      gradientButton(
+                                                        "Join Event",
+                                                        font: 15,
+                                                        txtColor:
+                                                            MyColors.white,
+                                                        ontap: () {
+                                                          // _.loginUser();
+                                                        },
+                                                        width: 90,
+                                                        height: 3.5,
+                                                        isColor: true,
+                                                        clr: MyColors.primary,
+                                                      ),
+                                                    ],
+                                                  )
+                                                : eventWidget(
+                                                    isEvent: true,
+                                                    title: event.title,
+                                                    imageUrl:
+                                                        event.imageUrls.first,
+                                                    address:
+                                                        "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
+                                                    eventId: event.id,
+                                                    onClickEvent: () {
+                                                      Get.to(EventView(
+                                                          event: event));
+                                                      Get.to(EventView(
+                                                          event: event));
+                                                    },
+                                                    onClickJoinButton: () {},
+                                                  ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  eventWidget(isEvent: true),
-                                  SizedBox(height: 2.h),
-                                  eventWidget(isEvent: true),
-                                  SizedBox(height: 2.h),
-                                  eventWidget(isEvent: true),
-                                  SizedBox(height: 2.h),
-                                  eventWidget(isEvent: true),
-                                ],
-                              ),
-                        SizedBox(height: 2.h),
+                                    ),
+                                  ),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

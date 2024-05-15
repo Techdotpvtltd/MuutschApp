@@ -1,18 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/range_slider.dart';
 import 'package:musch/widgets/text_widget.dart';
+import 'package:place_picker/entities/entities.dart';
+import 'package:place_picker/place_picker.dart';
+import 'package:place_picker/widgets/place_picker.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../blocs/event/event_bloc.dart';
+import '../../blocs/event/events_event.dart';
+import '../../models/location_model.dart';
+import '../../utils/constants/constants.dart';
 import '../../widgets/text_field.dart';
 
-class FilterScreen extends StatelessWidget {
-  const FilterScreen({super.key});
+class FilterScreen extends StatefulWidget {
+  const FilterScreen(
+      {super.key, this.searchText, this.location, this.rangeValues});
+  final String? searchText;
+  final LocationModel? location;
+  final RangeValues? rangeValues;
+
+  @override
+  State<FilterScreen> createState() => _FilterScreenState();
+}
+
+class _FilterScreenState extends State<FilterScreen> {
+  final TextEditingController searchController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  late RangeValues? rangeValues = widget.rangeValues;
+  late LocationModel? location = widget.location;
+
+  void triggerApplyFilterEvent(EventBloc bloc) {
+    bloc.add(EventsEventApplyFilter(
+      searchText: searchController.text,
+      values: rangeValues,
+      location: location,
+    ));
+  }
+
+  void triggerClearFilterEvent(EventBloc bloc) {
+    bloc.add(EventsEventClearFilter());
+  }
+
+  void pickLocation() async {
+    final LocationResult result = await Get.to(
+      PlacePicker(
+        "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
+        defaultLocation:
+            (location?.latitude != null && location?.longitude != null)
+                ? LatLng(location!.latitude, location!.longitude)
+                : null,
+      ),
+    );
+
+    location = LocationModel(
+      address: result.formattedAddress,
+      city: result.city?.name,
+      country: result.country?.name,
+      latitude: result.latLng?.latitude ?? 0,
+      longitude: result.latLng?.longitude ?? 0,
+    );
+
+    setState(() {
+      locationController.text = location?.address ?? "";
+    });
+  }
+
+  @override
+  void initState() {
+    searchController.text = widget.searchText ?? "";
+    locationController.text = widget.location?.address ?? "";
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,62 +92,94 @@ class FilterScreen extends StatelessWidget {
             color: Color(0xffBD9691),
           ),
           Positioned.fill(
-              child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 93.h,
-              decoration: BoxDecoration(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 93.h,
+                decoration: BoxDecoration(
                   color: Color(0xfff2f2f2),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(40),
                     topRight: Radius.circular(40),
-                  )),
+                  ),
+                ),
+              ),
             ),
-          )),
+          ),
           Positioned.fill(
             child: SafeArea(
               child: Scaffold(
-                floatingActionButton: gradientButton("Apply",
-                    font: 17,
-                    txtColor: MyColors.white,
-                    ontap: () {},
-                    // _.loginUser();
-
-                    width: 90,
-                    height: 6.6,
-                    isColor: true,
-                    clr: MyColors.primary),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerFloat,
+                floatingActionButton: Row(
+                  children: [
+                    gapW20,
+                    Expanded(
+                      child: gradientButton(
+                        "Clear",
+                        font: 17,
+                        txtColor: MyColors.primary,
+                        ontap: () {
+                          triggerClearFilterEvent(context.read<EventBloc>());
+                          Get.back();
+                        },
+                        height: 6.6,
+                        isColor: false,
+                      ),
+                    ),
+                    gapW10,
+                    Expanded(
+                      child: gradientButton(
+                        "Apply",
+                        font: 17,
+                        txtColor: MyColors.white,
+                        ontap: () {
+                          triggerApplyFilterEvent(context.read<EventBloc>());
+                          Get.back();
+                        },
+                        height: 6.6,
+                        isColor: true,
+                        clr: MyColors.primary,
+                      ),
+                    ),
+                    gapW20,
+                  ],
+                ),
                 backgroundColor: Colors.transparent,
                 body: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 18.0, vertical: 12),
+                    horizontal: 18.0,
+                    vertical: 12,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 3.h),
                       Row(
                         children: [
-                          // text_widget("Filter",color: Colors.transparent),
-
                           Spacer(),
-                          text_widget("Filter",
-                              fontSize: 18.sp, fontWeight: FontWeight.w400),
+                          text_widget(
+                            "Filter",
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
                           Spacer(),
                           InkWell(
-                              onTap: () {
-                                Get.back();
-                              },
-                              child: Icon(
-                                Remix.close_line,
-                                color: Color(0xff1E1E1E),
-                                size: 3.h,
-                              ))
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Icon(
+                              Remix.close_line,
+                              color: Color(0xff1E1E1E),
+                              size: 3.h,
+                            ),
+                          )
                         ],
                       ),
                       SizedBox(height: 2.h),
                       textFieldWithPrefixSuffuxIconAndHintText(
-                        "Search  ",
-                        // controller: _.password,
+                        "Search",
+                        controller: searchController,
                         fillColor: Colors.white,
                         mainTxtColor: Colors.black,
                         radius: 12,
@@ -96,29 +193,31 @@ class FilterScreen extends StatelessWidget {
                         fontSize: 18.sp,
                       ),
                       SizedBox(height: 2.h),
-                      textFieldWithPrefixSuffuxIconAndHintText(
-                        "City  ",
-                        // controller: _.password,
-                        fillColor: Colors.white,
-                        mainTxtColor: Colors.black,
-                        radius: 12,
-                        bColor: Colors.transparent,
-                        prefixIcon: "assets/icons/city.png",
-                        isPrefix: true,
+                      InkWell(
+                        onTap: () {
+                          pickLocation();
+                        },
+                        child: textFieldWithPrefixSuffuxIconAndHintText(
+                          "Select Address",
+                          controller: locationController,
+                          fillColor: Colors.white,
+                          mainTxtColor: Colors.black,
+                          radius: 12,
+                          enable: false,
+                          bColor: Colors.transparent,
+                          prefixIcon: "assets/icons/city.png",
+                          isPrefix: true,
+                        ),
                       ),
                       SizedBox(height: 2.h),
-                      textFieldWithPrefixSuffuxIconAndHintText(
-                        "State  ",
-                        // controller: _.password,
-                        fillColor: Colors.white,
-                        mainTxtColor: Colors.black,
-                        radius: 12,
-                        bColor: Colors.transparent,
-                        prefixIcon: "assets/icons/state.png",
-                        isPrefix: true,
+                      RangeSliderLabelWidget(
+                        title: "Search Radius",
+                        startedValue: rangeValues?.start ?? 0,
+                        endedValue: rangeValues?.end ?? 50,
+                        onValueChange: (value) {
+                          rangeValues = value;
+                        },
                       ),
-                      SizedBox(height: 2.h),
-                      RangeSliderLabelWidget(title: "Search Radius"),
                     ],
                   ),
                 ),

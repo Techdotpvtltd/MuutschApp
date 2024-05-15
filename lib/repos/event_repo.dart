@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../exceptions/app_exceptions.dart';
 import '../exceptions/exception_parsing.dart';
 import '../models/event_model.dart';
 import '../models/location_model.dart';
@@ -18,6 +19,7 @@ import '../utils/constants/firebase_collections.dart';
 import '../web_services/firestore_services.dart';
 import '../web_services/query_model.dart';
 import '../web_services/storage_services.dart';
+import 'user_repo.dart';
 import 'validations/check_validation.dart';
 
 class EventRepo {
@@ -134,7 +136,7 @@ class EventRepo {
   }
 
   // ===========================Immutable APIs================================
-  Future<List<EventModel>> fetchEvents({String? withUserId}) async {
+  Future<List<EventModel>> fetchEventsWith({String? withUserId}) async {
     try {
       final List<QueryModel> queries = [];
       if (withUserId != null) {
@@ -151,5 +153,35 @@ class EventRepo {
       debugPrint(e.toString());
       throw throwAppException(e: e);
     }
+  }
+
+  Future<void> fetchAllEvents({
+    required Function(AppException) onError,
+    required Function(EventModel) onEventRecieved,
+    required VoidCallback onAllGet,
+  }) async {
+    final String userId = UserRepo().currentUser.uid;
+
+    await FirestoreService().fetchWithListener(
+      collection: FIREBASE_COLLECTION_EVENTS,
+      onError: (e) {
+        onError(throwAppException(e: e));
+      },
+      onData: (data) {
+        final EventModel event = EventModel.fromMap(data);
+        onEventRecieved(event);
+      },
+      onAllDataGet: () {
+        onAllGet();
+      },
+      onCompleted: (listener) {
+        listener?.cancel();
+      },
+      queries: [
+        QueryModel(field: 'createdAt', value: true, type: QueryType.orderBy),
+        QueryModel(
+            field: 'createdBy', value: userId, type: QueryType.isNotEqual),
+      ],
+    );
   }
 }

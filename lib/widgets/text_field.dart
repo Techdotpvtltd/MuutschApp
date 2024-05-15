@@ -2,22 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-Widget textFieldWithPrefixSuffuxIconAndHintText(String hintText,
-    {suffixIcon,
-    prefixIcon,
-    TextEditingController? controller,
-    int line = 1,
-    bool isSuffix = false,
-    bool enable = true,
-    double? radius,
-    fillColor,
-    bColor,
-    mainTxtColor,
-    hintColor,
-    bool isPrefix = false,
-    color,
-    iconColor,
-    bool obsecure = false}) {
+Widget textFieldWithPrefixSuffuxIconAndHintText(
+  String hintText, {
+  suffixIcon,
+  prefixIcon,
+  TextEditingController? controller,
+  int line = 1,
+  bool isSuffix = false,
+  bool enable = true,
+  double? radius,
+  fillColor,
+  bColor,
+  mainTxtColor,
+  hintColor,
+  bool isPrefix = false,
+  color,
+  iconColor,
+  bool obsecure = false,
+  void Function(String)? onSubmitted,
+}) {
   return StatefulBuilder(
     builder: (BuildContext context, setState) {
       return TextField(
@@ -25,6 +28,7 @@ Widget textFieldWithPrefixSuffuxIconAndHintText(String hintText,
         enabled: enable,
         obscureText: obsecure,
         controller: controller,
+        onSubmitted: onSubmitted,
         style: GoogleFonts.poppins(
             color: mainTxtColor ?? Colors.black, fontSize: 15.sp),
         decoration: InputDecoration(
