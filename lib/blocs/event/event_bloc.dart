@@ -12,6 +12,7 @@ import 'package:place_picker/uuid.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
+import '../../models/join_event_model.dart';
 import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/helping_methods.dart';
@@ -232,5 +233,33 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
 
     /// clear Filter Event
     on<EventsEventClearFilter>((event, emit) => emit(EventStateClearFilter()));
+
+    /// Join Event Event
+    on<EventsEventJoin>(
+      (event, emit) async {
+        try {
+          emit(EventStateJoining(eventId: event.eventId));
+          final JoinEventModel joinEvent =
+              await EventRepo().joinEvent(eventId: event.eventId);
+          emit(EventStateJoined(joinModel: joinEvent));
+        } on AppException catch (e) {
+          emit(EventStateJoinFailure(exception: e));
+        }
+      },
+    );
+
+    /// Fetch Join Event
+    on<EventsEventFetchJoin>(
+      (event, emit) async {
+        try {
+          emit(EventStateFetchJoining(eventId: event.eventId));
+          final List<JoinEventModel> joinsModel =
+              await EventRepo().fetchJoinEvent(eventId: event.eventId);
+          emit(EventStateFetchJoined(joinData: joinsModel));
+        } on AppException catch (e) {
+          emit(EventStateFetchJoinFailure(exception: e));
+        }
+      },
+    );
   }
 }

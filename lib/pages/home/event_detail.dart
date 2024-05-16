@@ -14,30 +14,62 @@ import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
 import '../../models/event_model.dart';
+import '../../models/join_event_model.dart';
+import '../../repos/user_repo.dart';
+import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/custom_network_image.dart';
 import 'add_event.dart';
 
 class EventView extends StatefulWidget {
-  const EventView({super.key, this.event, this.isFromMyEvents = false});
-  final EventModel? event;
+  const EventView(
+      {super.key,
+      required this.event,
+      this.isFromMyEvents = false,
+      required this.joinsModel});
+  final EventModel event;
   final bool isFromMyEvents;
+  final List<JoinEventModel> joinsModel;
+
   @override
   State<EventView> createState() => _EventViewState();
 }
 
 class _EventViewState extends State<EventView> {
-  late EventModel? event = widget.event;
+  late EventModel event = widget.event;
   bool isDeleting = false;
-
+  bool isJoiningEvent = false;
+  String? joiningEventId;
   void triggerDeleteEvent(EventBloc bloc) {
-    bloc.add(EventsEventDelete(eventId: event!.id));
+    bloc.add(EventsEventDelete(eventId: event.id));
+  }
+
+  void triggerJoinEvent(EventBloc bloc) {
+    bloc.add(EventsEventJoin(eventId: event.id));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<EventBloc, EventState>(
       listener: (context, state) {
+        /// Join Event States
+        if (state is EventStateJoinFailure ||
+            state is EventStateJoined ||
+            state is EventStateJoining) {
+          setState(() {
+            isJoiningEvent = state.isLoading;
+            if (state is EventStateJoining) {
+              joiningEventId = state.eventId;
+            }
+          });
+
+          if (state is EventStateJoined) {}
+
+          if (state is EventStateJoinFailure) {
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+        }
+
         /// Update Event States
         if (state is EventStateUpdated) {
           setState(() {
@@ -108,7 +140,7 @@ class _EventViewState extends State<EventView> {
                         height: 38.h,
                         width: 100.w,
                         child: CustomNetworkImage(
-                          imageUrl: event?.imageUrls.first ?? "",
+                          imageUrl: event.imageUrls.first,
                           backgroundColor: Colors.grey,
                         ),
                       ),
@@ -117,13 +149,13 @@ class _EventViewState extends State<EventView> {
                     Row(
                       children: [
                         text_widget(
-                          event?.title ?? "",
+                          event.title,
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w600,
                         ),
                         Spacer(),
                         text_widget(
-                          "Joined: 0/${event?.maxPersons}",
+                          "Joined: ${widget.joinsModel.length}/${event.maxPersons}",
                           fontSize: 13.6.sp,
                           fontWeight: FontWeight.w300,
                         ),
@@ -135,8 +167,7 @@ class _EventViewState extends State<EventView> {
                         Image.asset("assets/icons/d2.png", height: 1.8.h),
                         SizedBox(width: 2.w),
                         text_widget(
-                          (event?.dateTime ?? DateTime.now())
-                              .dateToString('dd MMMM, yyyy'),
+                          (event.dateTime).dateToString('dd MMMM, yyyy'),
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w300,
                         ),
@@ -144,26 +175,25 @@ class _EventViewState extends State<EventView> {
                         Image.asset("assets/icons/cl.png", height: 1.8.h),
                         SizedBox(width: 2.w),
                         text_widget(
-                          (event?.dateTime ?? DateTime.now())
-                              .dateToString('hh:mm a'),
+                          (event.dateTime).dateToString('hh:mm a'),
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w300,
                         ),
                       ],
                     ),
-                    if (event?.description != "" || event?.description == null)
+                    if (event.description != "" || event.description == null)
                       SizedBox(height: 3.h),
-                    if (event?.description != "" || event?.description == null)
+                    if (event.description != "" || event.description == null)
                       text_widget(
                         "Description",
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                       ),
-                    if (event?.description != "" || event?.description == null)
+                    if (event.description != "" || event.description == null)
                       SizedBox(height: 0.5.h),
-                    if (event?.description != "" || event?.description == null)
+                    if (event.description != "" || event.description == null)
                       text_widget(
-                        event?.description ?? "",
+                        event.description ?? "",
                         fontSize: 14.6.sp,
                         fontWeight: FontWeight.w400,
                         color: Color(
@@ -190,7 +220,7 @@ class _EventViewState extends State<EventView> {
                         SizedBox(width: 2.w),
                         Flexible(
                           child: text_widget(
-                            event?.location.address ?? "",
+                            event.location.address ?? "",
                             fontSize: 15.6.sp,
                             fontWeight: FontWeight.w300,
                           ),
@@ -204,8 +234,8 @@ class _EventViewState extends State<EventView> {
                         height: 25.h,
                         child: MapCard(
                           isPin: true,
-                          defaultLocation: LatLng(event?.location.latitude ?? 0,
-                              event?.location.longitude ?? 0),
+                          defaultLocation: LatLng(event.location.latitude,
+                              event.location.longitude),
                         ),
                       ),
                     ),
@@ -223,7 +253,7 @@ class _EventViewState extends State<EventView> {
                                     CustomDialogs().deleteBox(
                                       title: "Delete Event Confirmation",
                                       message:
-                                          "Are you sure to delete this ${event?.title} event? This Process will not be undo.",
+                                          "Are you sure to delete this ${event.title} event? This Process will not be undo.",
                                       onPositivePressed: () {
                                         triggerDeleteEvent(
                                             context.read<EventBloc>());
@@ -253,19 +283,32 @@ class _EventViewState extends State<EventView> {
                               ),
                             ],
                           )
-                        : gradientButton(
-                            "Join Event",
-                            font: 17,
-                            txtColor: MyColors.white,
-                            ontap: () {
-                              // _.loginUser();
-                            },
-                            width: 90,
-                            height: 6.6,
-                            isColor: true,
-                            clr: MyColors.primary,
+                        : Visibility(
+                            visible: widget.joinsModel
+                                    .where((element) =>
+                                        element.eventId == event.id &&
+                                        UserRepo().currentUser.uid ==
+                                            element.joinerId)
+                                    .length <
+                                1,
+                            child: gradientButton(
+                              isJoiningEvent && joiningEventId == event.id
+                                  ? "Joining..."
+                                  : "Join Event",
+                              font: 17,
+                              isLoading:
+                                  isJoiningEvent && joiningEventId == event.id,
+                              txtColor: MyColors.white,
+                              ontap: () {
+                                triggerJoinEvent(context.read<EventBloc>());
+                              },
+                              width: 90,
+                              height: 6.6,
+                              isColor: true,
+                              clr: MyColors.primary,
+                            ),
                           ),
-                    SizedBox(height: 10.h),
+                    gapH20,
                   ],
                 ),
               ),

@@ -84,21 +84,20 @@ class MapSampleState extends State<MapSample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff2f2f2),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
         backgroundColor: Color(0xfff2f2f2),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Color(0xfff2f2f2),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          child: Image.asset(
-            "assets/icons/mag.png",
-            height: 3.h,
-          ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+        child: Image.asset(
+          "assets/icons/mag.png",
+          height: 3.h,
         ),
-        body: Stack(
-          children: [
-            Positioned.fill(
-                child: Column(
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Column(
               children: [
                 Container(
                   decoration: BoxDecoration(
@@ -167,9 +166,11 @@ class MapSampleState extends State<MapSample> {
                       }),
                 ),
               ],
-            )),
-          ],
-        ));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

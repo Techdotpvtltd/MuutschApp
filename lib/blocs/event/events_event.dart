@@ -98,3 +98,17 @@ class EventsEventUpdate extends EventsEvent {
     required this.oldEvent,
   });
 }
+
+/// Join Event Event
+
+class EventsEventJoin extends EventsEvent {
+  final String eventId;
+
+  EventsEventJoin({required this.eventId});
+}
+
+class EventsEventFetchJoin extends EventsEvent {
+  final String eventId;
+
+  EventsEventFetchJoin({required this.eventId});
+}

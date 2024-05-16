@@ -254,7 +254,10 @@ class _HomePageState extends State<HomePage> {
                                       eventId: event.id,
                                       imageUrl: event.imageUrls.first,
                                       onClickEvent: () {
-                                        Get.to(EventView(event: event));
+                                        Get.to(EventView(
+                                          event: event,
+                                          joinsModel: [],
+                                        ));
                                       },
                                       onClickJoinButton: () {},
                                     ),

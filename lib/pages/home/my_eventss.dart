@@ -180,6 +180,7 @@ class _MyEventsState extends State<MyEvents> {
                                               Get.to(EventView(
                                                 event: event,
                                                 isFromMyEvents: true,
+                                                joinsModel: [],
                                               ));
                                             },
                                             child: Container(

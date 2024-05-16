@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import '../exceptions/app_exceptions.dart';
 import '../exceptions/exception_parsing.dart';
 import '../models/event_model.dart';
+import '../models/join_event_model.dart';
 import '../models/location_model.dart';
 import '../utils/constants/firebase_collections.dart';
 import '../web_services/firestore_services.dart';
@@ -135,6 +136,29 @@ class EventRepo {
     }
   }
 
+  /// Join Event
+  Future<JoinEventModel> joinEvent({
+    required String eventId,
+  }) async {
+    try {
+      final String userId = UserRepo().currentUser.uid;
+      final JoinEventModel eventModel = JoinEventModel(
+          uuid: "",
+          joinerId: userId,
+          joinTime: DateTime.now(),
+          eventId: eventId);
+      final Map<String, dynamic> data = await FirestoreService()
+          .saveWithSpecificIdFiled(
+              path: FIREBASE_COLLECTION_JOIN_EVENTS,
+              data: eventModel.toMap(),
+              docIdFiled: 'uuid');
+      return JoinEventModel.fromMap(data);
+    } catch (e) {
+      log("[debug JoinEventError] ${e.toString}");
+      throw throwAppException(e: e);
+    }
+  }
+
   // ===========================Immutable APIs================================
   Future<List<EventModel>> fetchEventsWith({String? withUserId}) async {
     try {
@@ -155,6 +179,7 @@ class EventRepo {
     }
   }
 
+  /// Fetch All Events
   Future<void> fetchAllEvents({
     required Function(AppException) onError,
     required Function(EventModel) onEventRecieved,
@@ -183,5 +208,24 @@ class EventRepo {
             field: 'createdBy', value: userId, type: QueryType.isNotEqual),
       ],
     );
+  }
+
+  /// Fetch Joined Members Data
+
+  Future<List<JoinEventModel>> fetchJoinEvent({required String eventId}) async {
+    try {
+      final List<Map<String, dynamic>> data =
+          await FirestoreService().fetchWithMultipleConditions(
+        collection: FIREBASE_COLLECTION_JOIN_EVENTS,
+        queries: [
+          QueryModel(field: 'eventId', value: eventId, type: QueryType.isEqual),
+        ],
+      );
+
+      return data.map((e) => JoinEventModel.fromMap(e)).toList();
+    } catch (e) {
+      log("[debug JoinFetchEventError] ${e.toString}");
+      throw throwAppException(e: e);
+    }
   }
 }

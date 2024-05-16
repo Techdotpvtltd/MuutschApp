@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
+import '../../models/join_event_model.dart';
 import '../../models/location_model.dart';
 
 abstract class EventState {
@@ -149,3 +150,41 @@ class EventStateClearFilter extends EventState {}
 
 // ===========================Location Fetch Event================================
 class EventStateFetchedCurrentLocation extends EventState {}
+
+// ===========================Join Event States================================
+class EventStateJoining extends EventState {
+  final String eventId;
+  EventStateJoining(
+      {super.isLoading = true, super.loadingText, required this.eventId});
+}
+
+class EventStateJoinFailure extends EventState {
+  final AppException exception;
+
+  EventStateJoinFailure({required this.exception});
+}
+
+class EventStateJoined extends EventState {
+  final JoinEventModel joinModel;
+
+  EventStateJoined({required this.joinModel});
+}
+
+/// Fetch Info
+class EventStateFetchJoining extends EventState {
+  final String eventId;
+  EventStateFetchJoining(
+      {super.isLoading = true, super.loadingText, required this.eventId});
+}
+
+class EventStateFetchJoinFailure extends EventState {
+  final AppException exception;
+
+  EventStateFetchJoinFailure({required this.exception});
+}
+
+class EventStateFetchJoined extends EventState {
+  final List<JoinEventModel> joinData;
+
+  EventStateFetchJoined({required this.joinData});
+}
