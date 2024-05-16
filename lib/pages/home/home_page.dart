@@ -16,6 +16,8 @@ import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
 import '../../models/event_model.dart';
+import '../../models/join_event_model.dart';
+import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/constants/constants.dart';
 import '../../widgets/avatar_widget.dart';
@@ -39,6 +41,10 @@ class _HomePageState extends State<HomePage> {
 
   void triggerCurrentLocationEvent(EventBloc bloc) {
     bloc.add(EventsEventFetchCurrentLocation());
+  }
+
+  void triggerJoinEvent(EventBloc bloc, String eventId) {
+    bloc.add(EventsEventJoin(eventId: eventId));
   }
 
   @override
@@ -245,25 +251,60 @@ class _HomePageState extends State<HomePage> {
                               ),
                               gapH20,
                               for (final EventModel event in events)
-                                Column(
-                                  children: [
-                                    eventWidget(
-                                      title: event.title,
-                                      address:
-                                          "${event.location.city}, ${event.location.country}",
-                                      eventId: event.id,
-                                      imageUrl: event.imageUrls.first,
-                                      onClickEvent: () {
-                                        Get.to(EventView(
-                                          event: event,
-                                          joinsModel: [],
-                                        ));
-                                      },
-                                      onClickJoinButton: () {},
-                                    ),
-                                    gapH16,
-                                  ],
-                                ),
+                                FutureBuilder(
+                                    future: EventRepo()
+                                        .fetchJoinEvent(eventId: event.id),
+                                    builder: (context, snapshot) {
+                                      final List<JoinEventModel> joinsModel =
+                                          snapshot.data ?? [];
+
+                                      return BlocSelector<EventBloc, EventState,
+                                          bool?>(selector: (state) {
+                                        if (state is EventStateJoined) {
+                                          if (state.joinModel.eventId ==
+                                              event.id) {
+                                            joinsModel.add(state.joinModel);
+                                            return true;
+                                          }
+                                        }
+
+                                        return null;
+                                      }, builder: (context, isJoined) {
+                                        return Column(
+                                          children: [
+                                            eventWidget(
+                                              title: event.title,
+                                              address:
+                                                  "${event.location.city}, ${event.location.country}",
+                                              eventId: event.id,
+                                              imageUrl: event.imageUrls.first,
+                                              onClickEvent: () {
+                                                Get.to(EventView(
+                                                  event: event,
+                                                  joinsModel: joinsModel,
+                                                ));
+                                              },
+                                              onClickJoinButton: () {
+                                                triggerJoinEvent(
+                                                    context.read<EventBloc>(),
+                                                    event.id);
+                                              },
+                                              isVisibleJoinButton: joinsModel
+                                                      .where((element) =>
+                                                          element.joinerId ==
+                                                              UserRepo()
+                                                                  .currentUser
+                                                                  .uid &&
+                                                          element.eventId ==
+                                                              event.id)
+                                                      .length <
+                                                  1,
+                                            ),
+                                            gapH16,
+                                          ],
+                                        );
+                                      });
+                                    }),
                             ],
                           ),
                         ),

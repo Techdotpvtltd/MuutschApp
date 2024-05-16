@@ -281,92 +281,119 @@ class _AllEventsState extends State<AllEvents> {
                                                 },
                                                 builder: (context, isJoined) {
                                                   return isGrid
-                                                      ? Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                              child: SizedBox(
-                                                                height: 10.h,
-                                                                width:
-                                                                    Get.width,
-                                                                child:
-                                                                    CustomNetworkImage(
-                                                                  imageUrl: event
-                                                                      .imageUrls
-                                                                      .first,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                height: 1.h),
-                                                            text_widget(
-                                                              event.title,
-                                                              fontSize: 16.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                            SizedBox(
-                                                                height: 0.5.h),
-                                                            Row(
-                                                              children: [
-                                                                Image.asset(
-                                                                  "assets/images/p2.png",
-                                                                  height: 1.4.h,
-                                                                ),
-                                                                SizedBox(
-                                                                    width: 1.w),
-                                                                Flexible(
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            Get.to(EventView(
+                                                                event: event,
+                                                                joinsModel:
+                                                                    joinsModel));
+                                                          },
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                                child: SizedBox(
+                                                                  height: 10.h,
+                                                                  width:
+                                                                      Get.width,
                                                                   child:
-                                                                      text_widget(
-                                                                    "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
-                                                                    maxline: 1,
-                                                                    fontSize:
-                                                                        12.8.sp,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w300,
+                                                                      CustomNetworkImage(
+                                                                    imageUrl: event
+                                                                        .imageUrls
+                                                                        .first,
                                                                   ),
                                                                 ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                                height: 0.8.h),
-                                                            text_widget(
-                                                              "Created by: Hammad Habib",
-                                                              fontSize: 12.2.sp,
-                                                              color: MyColors
-                                                                  .primary,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                            SizedBox(
-                                                                height: 1.4.h),
-                                                            gradientButton(
-                                                              "Join Event",
-                                                              font: 15,
-                                                              txtColor: MyColors
-                                                                  .white,
-                                                              ontap: () {
-                                                                triggerJoinEvent(
-                                                                    context.read<
-                                                                        EventBloc>(),
-                                                                    event.id);
-                                                              },
-                                                              width: 90,
-                                                              height: 3.5,
-                                                              isColor: true,
-                                                              clr: MyColors
-                                                                  .primary,
-                                                            ),
-                                                          ],
+                                                              ),
+                                                              SizedBox(
+                                                                  height: 1.h),
+                                                              text_widget(
+                                                                event.title,
+                                                                fontSize: 16.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                              SizedBox(
+                                                                  height:
+                                                                      0.5.h),
+                                                              Row(
+                                                                children: [
+                                                                  Image.asset(
+                                                                    "assets/images/p2.png",
+                                                                    height:
+                                                                        1.4.h,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          1.w),
+                                                                  Flexible(
+                                                                    child:
+                                                                        text_widget(
+                                                                      "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
+                                                                      maxline:
+                                                                          1,
+                                                                      fontSize:
+                                                                          12.8.sp,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w300,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                  height:
+                                                                      0.8.h),
+                                                              text_widget(
+                                                                "Created by: Hammad Habib",
+                                                                fontSize:
+                                                                    12.2.sp,
+                                                                color: MyColors
+                                                                    .primary,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                              SizedBox(
+                                                                  height:
+                                                                      1.4.h),
+                                                              Visibility(
+                                                                visible: joinsModel
+                                                                        .where((element) =>
+                                                                            element.joinerId == UserRepo().currentUser.uid &&
+                                                                            element.eventId ==
+                                                                                event.id)
+                                                                        .length <
+                                                                    1,
+                                                                child:
+                                                                    gradientButton(
+                                                                  "Join Event",
+                                                                  font: 15,
+                                                                  txtColor:
+                                                                      MyColors
+                                                                          .white,
+                                                                  ontap: () {
+                                                                    triggerJoinEvent(
+                                                                        context.read<
+                                                                            EventBloc>(),
+                                                                        event
+                                                                            .id);
+                                                                  },
+                                                                  width: 90,
+                                                                  height: 3.5,
+                                                                  isColor: true,
+                                                                  clr: MyColors
+                                                                      .primary,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         )
                                                       : eventWidget(
                                                           isEvent: true,
@@ -388,13 +415,10 @@ class _AllEventsState extends State<AllEvents> {
                                                               "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
                                                           eventId: event.id,
                                                           onClickEvent: () {
-                                                            Get.to(
-                                                              EventView(
+                                                            Get.to(EventView(
                                                                 event: event,
                                                                 joinsModel:
-                                                                    joinsModel,
-                                                              ),
-                                                            );
+                                                                    joinsModel));
                                                           },
                                                           onClickJoinButton:
                                                               () {
