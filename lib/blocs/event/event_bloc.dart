@@ -5,8 +5,8 @@
 // Date:        14-05-24 15:50:34 -- Tuesday
 // Description:
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:place_picker/uuid.dart';
 
@@ -21,8 +21,18 @@ import 'events_event.dart';
 
 class EventBloc extends Bloc<EventsEvent, EventState> {
   final List<EventModel> events = [];
+  Position? position;
 
   EventBloc() : super(EventStateInitial()) {
+    /// Fetch Current Location
+    on<EventsEventFetchCurrentLocation>(
+      (event, emit) async {
+        position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        emit(EventStateFetchedCurrentLocation());
+      },
+    );
+
     /// Create Events
     on<EventsEventCreate>(
       (event, emit) async {
@@ -95,7 +105,6 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
                 aLong: event.location!.longitude,
                 bLat: element.location.latitude,
                 bLong: element.location.longitude));
-            debugPrint(distance.toString());
             return distance >= (event.minDistance ?? 0) &&
                 distance <= (event.maxDistance ?? 50);
           }).toList();
@@ -194,8 +203,13 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
               } else {
                 events.add(event);
               }
-              events.sort((a, b) => b.createdAt.millisecondsSinceEpoch
-                  .compareTo(a.createdAt.millisecondsSinceEpoch));
+              event.distance = calculateDistance(
+                  aLat: position?.latitude ?? 0,
+                  aLong: position?.longitude ?? 0,
+                  bLat: event.location.latitude,
+                  bLong: event.location.longitude);
+
+              events.sort((a, b) => a.distance.compareTo(b.distance));
               emit(EventStateFetched(events: events));
             },
             onAllGet: () {

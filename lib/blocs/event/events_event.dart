@@ -36,6 +36,8 @@ class EventsEventCreate extends EventsEvent {
 
 /// Fetch Events
 
+class EventsEventFetchCurrentLocation extends EventsEvent {}
+
 class EventsEventFetchOwn extends EventsEvent {}
 
 class EventsEventFetchAll extends EventsEvent {}

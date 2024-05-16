@@ -37,174 +37,47 @@ class _HomePageState extends State<HomePage> {
     bloc.add(EventsEventFetchAll());
   }
 
+  void triggerCurrentLocationEvent(EventBloc bloc) {
+    bloc.add(EventsEventFetchCurrentLocation());
+  }
+
   @override
   void initState() {
-    triggerFetchAllEvents(context.read<EventBloc>());
+    triggerCurrentLocationEvent(context.read<EventBloc>());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            Container(
-              height: 53.h,
-              color: Color(0xffBD9691),
-            ),
-            Expanded(
-                child: Container(
-              color: Colors.white,
-            ))
-          ],
-        ),
-        Positioned.fill(
-          child: SafeArea(
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25.0, vertical: 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Get.find<MyDrawerController>().toggleDrawer();
-                                },
-                                child: Image.asset(
-                                  "assets/images/logo.png",
-                                  height: 5.h,
-                                ),
-                              ),
-                              Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  Get.to(NotificationScreen(isDrawer: false));
-                                },
-
-                                /// Profile Widget
-                                child: Image.asset(
-                                  "assets/nav/d3.png",
-                                  color: Colors.white,
-                                  height: 4.5.h,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 1.5.w,
-                              ),
-
-                              /// Profile Widget
-                              InkWell(
-                                onTap: () {
-                                  Get.to(EditProfile());
-                                },
-                                child: AvatarWidget(
-                                  height: 40,
-                                  width: 40,
-                                  backgroundColor: Colors.black,
-                                  avatarUrl: UserRepo().currentUser.avatar,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 3.5.h),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 25, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: MyColors.primary,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: text_widget(
-                                "Hello, ${UserRepo().currentUser.name}",
-                                color: Colors.white,
-                                fontSize: 15.sp),
-                          ),
-                          SizedBox(height: 1.h),
-                          text_widget(
-                            "Find Amazing Friends",
-                            color: Colors.white,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          SizedBox(height: 2.5.h),
-                          textFieldWithPrefixSuffuxIconAndHintText(
-                            "Search products or services",
-                            // controller: _.password,
-                            fillColor: Colors.white,
-                            mainTxtColor: Colors.black,
-                            radius: 12,
-                            bColor: Colors.transparent,
-                            prefixIcon: "assets/nav/s1.png",
-                            isPrefix: true,
-                          ),
-                          SizedBox(height: 4.h),
-                          Row(
-                            children: [
-                              text_widget(
-                                "Friend Requests",
-                                color: Colors.white,
-                                fontSize: 17.5.sp,
-                              ),
-                              Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  Get.to(AllFriends());
-                                },
-                                child: text_widget(
-                                  "View All",
-                                  fontSize: 14.sp,
-                                  color: MyColors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 25.0),
-                        child: Row(
-                          children: [
-                            requestWidget(),
-                            SizedBox(width: 2.w),
-                            requestWidget(),
-                            SizedBox(width: 2.w),
-                            requestWidget(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 3.h),
-                    BlocListener<EventBloc, EventState>(
-                      listener: (context, state) {
-                        if (state is EventStateFetched) {
-                          setState(() {
-                            events = state.events.take(5).toList();
-                          });
-                        }
-                        if (state is EventStateFetchFailure ||
-                            state is EventStateFetchedAll ||
-                            state is EventStateFetching) {
-                          if (state is EventStateFetchedAll) {
-                            setState(() {
-                              events = state.events.take(5).toList();
-                            });
-                          }
-                        }
-                      },
-                      child: Padding(
+    return BlocListener<EventBloc, EventState>(
+      listener: (context, state) {
+        if (state is EventStateFetchedCurrentLocation) {
+          triggerFetchAllEvents(context.read<EventBloc>());
+        }
+      },
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Container(
+                height: 53.h,
+                color: Color(0xffBD9691),
+              ),
+              Expanded(
+                  child: Container(
+                color: Colors.white,
+              ))
+            ],
+          ),
+          Positioned.fill(
+            child: SafeArea(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 25.0, vertical: 0),
                         child: Column(
@@ -212,55 +85,194 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Row(
                               children: [
+                                InkWell(
+                                  onTap: () {
+                                    Get.find<MyDrawerController>()
+                                        .toggleDrawer();
+                                  },
+                                  child: Image.asset(
+                                    "assets/images/logo.png",
+                                    height: 5.h,
+                                  ),
+                                ),
+                                Spacer(),
+                                InkWell(
+                                  onTap: () {
+                                    Get.to(NotificationScreen(isDrawer: false));
+                                  },
+
+                                  /// Profile Widget
+                                  child: Image.asset(
+                                    "assets/nav/d3.png",
+                                    color: Colors.white,
+                                    height: 4.5.h,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 1.5.w,
+                                ),
+
+                                /// Profile Widget
+                                InkWell(
+                                  onTap: () {
+                                    Get.to(EditProfile());
+                                  },
+                                  child: AvatarWidget(
+                                    height: 40,
+                                    width: 40,
+                                    backgroundColor: Colors.black,
+                                    avatarUrl: UserRepo().currentUser.avatar,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 3.5.h),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 25, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: MyColors.primary,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: text_widget(
+                                  "Hello, ${UserRepo().currentUser.name}",
+                                  color: Colors.white,
+                                  fontSize: 15.sp),
+                            ),
+                            SizedBox(height: 1.h),
+                            text_widget(
+                              "Find Amazing Friends",
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            SizedBox(height: 2.5.h),
+                            textFieldWithPrefixSuffuxIconAndHintText(
+                              "Search products or services",
+                              // controller: _.password,
+                              fillColor: Colors.white,
+                              mainTxtColor: Colors.black,
+                              radius: 12,
+                              bColor: Colors.transparent,
+                              prefixIcon: "assets/nav/s1.png",
+                              isPrefix: true,
+                            ),
+                            SizedBox(height: 4.h),
+                            Row(
+                              children: [
                                 text_widget(
-                                  "Nearby Events",
-                                  color: Colors.black,
+                                  "Friend Requests",
+                                  color: Colors.white,
                                   fontSize: 17.5.sp,
                                 ),
                                 Spacer(),
                                 InkWell(
                                   onTap: () {
-                                    Get.to(AllEvents());
+                                    Get.to(AllFriends());
                                   },
                                   child: text_widget(
                                     "View All",
                                     fontSize: 14.sp,
-                                    color: MyColors.primary,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: MyColors.primary,
+                                    color: MyColors.white,
                                   ),
                                 ),
                               ],
                             ),
-                            gapH20,
-                            for (final EventModel event in events)
-                              Column(
-                                children: [
-                                  eventWidget(
-                                    title: event.title,
-                                    address:
-                                        "${event.location.city}, ${event.location.country}",
-                                    eventId: event.id,
-                                    imageUrl: event.imageUrls.first,
-                                    onClickEvent: () {
-                                      Get.to(EventView(event: event));
-                                    },
-                                    onClickJoinButton: () {},
-                                  ),
-                                  gapH16,
-                                ],
-                              ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 2.h),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 25.0),
+                          child: Row(
+                            children: [
+                              requestWidget(),
+                              SizedBox(width: 2.w),
+                              requestWidget(),
+                              SizedBox(width: 2.w),
+                              requestWidget(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 3.h),
+                      BlocListener<EventBloc, EventState>(
+                        listener: (context, state) {
+                          if (state is EventStateFetched) {
+                            setState(() {
+                              events = state.events.take(5).toList();
+                            });
+                          }
+                          if (state is EventStateFetchFailure ||
+                              state is EventStateFetchedAll ||
+                              state is EventStateFetching) {
+                            if (state is EventStateFetchedAll) {
+                              setState(() {
+                                events = state.events.take(5).toList();
+                              });
+                            }
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25.0, vertical: 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  text_widget(
+                                    "Nearby Events",
+                                    color: Colors.black,
+                                    fontSize: 17.5.sp,
+                                  ),
+                                  Spacer(),
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(AllEvents());
+                                    },
+                                    child: text_widget(
+                                      "View All",
+                                      fontSize: 14.sp,
+                                      color: MyColors.primary,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: MyColors.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              gapH20,
+                              for (final EventModel event in events)
+                                Column(
+                                  children: [
+                                    eventWidget(
+                                      title: event.title,
+                                      address:
+                                          "${event.location.city}, ${event.location.country}",
+                                      eventId: event.id,
+                                      imageUrl: event.imageUrls.first,
+                                      onClickEvent: () {
+                                        Get.to(EventView(event: event));
+                                      },
+                                      onClickJoinButton: () {},
+                                    ),
+                                    gapH16,
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

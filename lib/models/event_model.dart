@@ -21,6 +21,7 @@ class EventModel {
   final LocationModel location;
   final String? description;
   final int maxPersons;
+  double distance;
   EventModel({
     required this.id,
     required this.createdBy,
@@ -31,6 +32,7 @@ class EventModel {
     required this.location,
     this.description,
     required this.maxPersons,
+    this.distance = 0,
   });
 
   EventModel copyWith({

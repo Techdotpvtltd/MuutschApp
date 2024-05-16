@@ -146,3 +146,6 @@ class EventStateApplyFilter extends EventState {
 }
 
 class EventStateClearFilter extends EventState {}
+
+// ===========================Location Fetch Event================================
+class EventStateFetchedCurrentLocation extends EventState {}
