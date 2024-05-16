@@ -252,14 +252,15 @@ class _HomePageState extends State<HomePage> {
                               gapH20,
                               for (final EventModel event in events)
                                 FutureBuilder(
-                                    future: EventRepo()
-                                        .fetchJoinEvent(eventId: event.id),
-                                    builder: (context, snapshot) {
-                                      final List<JoinEventModel> joinsModel =
-                                          snapshot.data ?? [];
+                                  future: EventRepo()
+                                      .fetchJoinEvent(eventId: event.id),
+                                  builder: (context, snapshot) {
+                                    final List<JoinEventModel> joinsModel =
+                                        snapshot.data ?? [];
 
-                                      return BlocSelector<EventBloc, EventState,
-                                          bool?>(selector: (state) {
+                                    return BlocSelector<EventBloc, EventState,
+                                        bool?>(
+                                      selector: (state) {
                                         if (state is EventStateJoined) {
                                           if (state.joinModel.eventId ==
                                               event.id) {
@@ -269,7 +270,8 @@ class _HomePageState extends State<HomePage> {
                                         }
 
                                         return null;
-                                      }, builder: (context, isJoined) {
+                                      },
+                                      builder: (context, isJoined) {
                                         return Column(
                                           children: [
                                             eventWidget(
@@ -303,8 +305,10 @@ class _HomePageState extends State<HomePage> {
                                             gapH16,
                                           ],
                                         );
-                                      });
-                                    }),
+                                      },
+                                    );
+                                  },
+                                ),
                             ],
                           ),
                         ),
