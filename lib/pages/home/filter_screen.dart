@@ -6,9 +6,7 @@ import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/range_slider.dart';
 import 'package:musch/widgets/text_widget.dart';
-import 'package:place_picker/entities/entities.dart';
 import 'package:place_picker/place_picker.dart';
-import 'package:place_picker/widgets/place_picker.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -52,8 +50,8 @@ class _FilterScreenState extends State<FilterScreen> {
     final LocationResult result = await Get.to(
       PlacePicker(
         "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
-        defaultLocation:
-            (location?.latitude != null && location?.longitude != null)
+        displayLocation:
+            (location?.latitude != null || location?.longitude != null)
                 ? LatLng(location!.latitude, location!.longitude)
                 : null,
       ),

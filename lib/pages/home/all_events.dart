@@ -42,7 +42,14 @@ class _AllEventsState extends State<AllEvents> {
   }
 
   void triggerFilteredEvent(EventBloc bloc) {
-    bloc.add(EventsEventFilter(searchText: searchText));
+    bloc.add(
+      EventsEventFilter(
+        searchText: searchText,
+        location: location,
+        maxDistance: rangeValues?.end,
+        minDistance: rangeValues?.start,
+      ),
+    );
   }
 
   @override

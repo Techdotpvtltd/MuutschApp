@@ -5,6 +5,7 @@
 // Date:        14-05-24 15:50:34 -- Tuesday
 // Description:
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:place_picker/uuid.dart';
@@ -13,6 +14,7 @@ import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
 import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
+import '../../utils/helping_methods.dart';
 import '../../utils/utils.dart';
 import 'event_state.dart';
 import 'events_event.dart';
@@ -86,6 +88,18 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
               .toList();
         }
 
+        if (event.location != null) {
+          filteredEvents = filteredEvents.where((element) {
+            final double distance = (calculateDistance(
+                aLat: event.location!.latitude,
+                aLong: event.location!.longitude,
+                bLat: element.location.latitude,
+                bLong: element.location.longitude));
+            debugPrint(distance.toString());
+            return distance >= (event.minDistance ?? 0) &&
+                distance <= (event.maxDistance ?? 50);
+          }).toList();
+        }
         emit(EventStateFetchedFiltered(events: filteredEvents));
       },
     );

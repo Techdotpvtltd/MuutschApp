@@ -43,8 +43,8 @@ class EventsEventFetchAll extends EventsEvent {}
 class EventsEventFilter extends EventsEvent {
   final String? searchText;
   final LocationModel? location;
-  final int? minDistance;
-  final int? maxDistance;
+  final double? minDistance;
+  final double? maxDistance;
 
   EventsEventFilter({
     this.searchText,
