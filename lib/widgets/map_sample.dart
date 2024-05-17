@@ -29,7 +29,7 @@ class MapCardState extends State<MapCard> {
     String urlAppleMaps = '';
     if (Platform.isAndroid) {
       url =
-          'https://www.google.com/maps/search/?api=1&query=,${defaultLocation?.latitude},${defaultLocation?.longitude}';
+          'https://www.google.com/maps/search/?api=1&query=${defaultLocation?.latitude},${defaultLocation?.longitude}';
       if (await canLaunchUrl(Uri.parse(url))) {
         await launchUrl(Uri.parse(url));
       } else {
