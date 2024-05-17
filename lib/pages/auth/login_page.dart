@@ -77,9 +77,7 @@ class _LoginPageState extends State<LoginPage> {
             });
 
             if (state is AuthStateLoginFailure) {
-              if (state.exception.errorCode != null) {
-                CustomDialogs().errorBox(message: state.exception.message);
-              }
+              CustomDialogs().errorBox(message: state.exception.message);
             }
 
             if (state is AuthStateLoggedIn ||
