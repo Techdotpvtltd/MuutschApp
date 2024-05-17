@@ -30,7 +30,7 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
       (event, emit) async {
         position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
-        emit(EventStateFetchedCurrentLocation());
+        emit(EventStateFetchedCurrentLocation(position: position));
       },
     );
 

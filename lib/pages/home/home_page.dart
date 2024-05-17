@@ -215,9 +215,11 @@ class _HomePageState extends State<HomePage> {
                               state is EventStateFetchedAll ||
                               state is EventStateFetching) {
                             if (state is EventStateFetchedAll) {
-                              setState(() {
-                                events = state.events.take(5).toList();
-                              });
+                              setState(
+                                () {
+                                  events = state.events.take(5).toList();
+                                },
+                              );
                             }
                           }
                         },

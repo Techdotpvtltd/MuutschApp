@@ -47,3 +47,21 @@ class UserStateProfileUpdated extends UserState {
 
   UserStateProfileUpdated({required this.user});
 }
+
+// ===========================Find Users States================================
+
+class UserStateFinding extends UserState {
+  UserStateFinding({super.isLoading = true});
+}
+
+class UserStateFindFailure extends UserState {
+  final AppException exception;
+
+  UserStateFindFailure({required this.exception});
+}
+
+class UserStateFinded extends UserState {
+  final List<UserModel> users;
+
+  UserStateFinded({required this.users});
+}

@@ -70,26 +70,33 @@ class _HomeDrawerState extends State<HomeDrawer> {
               return Stack(
                 children: [
                   Positioned.fill(
-                      child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Image.asset(
-                      "assets/images/shape2.png",
-                      height: 25.h,
-                      fit: BoxFit.fill,
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Image.asset(
+                        "assets/images/shape2.png",
+                        height: 25.h,
+                        fit: BoxFit.fill,
+                      ),
                     ),
-                  )),
+                  ),
                   ZoomDrawer(
                       disableDragGesture: true,
                       controller: _.zoomDrawerController,
-                      menuScreen: DrawerScreen(setIndex: (index) {
-                        setState(() {
-                          currentIndex = index;
-                          _.open = false;
-                        });
-                      }),
-                      mainScreen: Builder(builder: (context) {
-                        return currentScreen();
-                      }),
+                      menuScreen: DrawerScreen(
+                        setIndex: (index) {
+                          setState(
+                            () {
+                              currentIndex = index;
+                              _.open = false;
+                            },
+                          );
+                        },
+                      ),
+                      mainScreen: Builder(
+                        builder: (context) {
+                          return currentScreen();
+                        },
+                      ),
                       borderRadius: 30,
                       // style: DrawerStyle.style2,
                       showShadow: true,
@@ -108,21 +115,25 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Row(children: [
-                                    InkWell(
+                                  Row(
+                                    children: [
+                                      InkWell(
                                         onTap: () {
                                           _.closeDrawer();
                                         },
                                         child: const Icon(
-                                            Icons.arrow_back_ios_new_rounded,
-                                            color: Colors.black)),
-                                    SizedBox(width: 2.w),
-                                    text_widget(
-                                      "Setting",
-                                      fontSize: 18.sp,
-                                    ),
-                                    const Spacer(),
-                                  ]),
+                                          Icons.arrow_back_ios_new_rounded,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      SizedBox(width: 2.w),
+                                      text_widget(
+                                        "Setting",
+                                        fontSize: 18.sp,
+                                      ),
+                                      const Spacer(),
+                                    ],
+                                  ),
                                   SizedBox(height: 3.h),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -241,98 +252,93 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<MyDrawerController>(
-        init: MyDrawerController(),
-        builder: (MyDrawerController _) => Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(children: [
-              Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SizedBox(
-                          height: 80.h,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                    child: Center(
-                                        child: SizedBox(
-                                            width: 43.w,
-                                            child: ListView.builder(
-                                                // padding: EdgeInsets.zero,
-                                                itemCount: titles.length,
-                                                itemBuilder: (context, index) =>
-                                                    InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            // widget.setIndex(
-                                                            //     index);
-
-                                                            _.update();
-                                                            log(_.active
-                                                                .toString());
-                                                            Get.to(
-                                                                pages[index]);
-                                                            _.closeDrawer();
-                                                            if (_.active != 3 &&
-                                                                _.active != 5 &&
-                                                                _.active != 6) {
-                                                              Get.find<NavController>()
-                                                                      .isVisible =
-                                                                  true;
-                                                              Get.find<
-                                                                      NavController>()
-                                                                  .update();
-                                                            }
-                                                            ZoomDrawer.of(
-                                                                    context)!
-                                                                .close();
-                                                            _.closeDrawer();
-                                                          });
-                                                        },
-                                                        child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        6.0),
-                                                            child: Container(
-                                                                height: 5.h,
-                                                                decoration: BoxDecoration(
-                                                                    color: _.active ==
-                                                                            index
-                                                                        ? Color(
-                                                                            0xffFFFFFF)
-                                                                        : Colors
-                                                                            .transparent,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            30)),
-                                                                child: Row(
-                                                                    children: [
-                                                                      SizedBox(
-                                                                          width:
-                                                                              4.w),
-                                                                      Image
-                                                                          .asset(
-                                                                        images[
-                                                                            index],
-                                                                        height:
-                                                                            2.h,
-                                                                        color: Colors
-                                                                            .black,
-                                                                      ),
-                                                                      SizedBox(
-                                                                          width:
-                                                                              4.w),
-                                                                      Text(
-                                                                          titles[
-                                                                              index],
-                                                                          style: GoogleFonts.plusJakartaSans(
-                                                                              color: MyColors.black,
-                                                                              fontSize: 14.sp,
-                                                                              fontWeight: _.active == index ? FontWeight.w600 : FontWeight.w500)),
-                                                                    ]))))))))
-                              ]))))
-            ])));
+      init: MyDrawerController(),
+      builder: (MyDrawerController _) => Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  height: 80.h,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: SizedBox(
+                            width: 43.w,
+                            child: ListView.builder(
+                              // padding: EdgeInsets.zero,
+                              itemCount: titles.length,
+                              itemBuilder: (context, index) => InkWell(
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      _.update();
+                                      log(_.active.toString());
+                                      Get.to(pages[index]);
+                                      _.closeDrawer();
+                                      if (_.active != 3 &&
+                                          _.active != 5 &&
+                                          _.active != 6) {
+                                        Get.find<NavController>().isVisible =
+                                            true;
+                                        Get.find<NavController>().update();
+                                      }
+                                      ZoomDrawer.of(context)!.close();
+                                      _.closeDrawer();
+                                    },
+                                  );
+                                },
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6.0),
+                                  child: Container(
+                                    height: 5.h,
+                                    decoration: BoxDecoration(
+                                      color: _.active == index
+                                          ? Color(0xffFFFFFF)
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: 4.w),
+                                        Image.asset(
+                                          images[index],
+                                          height: 2.h,
+                                          color: Colors.black,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          titles[index],
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: MyColors.black,
+                                            fontSize: 14.sp,
+                                            fontWeight: _.active == index
+                                                ? FontWeight.w600
+                                                : FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

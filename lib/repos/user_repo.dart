@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
 
 import '../../exceptions/exception_parsing.dart';
@@ -145,42 +147,53 @@ class UserRepo {
     }
   }
 
-  // Future<void> sendInvite(
-  //     {required String listId, required List<String> invitedUserIds}) async {
-  //   try {
-  //     if (!AppManager().isActiveSubscription && invitedUserIds.length > 5) {
-  //       throw DataExceptionSubscriptionRequired();
-  //     }
-  //     await FirestoreService().updateWithDocId(
-  //         path: FIREBASE_COLLECTION_LISTS,
-  //         docId: listId,
-  //         data: {'sharedUsers': invitedUserIds});
-  //   } catch (e) {
-  //     throw throwAppException(e: e);
-  //   }
-  // }
-
   // Fetech Users with
-  Future<List<UserModel>> fetchUsersBy({required String searchText}) async {
+  Future<List<UserModel>> fetchUsersBy(
+      {String? searchText, LatLngBounds? bounds}) async {
     try {
       final List<QueryModel> queries = [];
-      if (searchText.isNumeric()) {
+
+      /// Search User by name, Email and phone number
+      if (searchText != null) {
+        // if (searchText.isNumeric()) {
+        //   queries.add(QueryModel(
+        //       field: "phone", value: searchText, type: QueryType.isEqual));
+        // } else
+        if (searchText.isValidEmail()) {
+          queries.add(QueryModel(
+              field: "email", value: searchText, type: QueryType.isEqual));
+        } else {
+          queries.add(QueryModel(
+              field: "name",
+              value: searchText,
+              type: QueryType.isGreaterThanOrEqual));
+          queries.add(
+            QueryModel(
+                field: "name",
+                value: "$searchText\uf8ff",
+                type: QueryType.isLessThanOrEqual),
+          );
+        }
+      }
+
+      /// Search User by location
+      if (bounds != null) {
+        final double minLat = bounds.southwest.latitude;
+        final double maxLat = bounds.northeast.latitude;
+        // final double minLng = bounds.southwest.longitude;
+        // final double maxLng = bounds.northeast.longitude;
+
         queries.add(QueryModel(
-            field: "phone", value: searchText, type: QueryType.isEqual));
-      } else if (searchText.isValidEmail()) {
-        queries.add(QueryModel(
-            field: "email", value: searchText, type: QueryType.isEqual));
-      } else {
-        queries.add(QueryModel(
-            field: "name",
-            value: searchText,
+            field: 'location.latitude',
+            value: minLat,
             type: QueryType.isGreaterThanOrEqual));
         queries.add(QueryModel(
-            field: "name",
-            value: "$searchText\uf8ff",
+            field: 'location.latitude',
+            value: maxLat,
             type: QueryType.isLessThanOrEqual));
       }
 
+      debugPrint(queries.toString());
       final List<Map<String, dynamic>> listOfData =
           await FirestoreService().fetchWithMultipleConditions(
         collection: FIREBASE_COLLECTION_USER,
@@ -192,6 +205,7 @@ class UserRepo {
           element.role == "admin" || element.uid == currentUser.uid);
       return users;
     } catch (e) {
+      log("[debug FindUserError] $e");
       throw throwAppException(e: e);
     }
   }

@@ -1,4 +1,6 @@
 // ignore: dangling_library_doc_comments
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../models/child_model.dart';
 import '../../models/location_model.dart';
 
@@ -31,4 +33,11 @@ class UserEventUpdateProfile extends UserEvent {
     this.name,
     this.email,
   });
+}
+
+class UserEventFindBy extends UserEvent {
+  final LatLngBounds? bounds;
+  final String? searchText;
+
+  UserEventFindBy({this.bounds, this.searchText});
 }

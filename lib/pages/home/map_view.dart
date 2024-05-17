@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musch/config/colors.dart';
@@ -16,6 +17,13 @@ import 'dart:ui' as ui;
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../blocs/event/event_bloc.dart';
+import '../../blocs/event/event_state.dart';
+import '../../blocs/event/events_event.dart';
+import '../../blocs/user/user_bloc.dart';
+import '../../blocs/user/user_event.dart';
+import '../../blocs/user/user_state.dart';
+import '../../models/user_model.dart';
 import '../../widgets/text_field.dart';
 
 class MapSample extends StatefulWidget {
@@ -34,89 +42,131 @@ class MapSampleState extends State<MapSample> {
   GoogleMapController? _controller;
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
+  LatLngBounds? previousBounds;
+
+  void triggerCurrentLocationEvent(EventBloc bloc) {
+    bloc.add(EventsEventFetchCurrentLocation());
+  }
+
+  void triggerFetchUserEvent(UserBloc bloc, LatLngBounds? bounds) {
+    bloc.add(UserEventFindBy(bounds: bounds));
+  }
+
+  void _onCameraMove(CameraPosition position) async {
+    final LatLngBounds? bounds = await _controller?.getVisibleRegion();
+
+    if (previousBounds == null ||
+        !previousBounds!.contains(bounds!.southwest) ||
+        !previousBounds!.contains(bounds.northeast)) {
+      triggerFetchUserEvent(context.read<UserBloc>(), bounds);
+      previousBounds = bounds;
+    }
+  }
 
   @override
   void initState() {
+    triggerCurrentLocationEvent(context.read<EventBloc>());
     super.initState();
-    addMarkers();
-    setState(() {});
   }
 
   @override
   void dispose() {
     _customInfoWindowController.dispose();
+    _controller?.dispose();
     super.dispose();
   }
-  // Uint8List? resizeImage(Uint8List data, width, height) {
-  //   Uint8List? resizedData = data;
-  //   IMG.Image? img = IMG.decodeImage(data);
-  //   IMG.Image resized = IMG.copyResize(img!, width: width, height: height);
-  //   resizedData = Uint8List.fromList(IMG.encodePng(resized));
-  //   return resizedData;
-  // }
 
   LatLng startLocation = LatLng(27.6602292, 85.308027);
   LatLng endLocation = LatLng(27.6599592, 85.3102498);
 
-  addMarkers() async {
-    markers.add(
-      Marker(
+  void addMarkers({required List<UserModel> users}) async {
+    for (final UserModel user in users) {
+      final Marker marker = Marker(
         onTap: () {
           showDialog(
               context: context,
               barrierColor: MyColors.primary.withOpacity(0.8),
               builder: (context) => NotAccess());
         },
-        markerId: MarkerId(startLocation.toString()),
-        position: LatLng(33.489044, 73.089211),
-        icon: await getMarkerIcon(
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTUzn7-qinvq-jbUgQWNL-OfnXUFXfxbtwMs6-Utey3A&s",
-            Size(170.0, 170.0)),
-      ),
-    );
+        markerId: MarkerId(user.uid),
+        position: LatLng(user.location!.latitude, user.location!.longitude),
+        icon: await getMarkerIcon(user.avatar, Size(170.0, 170.0)),
+      );
+      markers.add(marker);
+    }
 
     if (_controller == null) return;
-    await _controller!.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(33.489044, 73.089211), zoom: 14.4746)));
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xfff2f2f2),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Color(0xfff2f2f2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        child: Image.asset(
-          "assets/icons/mag.png",
-          height: 3.h,
-        ),
-      ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xffF4F4F4),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<EventBloc, EventState>(
+          listener: (context, state) async {
+            if (state is EventStateFetchedCurrentLocation) {
+              if (state.position != null) {
+                await Future.delayed(Duration(seconds: 1));
+                await _controller?.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                        target: LatLng(state.position!.latitude,
+                            state.position!.longitude),
+                        zoom: 14),
                   ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 22.0, vertical: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              InkWell(
+                );
+              }
+            }
+          },
+        ),
+
+        /// User Listener
+        BlocListener<UserBloc, UserState>(
+          listener: (context, state) {
+            if (state is UserStateFinded) {
+              addMarkers(users: state.users);
+            }
+          },
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: Color(0xfff2f2f2),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: Color(0xfff2f2f2),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+          child: Image.asset(
+            "assets/icons/mag.png",
+            height: 3.h,
+          ),
+        ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xffF4F4F4),
+                    ),
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 22.0, vertical: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      current = 0;
-                                    });
+                                    setState(
+                                      () {
+                                        current = 0;
+                                      },
+                                    );
                                     Get.find<NavScreenController>()
                                         .controller
                                         .jumpToTab(current);
@@ -127,32 +177,34 @@ class MapSampleState extends State<MapSample> {
                                     Remix.arrow_left_s_line,
                                     color: Colors.black,
                                     size: 3.h,
-                                  )),
-                              SizedBox(width: 3.w),
-                              text_widget(
-                                "Find Near by",
-                                fontSize: 19.sp,
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 2.h),
-                          textFieldWithPrefixSuffuxIconAndHintText(
-                            "Search  ",
-                            // controller: _.password,
-                            fillColor: Colors.white,
-                            mainTxtColor: Colors.black,
-                            radius: 12,
-                            bColor: Colors.transparent,
-                            prefixIcon: "assets/nav/s1.png",
-                            isPrefix: true,
-                          ),
-                        ],
+                                  ),
+                                ),
+                                SizedBox(width: 3.w),
+                                text_widget(
+                                  "Find Near by",
+                                  fontSize: 19.sp,
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 2.h),
+                            textFieldWithPrefixSuffuxIconAndHintText(
+                              "Search  ",
+                              // controller: _.password,
+                              fillColor: Colors.white,
+                              mainTxtColor: Colors.black,
+                              radius: 12,
+                              bColor: Colors.transparent,
+                              prefixIcon: "assets/nav/s1.png",
+                              isPrefix: true,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: GoogleMap(
+                  Expanded(
+                    child: GoogleMap(
+                      onCameraMove: _onCameraMove,
                       mapType: MapType.normal,
                       myLocationEnabled: true,
                       myLocationButtonEnabled: false,
@@ -162,13 +214,14 @@ class MapSampleState extends State<MapSample> {
                       markers: markers,
                       onMapCreated: (GoogleMapController controller) {
                         _controller = controller;
-                        // _controller!.setMapStyle(_mapStyle);
-                      }),
-                ),
-              ],
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -279,54 +332,55 @@ class NotAccess extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           Container(
-              width: 90.w,
-              // height: 45.h,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20), color: Colors.white),
-              // color: Color(0xfff9f8f6),
+            width: 90.w,
+            // height: 45.h,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), color: Colors.white),
+            // color: Color(0xfff9f8f6),
 
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 1.4.h),
-                    Image.asset(
-                      "assets/icons/noa.png",
-                      height: 8.h,
-                    ),
-                    SizedBox(height: 1.4.h),
-                    text_widget("Couldn't access This Feiends",
-                        color: MyColors.black,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold),
-                    SizedBox(height: 1.5.h),
-                    text_widget(
-                        " In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full function",
-                        textAlign: TextAlign.center,
-                        color: Color(0xff2F3342).withOpacity(0.50),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14.sp),
-                    SizedBox(height: 3.h),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: gradientButton("See Plan", ontap: () async {
-                            Navigator.pop(context);
-                            Get.to(SubscriptionPlan());
-                          },
-                              height: 4.8,
-                              font: 13.5,
-                              width: 60,
-                              isColor: true,
-                              clr: MyColors.primary),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 1.h),
-                  ],
-                ),
-              )),
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 1.4.h),
+                  Image.asset(
+                    "assets/icons/noa.png",
+                    height: 8.h,
+                  ),
+                  SizedBox(height: 1.4.h),
+                  text_widget("Couldn't access This Feiends",
+                      color: MyColors.black,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold),
+                  SizedBox(height: 1.5.h),
+                  text_widget(
+                      " In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full function",
+                      textAlign: TextAlign.center,
+                      color: Color(0xff2F3342).withOpacity(0.50),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14.sp),
+                  SizedBox(height: 3.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: gradientButton("See Plan", ontap: () async {
+                          Navigator.pop(context);
+                          Get.to(SubscriptionPlan());
+                        },
+                            height: 4.8,
+                            font: 13.5,
+                            width: 60,
+                            isColor: true,
+                            clr: MyColors.primary),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 1.h),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

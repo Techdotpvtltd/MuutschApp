@@ -17,6 +17,9 @@ class QueryModel {
     required this.value,
     required this.type,
   });
+
+  @override
+  String toString() => 'QueryModel(field: $field, value: $value, type: $type)';
 }
 
 enum QueryType {

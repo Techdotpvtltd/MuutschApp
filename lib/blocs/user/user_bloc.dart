@@ -15,6 +15,7 @@ import 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc() : super(UserStateInitial()) {
+    /// OnUpdateProfile Event
     on<UserEventUpdateProfile>(
       (event, emit) async {
         try {
@@ -58,6 +59,20 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           emit(UserStateProfileUpdated(user: updatedModel));
         } on AppException catch (e) {
           emit(UserStateProfileUpdatingFailure(exception: e));
+        }
+      },
+    );
+
+    /// OnFindUser
+    on<UserEventFindBy>(
+      (event, emit) async {
+        try {
+          emit(UserStateFinding());
+          final List<UserModel> users = await UserRepo()
+              .fetchUsersBy(searchText: event.searchText, bounds: event.bounds);
+          emit(UserStateFinded(users: users));
+        } on AppException catch (e) {
+          emit(UserStateFindFailure(exception: e));
         }
       },
     );

@@ -6,6 +6,7 @@
 // Description:
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
@@ -149,7 +150,11 @@ class EventStateApplyFilter extends EventState {
 class EventStateClearFilter extends EventState {}
 
 // ===========================Location Fetch Event================================
-class EventStateFetchedCurrentLocation extends EventState {}
+class EventStateFetchedCurrentLocation extends EventState {
+  final Position? position;
+
+  EventStateFetchedCurrentLocation({this.position});
+}
 
 // ===========================Join Event States================================
 class EventStateJoining extends EventState {
