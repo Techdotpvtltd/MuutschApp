@@ -54,6 +54,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             user = user.copyWith(email: event.email);
           }
 
+          if (event.bio != null) {
+            user = user.copyWith(bio: event.bio);
+          }
+
           emit(UserStateProfileUpdating());
           final UserModel updatedModel = await UserRepo().update(user: user);
           emit(UserStateProfileUpdated(user: updatedModel));

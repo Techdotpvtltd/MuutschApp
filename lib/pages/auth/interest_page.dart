@@ -12,6 +12,7 @@ import '../../blocs/user/user_event.dart';
 import '../../blocs/user/user_state.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
+import '../../widgets/text_field.dart';
 import 'login_page.dart';
 
 class InterestPage extends StatefulWidget {
@@ -40,6 +41,7 @@ class _InterestPageState extends State<InterestPage> {
   List<String> selectedInterests = [];
   List current2 = [];
   bool isLoading = false;
+  final TextEditingController bioController = TextEditingController();
 
   void triggerUpdateProfileEvent(UserBloc bloc) {
     if (selectedInterests.isEmpty) {
@@ -47,14 +49,15 @@ class _InterestPageState extends State<InterestPage> {
       return;
     }
 
-    bloc.add(UserEventUpdateProfile(interests: selectedInterests));
+    bloc.add(UserEventUpdateProfile(
+        interests: selectedInterests, bio: bioController.text));
   }
 
   @override
   void initState() {
     super.initState();
     selectedInterests = UserRepo().currentUser.interests ?? [];
-
+    bioController.text = UserRepo().currentUser.bio ?? "";
     if (selectedInterests.isNotEmpty) {
       selectedInterests.forEach((a) {
         final index = txt1.indexWhere(
@@ -106,14 +109,15 @@ class _InterestPageState extends State<InterestPage> {
             ),
           ),
           Positioned.fill(
-              child: Align(
-            alignment: Alignment.bottomRight,
-            child: Image.asset(
-              "assets/images/shape.png",
-              height: 25.h,
-              fit: BoxFit.fill,
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Image.asset(
+                "assets/images/shape.png",
+                height: 25.h,
+                fit: BoxFit.fill,
+              ),
             ),
-          )),
+          ),
           Positioned.fill(
               child: Scaffold(
             backgroundColor: Colors.transparent,
@@ -140,18 +144,38 @@ class _InterestPageState extends State<InterestPage> {
                         ],
                       ),
                       Center(
-                          child: Image.asset(
-                        "assets/images/logo.png",
-                        height: 10.h,
-                      )),
+                        child: Image.asset(
+                          "assets/images/logo.png",
+                          height: 10.h,
+                        ),
+                      ),
                       SizedBox(height: 4.h),
-                      text_widget("Your Interest",
-                          fontSize: 21.sp, fontWeight: FontWeight.w600),
+                      text_widget(
+                        "Your Interest",
+                        fontSize: 21.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                       SizedBox(height: 0.4.h),
                       text_widget(
-                          "Allow us to access your location while you’re using the app so we can help you find and meet members.",
-                          fontSize: 15.sp,
-                          color: Color(0xff8C8C8C)),
+                        "Allow us to access your location while you’re using the app so we can help you find and meet members.",
+                        fontSize: 15.sp,
+                        color: Color(0xff8C8C8C),
+                      ),
+                      SizedBox(height: 2.h),
+                      text_widget(
+                        "Your Bio",
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      SizedBox(height: 2.h),
+                      textFieldWithPrefixSuffuxIconAndHintText(
+                        "Tell us about yourself",
+                        controller: bioController,
+                        fillColor: Colors.white,
+                        mainTxtColor: Colors.black,
+                        radius: 12,
+                        bColor: Colors.transparent,
+                      ),
                       SizedBox(height: 4.h),
                       Wrap(
                         children: [

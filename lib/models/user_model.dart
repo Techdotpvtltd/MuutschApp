@@ -24,6 +24,7 @@ class UserModel {
   final List<ChildModel>? children;
   final LocationModel? location;
   final List<String>? interests;
+  final String? bio;
 
   UserModel({
     required this.uid,
@@ -37,6 +38,7 @@ class UserModel {
     this.location,
     this.numberOfChildren,
     this.interests,
+    this.bio,
   });
 
   UserModel copyWith({
@@ -53,6 +55,7 @@ class UserModel {
     List<ChildModel>? children,
     LocationModel? location,
     List<String>? interests,
+    String? bio,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -65,6 +68,7 @@ class UserModel {
       numberOfChildren: numOfChildren ?? numberOfChildren,
       location: location ?? this.location,
       interests: interests ?? this.interests,
+      bio: bio ?? this.bio,
     );
   }
 
@@ -81,6 +85,7 @@ class UserModel {
       'location': location?.toMap(),
       'children': children?.map((e) => e.toMap()).toList(),
       'interests': interests,
+      'bio': bio,
     };
   }
 
@@ -107,12 +112,13 @@ class UserModel {
               .map((e) => e.toString())
               .toList()
           : null,
+      bio: map['bio'] as String?,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, email: $email, avatar: $avatar, createdAt: $createdAt, isActived: $isActived, numberOfChildren: $numberOfChildren, children: ${children.toString()}, location: ${location.toString()}, interests: $interests)';
+    return 'UserModel(uid: $uid, name: $name, email: $email, avatar: $avatar, createdAt: $createdAt, isActived: $isActived, numberOfChildren: $numberOfChildren, children: ${children.toString()}, location: ${location.toString()}, interests: $interests, bio:$bio)';
   }
 
   @override

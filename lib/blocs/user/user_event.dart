@@ -23,6 +23,7 @@ class UserEventUpdateProfile extends UserEvent {
   final List<String>? interests;
   final String? name;
   final String? email;
+  final String? bio;
 
   UserEventUpdateProfile({
     this.children,
@@ -32,6 +33,7 @@ class UserEventUpdateProfile extends UserEvent {
     this.interests,
     this.name,
     this.email,
+    this.bio,
   });
 }
 
