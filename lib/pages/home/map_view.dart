@@ -10,6 +10,7 @@ import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
+import 'package:place_picker/place_picker.dart';
 
 import 'package:remixicon/remixicon.dart';
 
@@ -24,7 +25,11 @@ import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_event.dart';
 import '../../blocs/user/user_state.dart';
 import '../../models/user_model.dart';
+import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
+import 'package:google_place/google_place.dart';
+
+import 'friend_view.dart';
 
 class MapSample extends StatefulWidget {
   final VoidCallback updateParentState; // Define callback
@@ -43,6 +48,8 @@ class MapSampleState extends State<MapSample> {
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
   LatLngBounds? previousBounds;
+  final TextEditingController searchController = TextEditingController();
+  late GooglePlace googlePlace;
 
   void triggerCurrentLocationEvent(EventBloc bloc) {
     bloc.add(EventsEventFetchCurrentLocation());
@@ -63,9 +70,21 @@ class MapSampleState extends State<MapSample> {
     }
   }
 
+  void onSearchPressed() async {
+    final LocationResult result = await Get.to(
+      PlacePicker("AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0"),
+    );
+
+    _controller?.animateCamera(CameraUpdate.newLatLngZoom(
+        LatLng(result.latLng?.latitude ?? 0, result.latLng?.longitude ?? 0),
+        14));
+    searchController.text = result.formattedAddress ?? "";
+  }
+
   @override
   void initState() {
     triggerCurrentLocationEvent(context.read<EventBloc>());
+    googlePlace = GooglePlace('AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0');
     super.initState();
   }
 
@@ -86,17 +105,15 @@ class MapSampleState extends State<MapSample> {
           showDialog(
               context: context,
               barrierColor: MyColors.primary.withOpacity(0.8),
-              builder: (context) => NotAccess());
+              builder: (context) => UserDetailDialog(user: user));
         },
         markerId: MarkerId(user.uid),
         position: LatLng(user.location!.latitude, user.location!.longitude),
         icon: await getMarkerIcon(user.avatar, Size(170.0, 170.0)),
       );
       markers.add(marker);
+      setState(() {});
     }
-
-    if (_controller == null) return;
-    setState(() {});
   }
 
   @override
@@ -187,15 +204,21 @@ class MapSampleState extends State<MapSample> {
                               ],
                             ),
                             SizedBox(height: 2.h),
-                            textFieldWithPrefixSuffuxIconAndHintText(
-                              "Search  ",
-                              // controller: _.password,
-                              fillColor: Colors.white,
-                              mainTxtColor: Colors.black,
-                              radius: 12,
-                              bColor: Colors.transparent,
-                              prefixIcon: "assets/nav/s1.png",
-                              isPrefix: true,
+                            InkWell(
+                              onTap: () {
+                                onSearchPressed();
+                              },
+                              child: textFieldWithPrefixSuffuxIconAndHintText(
+                                "Search Place.",
+                                controller: searchController,
+                                enable: false,
+                                fillColor: Colors.white,
+                                mainTxtColor: Colors.black,
+                                radius: 12,
+                                bColor: Colors.transparent,
+                                prefixIcon: "assets/nav/s1.png",
+                                isPrefix: true,
+                              ),
                             ),
                           ],
                         ),
@@ -367,6 +390,82 @@ class NotAccess extends StatelessWidget {
                         child: gradientButton("See Plan", ontap: () async {
                           Navigator.pop(context);
                           Get.to(SubscriptionPlan());
+                        },
+                            height: 4.8,
+                            font: 13.5,
+                            width: 60,
+                            isColor: true,
+                            clr: MyColors.primary),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 1.h),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class UserDetailDialog extends StatelessWidget {
+  UserDetailDialog({super.key, required this.user});
+  final UserModel user;
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 90.w,
+            // height: 45.h,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), color: Colors.white),
+            // color: Color(0xfff9f8f6),
+
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 1.4.h),
+                  AvatarWidget(
+                    avatarUrl: user.avatar,
+                  ),
+                  SizedBox(height: 1.4.h),
+                  text_widget(
+                    user.name,
+                    color: MyColors.black,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  SizedBox(height: 1.5.h),
+                  text_widget(
+                    user.location?.address ?? "",
+                    textAlign: TextAlign.center,
+                    color: Color(0xff2F3342).withOpacity(0.50),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14.sp,
+                  ),
+                  SizedBox(height: 3.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: gradientButton("See Info", ontap: () async {
+                          Navigator.pop(context);
+                          Get.to(
+                            FriendView(
+                              isFriend: false,
+                              isChat: false,
+                              user: user,
+                            ),
+                          );
                         },
                             height: 4.8,
                             font: 13.5,

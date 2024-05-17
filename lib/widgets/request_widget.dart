@@ -6,12 +6,15 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../repos/user_repo.dart';
+
 Widget requestWidget() {
   return InkWell(
     onTap: () {
       Get.to(FriendView(
         isFriend: true,
         isChat: false,
+        user: UserRepo().currentUser,
       ));
     },
     child: Container(

@@ -8,6 +8,8 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../repos/user_repo.dart';
+
 class AllFriends extends StatelessWidget {
   const AllFriends({super.key});
 
@@ -76,7 +78,10 @@ class AllFriends extends StatelessWidget {
                               InkWell(
                                   onTap: () {
                                     Get.to(FriendView(
-                                        isFriend: false, isChat: true));
+                                      isFriend: false,
+                                      isChat: true,
+                                      user: UserRepo().currentUser,
+                                    ));
                                   },
                                   child: Stack(
                                     children: [
@@ -104,7 +109,9 @@ class AllFriends extends StatelessWidget {
                               InkWell(
                                 onTap: () {
                                   Get.to(FriendView(
-                                      isFriend: false, isChat: true));
+                                      isFriend: false,
+                                      isChat: true,
+                                      user: UserRepo().currentUser));
                                 },
                                 child: Stack(
                                   children: [
@@ -133,7 +140,9 @@ class AllFriends extends StatelessWidget {
                               InkWell(
                                 onTap: () {
                                   Get.to(FriendView(
-                                      isFriend: false, isChat: true));
+                                      isFriend: false,
+                                      isChat: true,
+                                      user: UserRepo().currentUser));
                                 },
                                 child: Stack(
                                   children: [
@@ -189,7 +198,10 @@ class AllFriends extends StatelessWidget {
                           6,
                           (index) => InkWell(
                             onTap: () {
-                              Get.to(FriendView(isFriend: false, isChat: true));
+                              Get.to(FriendView(
+                                  isFriend: false,
+                                  isChat: true,
+                                  user: UserRepo().currentUser));
                             },
                             child: Padding(
                               padding:
