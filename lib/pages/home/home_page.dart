@@ -15,6 +15,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
+import '../../manager/app_manager.dart';
 import '../../models/event_model.dart';
 import '../../models/join_event_model.dart';
 import '../../repos/event_repo.dart';
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
     return BlocListener<EventBloc, EventState>(
       listener: (context, state) {
         if (state is EventStateFetchedCurrentLocation) {
+          AppManager().currentPosition = state.position;
           triggerFetchAllEvents(context.read<EventBloc>());
         }
       },

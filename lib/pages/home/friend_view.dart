@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musch/config/colors.dart';
@@ -10,10 +11,12 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:readmore/readmore.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../manager/app_manager.dart';
 import '../../models/user_model.dart';
+import '../../utils/helping_methods.dart';
 import '../../widgets/custom_network_image.dart';
 
-class FriendView extends StatelessWidget {
+class FriendView extends StatefulWidget {
   FriendView(
       {super.key,
       required this.isFriend,
@@ -22,6 +25,16 @@ class FriendView extends StatelessWidget {
   final bool isFriend;
   final bool isChat;
   final UserModel user;
+
+  @override
+  State<FriendView> createState() => _FriendViewState();
+}
+
+class _FriendViewState extends State<FriendView> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +54,7 @@ class FriendView extends StatelessWidget {
                   child: SizedBox(
                     width: 100.w,
                     height: 48.h,
-                    child: CustomNetworkImage(imageUrl: user.avatar),
+                    child: CustomNetworkImage(imageUrl: widget.user.avatar),
                   ),
                 ),
                 Positioned.fill(
@@ -73,7 +86,7 @@ class FriendView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   text_widget(
-                    user.name,
+                    widget.user.name,
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
                   ),
@@ -88,9 +101,9 @@ class FriendView extends StatelessWidget {
                     children: [
                       for (int index = 0;
                           index <
-                              ((user.numberOfChildren ?? 0) > 3
+                              ((widget.user.numberOfChildren ?? 0) > 3
                                   ? 3
-                                  : (user.numberOfChildren ?? 0));
+                                  : (widget.user.numberOfChildren ?? 0));
                           index++)
                         Row(
                           children: [
@@ -105,9 +118,11 @@ class FriendView extends StatelessWidget {
                             SizedBox(width: .5.w),
                           ],
                         ),
-                      if ((user.numberOfChildren ?? 0) > 3)
-                        text_widget("+${(user.numberOfChildren ?? 0) - 3}",
-                            fontSize: 15.6.sp, fontWeight: FontWeight.w300),
+                      if ((widget.user.numberOfChildren ?? 0) > 3)
+                        text_widget(
+                            "+${(widget.user.numberOfChildren ?? 0) - 3}",
+                            fontSize: 15.6.sp,
+                            fontWeight: FontWeight.w300),
                       SizedBox(width: 1.w),
                       InkWell(
                         onTap: () {
@@ -135,8 +150,11 @@ class FriendView extends StatelessWidget {
                   SizedBox(height: 2.5.h),
                   Row(
                     children: [
-                      text_widget("Location",
-                          fontSize: 16.sp, fontWeight: FontWeight.w600),
+                      text_widget(
+                        "Location",
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                       Spacer(),
                       Container(
                         padding:
@@ -152,8 +170,11 @@ class FriendView extends StatelessWidget {
                               height: 1.7.h,
                             ),
                             SizedBox(width: 1.w),
-                            text_widget("1 km",
-                                color: MyColors.primary, fontSize: 13.sp),
+                            text_widget(
+                              "${calculateDistance(aLat: AppManager().currentPosition?.latitude ?? 0, aLong: AppManager().currentPosition?.longitude ?? 0, bLat: widget.user.location?.latitude ?? 0, bLong: widget.user.location?.longitude ?? 0).toInt()} KM",
+                              color: MyColors.primary,
+                              fontSize: 13.sp,
+                            ),
                             SizedBox(width: 1.w),
                           ],
                         ),
@@ -162,7 +183,7 @@ class FriendView extends StatelessWidget {
                   ),
                   SizedBox(height: 0.5.h),
                   text_widget(
-                    user.location?.address ?? "",
+                    widget.user.location?.address ?? "",
                     fontSize: 15.6.sp,
                     fontWeight: FontWeight.w300,
                   ),
@@ -215,7 +236,7 @@ class FriendView extends StatelessWidget {
                       childAspectRatio: 4,
                     ),
                     childrenDelegate: SliverChildBuilderDelegate(
-                      childCount: user.interests?.length,
+                      childCount: widget.user.interests?.length,
                       (context, index) {
                         return Container(
                           padding: EdgeInsets.symmetric(horizontal: 14),
@@ -225,7 +246,7 @@ class FriendView extends StatelessWidget {
                           ),
                           child: Center(
                             child: text_widget(
-                              user.interests?[index] ?? "",
+                              widget.user.interests?[index] ?? "",
                               textAlign: TextAlign.center,
                               fontWeight: FontWeight.w400,
                               fontSize: 15.5.sp,
@@ -236,8 +257,8 @@ class FriendView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  !isChat
-                      ? isFriend
+                  !widget.isChat
+                      ? widget.isFriend
                           ? Row(
                               children: [
                                 Expanded(
@@ -253,36 +274,47 @@ class FriendView extends StatelessWidget {
                                 ),
                                 SizedBox(width: 2.w),
                                 Expanded(
-                                  child: gradientButton("Accept Request",
-                                      font: 15.6,
-                                      txtColor: MyColors.white, ontap: () {
-                                    // _.loginUser();
-                                  },
-                                      width: 90,
-                                      height: 6.6,
-                                      isColor: true,
-                                      clr: MyColors.primary),
+                                  child: gradientButton(
+                                    "Accept Request",
+                                    font: 15.6,
+                                    txtColor: MyColors.white,
+                                    ontap: () {
+                                      // _.loginUser();
+                                    },
+                                    width: 90,
+                                    height: 6.6,
+                                    isColor: true,
+                                    clr: MyColors.primary,
+                                  ),
                                 ),
                               ],
                             )
-                          : gradientButton("Send Friend Request",
-                              font: 17, txtColor: MyColors.white, ontap: () {
-                              // _.loginUser();
-                            },
+                          : gradientButton(
+                              "Send Friend Request",
+                              font: 17,
+                              txtColor: MyColors.white,
+                              ontap: () {
+                                // _.loginUser();
+                              },
                               width: 90,
                               height: 6.6,
                               isColor: true,
-                              clr: MyColors.primary)
-                      : isChat
-                          ? gradientButton("Chat",
-                              font: 17, txtColor: MyColors.white, ontap: () {
-                              Get.to(UserChatPage(IsSupport: false));
-                              // _.loginUser();
-                            },
+                              clr: MyColors.primary,
+                            )
+                      : widget.isChat
+                          ? gradientButton(
+                              "Chat",
+                              font: 17,
+                              txtColor: MyColors.white,
+                              ontap: () {
+                                Get.to(UserChatPage(IsSupport: false));
+                                // _.loginUser();
+                              },
                               width: 90,
                               height: 6.6,
                               isColor: true,
-                              clr: MyColors.primary)
+                              clr: MyColors.primary,
+                            )
                           : SizedBox(),
                   SizedBox(height: 10.h),
                 ],
