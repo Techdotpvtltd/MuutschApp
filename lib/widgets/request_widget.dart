@@ -6,23 +6,27 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import '../repos/user_repo.dart';
+import '../models/user_model.dart';
 
-Widget requestWidget() {
+Widget requestWidget({required UserModel user}) {
   return InkWell(
     onTap: () {
-      Get.to(FriendView(
-        isFriend: true,
-        isChat: false,
-        user: UserRepo().currentUser,
-      ));
+      Get.to(
+        FriendView(
+          isFriend: true,
+          isChat: false,
+          user: user,
+        ),
+      );
     },
     child: Container(
       height: 30.h,
-      // width: 46.w,
+      width: 46.w,
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage("assets/images/im1.png"), fit: BoxFit.cover),
+            image: NetworkImage(user.avatar),
+            fit: BoxFit.cover,
+          ),
           borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -30,52 +34,53 @@ Widget requestWidget() {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Spacer(),
-            text_widget("Hassan Ahmad",
-                color: Colors.white,
-                fontSize: 15.7.sp,
-                fontWeight: FontWeight.bold),
+            text_widget(
+              user.name,
+              color: Colors.white,
+              fontSize: 15.7.sp,
+              fontWeight: FontWeight.bold,
+            ),
             SizedBox(height: 0.5.h),
             Row(
               children: [
                 Image.asset("assets/icons/p1.png", height: 1.6.h),
                 SizedBox(width: 1.w),
-                text_widget("Canada", fontSize: 14.sp, color: Colors.white)
+                text_widget(
+                  user.location?.city ?? user.location?.country ?? "---",
+                  fontSize: 14.sp,
+                  color: Colors.white,
+                )
               ],
             ),
             SizedBox(height: 1.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: MyColors.white,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: text_widget("Yoga",
-                      color: MyColors.primary, fontSize: 12.5.sp),
-                ),
-                SizedBox(width: 1.3.w),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: MyColors.white,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: text_widget("Art",
-                      color: MyColors.primary, fontSize: 12.5.sp),
-                ),
-                SizedBox(width: 1.3.w),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: MyColors.white,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: text_widget("Music",
-                      color: MyColors.primary, fontSize: 12.5.sp),
-                ),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (int i = 0;
+                      i < (user.interests?.take(3) ?? []).length;
+                      i++)
+                    Row(
+                      children: [
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: MyColors.white,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: text_widget(
+                            user.interests?[i] ?? "",
+                            color: MyColors.primary,
+                            fontSize: 12.5.sp,
+                          ),
+                        ),
+                        SizedBox(width: 1.3.w),
+                      ],
+                    ),
+                ],
+              ),
             ),
             SizedBox(height: 1.h),
           ],

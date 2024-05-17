@@ -33,3 +33,24 @@ class FriendStateSent extends FriendState {
 
   FriendStateSent({required this.friend});
 }
+
+// ===========================Fetch Friend States================================
+
+class FriendStateFetching extends FriendState {
+  FriendStateFetching({super.isLoading = true});
+}
+
+class FriendStateFetchFailure extends FriendState {
+  final AppException exception;
+  FriendStateFetchFailure({required this.exception});
+}
+
+class FriendStateFetched extends FriendState {}
+
+class FriendStateFetchedAll extends FriendState {}
+
+class FriendStateFetchedPendingRequests extends FriendState {
+  final List<FriendModel> friends;
+
+  FriendStateFetchedPendingRequests({required this.friends});
+}

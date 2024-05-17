@@ -14,3 +14,9 @@ class FriendEventSend extends FriendEvent {
 
   FriendEventSend({required this.recieverId});
 }
+
+/// FetchFriends Event
+class FriendEventFetch extends FriendEvent {}
+
+/// FetchPendingRequest Event
+class FriendEventFetchPendingRequests extends FriendEvent {}

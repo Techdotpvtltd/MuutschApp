@@ -15,9 +15,13 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
+import '../../blocs/friend/friend_bloc.dart';
+import '../../blocs/friend/friend_event.dart';
+import '../../blocs/friend/friend_state.dart';
 import '../../manager/app_manager.dart';
 import '../../models/event_model.dart';
 import '../../models/join_event_model.dart';
+import '../../models/user_model.dart';
 import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/constants/constants.dart';
@@ -48,9 +52,14 @@ class _HomePageState extends State<HomePage> {
     bloc.add(EventsEventJoin(eventId: eventId));
   }
 
+  void triggerFetchFriends(FriendBloc bloc) {
+    bloc.add(FriendEventFetch());
+  }
+
   @override
   void initState() {
     triggerCurrentLocationEvent(context.read<EventBloc>());
+    triggerFetchFriends(context.read<FriendBloc>());
     super.initState();
   }
 
@@ -165,45 +174,84 @@ class _HomePageState extends State<HomePage> {
                               prefixIcon: "assets/nav/s1.png",
                               isPrefix: true,
                             ),
-                            SizedBox(height: 4.h),
-                            Row(
-                              children: [
-                                text_widget(
-                                  "Friend Requests",
-                                  color: Colors.white,
-                                  fontSize: 17.5.sp,
-                                ),
-                                Spacer(),
-                                InkWell(
-                                  onTap: () {
-                                    Get.to(AllFriends());
-                                  },
-                                  child: text_widget(
-                                    "View All",
-                                    fontSize: 14.sp,
-                                    color: MyColors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 2.h),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 25.0),
-                          child: Row(
-                            children: [
-                              requestWidget(),
-                              SizedBox(width: 2.w),
-                              requestWidget(),
-                              SizedBox(width: 2.w),
-                              requestWidget(),
-                            ],
-                          ),
-                        ),
+                      BlocBuilder<FriendBloc, FriendState>(
+                        builder: (context, state) {
+                          return state is FriendStateFetchedPendingRequests &&
+                                  state.friends.isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 4.h),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 25, right: 25, bottom: 10),
+                                      child: Row(
+                                        children: [
+                                          text_widget(
+                                            "Friend Requests",
+                                            color: Colors.white,
+                                            fontSize: 17.5.sp,
+                                          ),
+                                          Spacer(),
+                                          InkWell(
+                                            onTap: () {
+                                              Get.to(AllFriends());
+                                            },
+                                            child: text_widget(
+                                              "View All",
+                                              fontSize: 14.sp,
+                                              color: MyColors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 25.0, right: 25),
+                                        child: Row(
+                                          children: [
+                                            for (int i = 0;
+                                                i <
+                                                    state.friends
+                                                        .take(5)
+                                                        .length;
+                                                i++)
+                                              FutureBuilder<UserModel?>(
+                                                future: UserRepo().fetchUser(
+                                                    profileId: state
+                                                        .friends[i].senderId),
+                                                builder: (context, snapshot) {
+                                                  return snapshot.hasData &&
+                                                          snapshot.data != null
+                                                      ? Row(
+                                                          children: [
+                                                            requestWidget(
+                                                                user: snapshot
+                                                                    .data!),
+                                                            SizedBox(
+                                                                width: 2.w),
+                                                          ],
+                                                        )
+                                                      : Center(
+                                                          child:
+                                                              CircularProgressIndicator(),
+                                                        );
+                                                },
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox();
+                        },
                       ),
                       SizedBox(height: 3.h),
                       BlocListener<EventBloc, EventState>(
