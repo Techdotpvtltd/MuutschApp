@@ -11,3 +11,6 @@ const String FIREBASE_COLLECTION_EVENTS =
 
 const String FIREBASE_COLLECTION_JOIN_EVENTS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Join_Events";
+
+const String FIREBASE_COLLECTION_FRIENDS =
+    "${kReleaseMode ? "Rel-" : "Dev-"}Friends";
