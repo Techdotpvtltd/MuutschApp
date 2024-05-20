@@ -10,6 +10,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../main.dart';
+import '../../repos/user_repo.dart';
 
 const gapH2 = SizedBox(height: 2);
 const gapH4 = SizedBox(height: 4);
@@ -69,3 +70,7 @@ const gapW50 = SizedBox(width: 50);
 
 final double SCREEN_WIDTH = MediaQuery.of(navKey.currentContext!).size.width;
 final double SCREEN_HEIGHT = MediaQuery.of(navKey.currentContext!).size.height;
+
+// =========================== Push Notification ================================
+final PUSH_NOTIFICATION_FRIEND_REQUEST = "friend-request-";
+const PUSH_NOTIFICATION_EVENT_UPDATES = "event-updates-";

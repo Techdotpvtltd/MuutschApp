@@ -18,6 +18,8 @@ import '../../blocs/event/events_event.dart';
 import '../../blocs/friend/friend_bloc.dart';
 import '../../blocs/friend/friend_event.dart';
 import '../../blocs/friend/friend_state.dart';
+import '../../blocs/push_notification/psuh_notification_event.dart';
+import '../../blocs/push_notification/push_notification_bloc.dart';
 import '../../manager/app_manager.dart';
 import '../../models/event_model.dart';
 import '../../models/friend_model.dart';
@@ -58,10 +60,17 @@ class _HomePageState extends State<HomePage> {
     bloc.add(FriendEventFetch());
   }
 
+  void triggerPushNotificationSubscriptionEvents() {
+    context
+        .read<PushNotificationBloc>()
+        .add(PushNotificationEventUserSubscribed());
+  }
+
   @override
   void initState() {
     triggerCurrentLocationEvent(context.read<EventBloc>());
     triggerFetchFriends(context.read<FriendBloc>());
+    triggerPushNotificationSubscriptionEvents();
     super.initState();
   }
 

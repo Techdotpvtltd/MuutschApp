@@ -13,6 +13,8 @@ import '../../exceptions/app_exceptions.dart';
 import '../../models/friend_model.dart';
 import '../../repos/friend_repo.dart';
 import '../../repos/user_repo.dart';
+import '../../services/notification_services/fire_notification.dart';
+import '../../utils/constants/constants.dart';
 import 'friend_event.dart';
 import 'friend_state.dart';
 
@@ -29,6 +31,12 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
           final FriendModel friend =
               await FriendRepo().sendRequest(recieverId: event.recieverId);
           emit(FriendStateSent(friend: friend));
+          FireNotification().sendNotification(
+              title: "Friend Request",
+              type: 'request',
+              description:
+                  "${UserRepo().currentUser.name} sends you a friend request.",
+              topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST${friend.recieverId}");
         } on AppException catch (e) {
           emit(FriendStateSendFailure(exception: e));
         }
@@ -118,6 +126,13 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
           if (index > -1) {
             friends[index] = friends[index].copyWith(type: FriendType.friend);
             emit(FriendStateAccepted(frined: friends[index]));
+            FireNotification().sendNotification(
+                title: "Friend Request Accepted",
+                type: 'request',
+                description:
+                    "${UserRepo().currentUser.name} accepted your friend request.",
+                topic:
+                    "$PUSH_NOTIFICATION_FRIEND_REQUEST${friends[index].senderId}");
           }
         } on AppException catch (e) {
           emit(FriendStateAcceptFailure(exception: e));

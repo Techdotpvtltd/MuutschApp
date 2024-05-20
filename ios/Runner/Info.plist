@@ -2,31 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.977913445059-9efp9vsh8o81gdr075bcg86krr2rmbqv</string>
-			</array>
-		</dict>
-	</array>
-	<key>GIDClientID</key>
-	<string>977913445059-9efp9vsh8o81gdr075bcg86krr2rmbqv.apps.googleusercontent.com</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app requires access to your location in order to capture your exact location.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app requires access to your location in order to capture your exact location.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app requires access to your location in order to capture your exact location.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera in order to capture images for your profile.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library in order to upload images for your profile.</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Muutsch would like to access push notification permission to keep you updates.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -47,12 +24,41 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.977913445059-9efp9vsh8o81gdr075bcg86krr2rmbqv</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GIDClientID</key>
+	<string>977913445059-9efp9vsh8o81gdr075bcg86krr2rmbqv.apps.googleusercontent.com</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the camera in order to capture images for your profile.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app requires access to your location in order to capture your exact location.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app requires access to your location in order to capture your exact location.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires access to your location in order to capture your exact location.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to the photo library in order to upload images for your profile.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

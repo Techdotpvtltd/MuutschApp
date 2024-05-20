@@ -12,8 +12,10 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/event/event_bloc.dart';
 import 'blocs/friend/friend_bloc.dart';
+import 'blocs/push_notification/push_notification_bloc.dart';
 import 'blocs/user/user_bloc.dart';
 import 'manager/app_bloc_observer.dart';
+import 'services/notification_services/push_notification_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +35,7 @@ void main() async {
   Get.put(NavController());
   Get.find<MyDrawerController>().closeDrawer();
 
+  PushNotificationServices().initialize();
   runApp(const MyApp());
 }
 
@@ -48,6 +51,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => UserBloc()),
             BlocProvider(create: (context) => EventBloc()),
             BlocProvider(create: (context) => FriendBloc()),
+            BlocProvider(create: (context) => PushNotificationBloc()),
           ],
           child: GetMaterialApp(
             navigatorKey: navKey,
