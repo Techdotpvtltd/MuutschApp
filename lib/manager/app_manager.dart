@@ -13,5 +13,5 @@ class AppManager {
   AppManager._internal();
   factory AppManager() => _instance;
 
-  Position? currentPosition;
+  Position? currentLocationPosition;
 }

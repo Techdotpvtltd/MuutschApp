@@ -16,34 +16,44 @@ import '../../blocs/friend/friend_bloc.dart';
 import '../../blocs/friend/friend_event.dart';
 import '../../blocs/friend/friend_state.dart';
 import '../../manager/app_manager.dart';
+import '../../models/friend_model.dart';
 import '../../models/user_model.dart';
+import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../utils/helping_methods.dart';
 import '../../widgets/custom_network_image.dart';
 
 class FriendView extends StatefulWidget {
-  FriendView(
-      {super.key,
-      required this.isFriend,
-      required this.isChat,
-      required this.user});
+  FriendView({
+    super.key,
+    required this.isFriend,
+    required this.isChat,
+    required this.user,
+    this.friend,
+  });
   final bool isFriend;
   final bool isChat;
   final UserModel user;
-
+  final FriendModel? friend;
   @override
   State<FriendView> createState() => _FriendViewState();
 }
 
 class _FriendViewState extends State<FriendView> {
   bool isSendingRequest = false;
+  late FriendModel? friend = widget.friend;
 
   void triggerSendRequestEvent(FriendBloc bloc) {
     bloc.add(FriendEventSend(recieverId: widget.user.uid));
   }
 
+  void triggerGetFriendEvent(FriendBloc bloc) {
+    bloc.add(FriendEventGet(friendId: widget.user.uid));
+  }
+
   @override
   void initState() {
+    triggerGetFriendEvent(context.read<FriendBloc>());
     super.initState();
   }
 
@@ -51,6 +61,11 @@ class _FriendViewState extends State<FriendView> {
   Widget build(BuildContext context) {
     return BlocListener<FriendBloc, FriendState>(
       listener: (context, state) {
+        if (state is FriendStateGot) {
+          setState(() {
+            friend = state.friend;
+          });
+        }
         if (state is FriendStateSendFailure ||
             state is FriendStateSending ||
             state is FriendStateSent) {
@@ -157,10 +172,10 @@ class _FriendViewState extends State<FriendView> {
                         InkWell(
                           onTap: () {
                             showDialog(
-                                context: context,
-                                barrierColor:
-                                    MyColors.primary.withOpacity(0.88),
-                                builder: (context) => ChildDetails());
+                              context: context,
+                              barrierColor: MyColors.primary.withOpacity(0.88),
+                              builder: (context) => ChildDetails(),
+                            );
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
@@ -189,7 +204,9 @@ class _FriendViewState extends State<FriendView> {
                         Spacer(),
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: MyColors.white,
                             borderRadius: BorderRadius.circular(10),
@@ -202,7 +219,7 @@ class _FriendViewState extends State<FriendView> {
                               ),
                               SizedBox(width: 1.w),
                               text_widget(
-                                "${calculateDistance(aLat: AppManager().currentPosition?.latitude ?? 0, aLong: AppManager().currentPosition?.longitude ?? 0, bLat: widget.user.location?.latitude ?? 0, bLong: widget.user.location?.longitude ?? 0).toInt()} KM",
+                                "${calculateDistance(aLat: AppManager().currentLocationPosition?.latitude ?? 0, aLong: AppManager().currentLocationPosition?.longitude ?? 0, bLat: widget.user.location?.latitude ?? 0, bLong: widget.user.location?.longitude ?? 0).toInt()} KM",
                                 color: MyColors.primary,
                                 fontSize: 13.sp,
                               ),
@@ -288,8 +305,10 @@ class _FriendViewState extends State<FriendView> {
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    !widget.isChat
-                        ? widget.isFriend
+                    widget.friend != null
+                        ? widget.friend?.senderId !=
+                                    UserRepo().currentUser.uid &&
+                                widget.friend?.type == FriendType.request
                             ? Row(
                                 children: [
                                   Expanded(
@@ -336,7 +355,7 @@ class _FriendViewState extends State<FriendView> {
                                 isColor: true,
                                 clr: MyColors.primary,
                               )
-                        : widget.isChat
+                        : widget.friend?.type == FriendType.firend
                             ? gradientButton(
                                 "Chat",
                                 font: 17,

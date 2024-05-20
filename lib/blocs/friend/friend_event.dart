@@ -20,3 +20,10 @@ class FriendEventFetch extends FriendEvent {}
 
 /// FetchPendingRequest Event
 class FriendEventFetchPendingRequests extends FriendEvent {}
+
+/// Get Friend Info
+class FriendEventGet extends FriendEvent {
+  final String friendId;
+
+  FriendEventGet({required this.friendId});
+}

@@ -20,6 +20,7 @@ import '../../blocs/friend/friend_event.dart';
 import '../../blocs/friend/friend_state.dart';
 import '../../manager/app_manager.dart';
 import '../../models/event_model.dart';
+import '../../models/friend_model.dart';
 import '../../models/join_event_model.dart';
 import '../../models/user_model.dart';
 import '../../repos/event_repo.dart';
@@ -39,6 +40,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<EventModel> events = [];
+  List<FriendModel> friends = [];
 
   void triggerFetchAllEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchAll());
@@ -65,13 +67,28 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EventBloc, EventState>(
-      listener: (context, state) {
-        if (state is EventStateFetchedCurrentLocation) {
-          AppManager().currentPosition = state.position;
-          triggerFetchAllEvents(context.read<EventBloc>());
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<EventBloc, EventState>(
+          listener: (context, state) {
+            if (state is EventStateFetchedCurrentLocation) {
+              AppManager().currentLocationPosition = state.position;
+              triggerFetchAllEvents(context.read<EventBloc>());
+            }
+          },
+        ),
+        BlocListener<FriendBloc, FriendState>(
+          listener: (context, state) {
+            if (state is FriendStateFetchedPendingRequests) {
+              setState(
+                () {
+                  friends = state.friends;
+                },
+              );
+            }
+          },
+        ),
+      ],
       child: Stack(
         children: [
           Column(
@@ -177,89 +194,90 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      BlocBuilder<FriendBloc, FriendState>(
-                        builder: (context, state) {
-                          return state is FriendStateFetchedPendingRequests &&
-                                  state.friends.isNotEmpty
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(height: 4.h),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 25, right: 25, bottom: 10),
-                                      child: Row(
-                                        children: [
-                                          text_widget(
-                                            "Friend Requests",
-                                            color: Colors.white,
-                                            fontSize: 17.5.sp,
-                                          ),
-                                          Spacer(),
-                                          InkWell(
-                                            onTap: () {
-                                              Get.to(AllFriends());
-                                            },
-                                            child: text_widget(
-                                              "View All",
-                                              fontSize: 14.sp,
-                                              color: MyColors.white,
-                                            ),
-                                          ),
-                                        ],
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 4.h),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 25,
+                              right: 25,
+                              bottom: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                text_widget(
+                                  "Friend Requests",
+                                  color: Colors.white,
+                                  fontSize: 17.5.sp,
+                                ),
+                                Spacer(),
+                                InkWell(
+                                  onTap: () {
+                                    Get.to(
+                                      AllFriends(
+                                        friends: friends,
+                                        isRequestFriendScreen: true,
                                       ),
+                                    );
+                                  },
+                                  child: text_widget(
+                                    "View All",
+                                    fontSize: 14.sp,
+                                    color: MyColors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 25.0,
+                                right: 25,
+                              ),
+                              child: Row(
+                                children: [
+                                  for (int i = 0;
+                                      i < friends.take(5).length;
+                                      i++)
+                                    FutureBuilder<UserModel?>(
+                                      future: UserRepo().fetchUser(
+                                          profileId: friends[i].senderId),
+                                      builder: (context, snapshot) {
+                                        return snapshot.hasData &&
+                                                snapshot.data != null
+                                            ? Row(
+                                                children: [
+                                                  requestWidget(
+                                                    user: snapshot.data!,
+                                                    friend: friends[i],
+                                                  ),
+                                                  SizedBox(width: 2.w),
+                                                ],
+                                              )
+                                            : Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                      },
                                     ),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 25.0, right: 25),
-                                        child: Row(
-                                          children: [
-                                            for (int i = 0;
-                                                i <
-                                                    state.friends
-                                                        .take(5)
-                                                        .length;
-                                                i++)
-                                              FutureBuilder<UserModel?>(
-                                                future: UserRepo().fetchUser(
-                                                    profileId: state
-                                                        .friends[i].senderId),
-                                                builder: (context, snapshot) {
-                                                  return snapshot.hasData &&
-                                                          snapshot.data != null
-                                                      ? Row(
-                                                          children: [
-                                                            requestWidget(
-                                                                user: snapshot
-                                                                    .data!),
-                                                            SizedBox(
-                                                                width: 2.w),
-                                                          ],
-                                                        )
-                                                      : Center(
-                                                          child:
-                                                              CircularProgressIndicator(),
-                                                        );
-                                                },
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : SizedBox();
-                        },
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 3.h),
                       BlocListener<EventBloc, EventState>(
                         listener: (context, state) {
                           if (state is EventStateFetched) {
-                            setState(() {
-                              events = state.events.take(5).toList();
-                            });
+                            setState(
+                              () {
+                                events = state.events.take(5).toList();
+                              },
+                            );
                           }
                           if (state is EventStateFetchFailure ||
                               state is EventStateFetchedAll ||

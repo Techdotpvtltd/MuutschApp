@@ -212,7 +212,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(height: 2.h),
                       InkWell(
                         onTap: () {
-                          Get.to(AllFriends());
+                          Get.to(
+                            AllFriends(friends: []),
+                          );
                         },
                         child: Container(
                           decoration: BoxDecoration(

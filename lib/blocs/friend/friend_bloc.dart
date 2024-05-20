@@ -5,7 +5,8 @@
 // Date:        17-05-24 14:22:07 -- Friday
 // Description:
 
-import 'package:flutter/foundation.dart';
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../exceptions/app_exceptions.dart';
@@ -34,6 +35,20 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       },
     );
 
+    /// OnGetFriend Event
+    on<FriendEventGet>(
+      (event, emit) {
+        try {
+          final FriendModel friend = friends.firstWhere(
+              (element) => element.participants.contains(event.friendId));
+          emit(FriendStateGot(friend: friend));
+        } catch (e) {
+          log("[debug FriendEventGet] $e");
+        }
+      },
+    );
+
+    /// OnPendingRequest Fetch
     on<FriendEventFetchPendingRequests>(
       (event, emit) {
         final List<FriendModel> filteredFriends =
@@ -66,8 +81,6 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
                 friend.recieverId == userId) {
               add(FriendEventFetchPendingRequests());
             }
-
-            debugPrint(friends.toString());
           },
           onError: (e) {
             emit(FriendStateFetchedAll());

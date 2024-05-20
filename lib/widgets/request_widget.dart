@@ -6,9 +6,10 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../models/friend_model.dart';
 import '../models/user_model.dart';
 
-Widget requestWidget({required UserModel user}) {
+Widget requestWidget({required UserModel user, required FriendModel friend}) {
   return InkWell(
     onTap: () {
       Get.to(
@@ -16,6 +17,7 @@ Widget requestWidget({required UserModel user}) {
           isFriend: true,
           isChat: false,
           user: user,
+          friend: friend,
         ),
       );
     },

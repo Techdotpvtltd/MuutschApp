@@ -8,11 +8,21 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../models/friend_model.dart';
+import '../../models/user_model.dart';
 import '../../repos/user_repo.dart';
 
-class AllFriends extends StatelessWidget {
-  const AllFriends({super.key});
+class AllFriends extends StatefulWidget {
+  const AllFriends(
+      {super.key, required this.friends, this.isRequestFriendScreen = false});
+  final List<FriendModel> friends;
+  final bool isRequestFriendScreen;
+  @override
+  State<AllFriends> createState() => _AllFriendsState();
+}
 
+class _AllFriendsState extends State<AllFriends> {
+  late final List<FriendModel> friends = widget.friends;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -28,9 +38,10 @@ class AllFriends extends StatelessWidget {
                 color: Color(0xffBD9691),
               ),
               Expanded(
-                  child: Container(
-                color: Color(0xfff2f2f2),
-              ))
+                child: Container(
+                  color: Color(0xfff2f2f2),
+                ),
+              )
             ],
           ),
           Positioned.fill(
@@ -40,27 +51,37 @@ class AllFriends extends StatelessWidget {
                 body: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 18.0, vertical: 8),
+                      horizontal: 18.0,
+                      vertical: 8,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             InkWell(
-                                onTap: () {
-                                  Get.back();
-                                },
-                                child: Icon(Remix.arrow_left_s_line,
-                                    color: Colors.white, size: 4.h)),
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: Icon(
+                                Remix.arrow_left_s_line,
+                                color: Colors.white,
+                                size: 4.h,
+                              ),
+                            ),
                             SizedBox(width: 2.w),
-                            text_widget("Friends",
-                                color: Colors.white, fontSize: 18.sp),
+                            text_widget(
+                              widget.isRequestFriendScreen
+                                  ? "Requests"
+                                  : "Friends",
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                            ),
                           ],
                         ),
                         SizedBox(height: 3.h),
                         textFieldWithPrefixSuffuxIconAndHintText(
                           "Search ",
-                          // controller: _.password,
                           fillColor: Colors.white,
                           isPrefix: true,
                           prefixIcon: "assets/nav/s1.png",
@@ -71,8 +92,13 @@ class AllFriends extends StatelessWidget {
                         SizedBox(height: 3.h),
                         Row(
                           children: [
-                            text_widget("Friends",
-                                fontSize: 16.5.sp, fontWeight: FontWeight.w500),
+                            text_widget(
+                              widget.isRequestFriendScreen
+                                  ? "Requests"
+                                  : "Friends",
+                              fontSize: 16.5.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
                             SizedBox(width: 3.w),
                             Container(
                               decoration: BoxDecoration(
@@ -81,9 +107,11 @@ class AllFriends extends StatelessWidget {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 18.0, vertical: 6),
+                                  horizontal: 18.0,
+                                  vertical: 6,
+                                ),
                                 child: text_widget(
-                                  "200",
+                                  "${friends.length}",
                                   color: Colors.white,
                                   fontSize: 15.sp,
                                 ),
@@ -93,38 +121,70 @@ class AllFriends extends StatelessWidget {
                         ),
                         SizedBox(height: 3.h),
                         ...List.generate(
-                          6,
-                          (index) => InkWell(
-                            onTap: () {
-                              Get.to(FriendView(
-                                  isFriend: false,
-                                  isChat: true,
-                                  user: UserRepo().currentUser));
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12)),
+                          friends.length,
+                          (index) => FutureBuilder<UserModel?>(
+                            future: UserRepo()
+                                .fetchUser(profileId: friends[index].senderId),
+                            builder: (context, snapshot) {
+                              final UserModel? user = snapshot.data;
+
+                              return InkWell(
+                                onTap: () {
+                                  if (user != null)
+                                    Get.to(
+                                      FriendView(
+                                        isFriend: false,
+                                        isChat: true,
+                                        user: user,
+                                        friend: friends[index],
+                                      ),
+                                    );
+                                },
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4.0),
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundColor: MyColors.primary,
-                                      radius: 2.4.h,
-                                      backgroundImage:
-                                          AssetImage("assets/images/girl.png"),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                  ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    title: text_widget("Jessica Parker",
-                                        fontSize: 16.5.sp,
-                                        fontWeight: FontWeight.w500),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0,
+                                      ),
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: MyColors.primary,
+                                          radius: 2.4.h,
+                                          backgroundImage: NetworkImage(
+                                            user?.avatar ?? "",
+                                          ),
+                                        ),
+                                        title: text_widget(
+                                          user?.name ?? "---",
+                                          fontSize: 16.5.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        trailing: Visibility(
+                                          visible:
+                                              widget.isRequestFriendScreen &&
+                                                  friends[index].type ==
+                                                      FriendType.request,
+                                          child: IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.check,
+                                              color: MyColors.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
                         )
                       ],
