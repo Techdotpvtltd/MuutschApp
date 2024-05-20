@@ -57,6 +57,10 @@ class _FriendViewState extends State<FriendView> {
     bloc.add(FriendEventAccept(friendId: friend!.uuid));
   }
 
+  void triggerRemoveFriendEvent(FriendBloc bloc) {
+    bloc.add(FriendEventRemove(friendId: friend!.uuid));
+  }
+
   @override
   void initState() {
     triggerGetFriendEvent(context.read<FriendBloc>());
@@ -67,6 +71,30 @@ class _FriendViewState extends State<FriendView> {
   Widget build(BuildContext context) {
     return BlocListener<FriendBloc, FriendState>(
       listener: (context, state) {
+        if (state is FriendStateDataUpdated &&
+            state.friend.uuid == friend?.uuid) {
+          setState(() {
+            friend = state.friend;
+          });
+        }
+
+        if (state is FriendStateDataRemoved &&
+            state.friend.uuid == friend?.uuid) {
+          setState(() {
+            friend = null;
+          });
+        }
+        if (state is FriendStateRemoving ||
+            state is FriendStateRemoveFailure ||
+            state is FriendStateRemoved) {
+          setState(() {
+            isRejectedRequest = state.isLoading;
+          });
+
+          if (state is FriendStateRemoveFailure) {
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+        }
         if (state is FriendStateAcceptFailure ||
             state is FriendStateAccepted ||
             state is FriendStateAccepting) {
@@ -78,7 +106,8 @@ class _FriendViewState extends State<FriendView> {
             CustomDialogs().errorBox(message: state.exception.message);
           }
 
-          if (state is FriendStateAccepted) {
+          if (state is FriendStateAccepted &&
+              state.frined.uuid == friend?.uuid) {
             setState(() {
               friend = state.frined;
             });
@@ -342,8 +371,10 @@ class _FriendViewState extends State<FriendView> {
                                       "Decline Request",
                                       font: 15.6,
                                       txtColor: MyColors.primary,
+                                      isLoading: isRejectedRequest,
                                       ontap: () {
-                                        // _.loginUser();
+                                        triggerRemoveFriendEvent(
+                                            context.read<FriendBloc>());
                                       },
                                       width: 90,
                                       height: 6.6,
@@ -387,8 +418,12 @@ class _FriendViewState extends State<FriendView> {
                                 : gradientButton(
                                     "Withdraw Request",
                                     font: 15.6,
+                                    isLoading: isRejectedRequest,
                                     txtColor: MyColors.primary,
-                                    ontap: () {},
+                                    ontap: () {
+                                      triggerRemoveFriendEvent(
+                                          context.read<FriendBloc>());
+                                    },
                                     width: 90,
                                     height: 6.6,
                                     isColor: false,

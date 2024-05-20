@@ -171,7 +171,9 @@ class FirestoreService {
   Future<void> fetchWithListener({
     required String collection,
     required Function(dynamic) onError,
-    required Function(Map<String, dynamic>) onData,
+    required Function(Map<String, dynamic>) onAdded,
+    required Function(Map<String, dynamic>) onRemoved,
+    required Function(Map<String, dynamic>) onUpdated,
     required VoidCallback onAllDataGet,
     required Function(
             StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? listener)
@@ -190,7 +192,17 @@ class FirestoreService {
         for (final change in querySnapshot.docChanges) {
           final Map<String, dynamic>? data = change.doc.data();
           if (data != null) {
-            onData(data);
+            if (change.type.name == "removed") {
+              onRemoved(data);
+            }
+
+            if (change.type.name == "added") {
+              onAdded(data);
+            }
+
+            if (change.type.name == "modified") {
+              onUpdated(data);
+            }
           }
         }
         onAllDataGet();

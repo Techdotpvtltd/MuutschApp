@@ -43,7 +43,9 @@ class FriendRepo {
 
   /// Fetch All Friends Request
   Future<void> fetchFriends({
-    required Function(FriendModel) onUpdateData,
+    required Function(FriendModel) onAddedData,
+    required Function(FriendModel) onUpdated,
+    required Function(FriendModel) onDeleted,
     required Function(AppException) onError,
     required VoidCallback onAllGet,
   }) async {
@@ -54,9 +56,17 @@ class FriendRepo {
         log("[debug FetchFriends] $e");
         onError(throwAppException(e: e));
       },
-      onData: (data) {
+      onAdded: (data) {
         final FriendModel friend = FriendModel.fromMap(data);
-        onUpdateData(friend);
+        onAddedData(friend);
+      },
+      onUpdated: (data) {
+        final FriendModel friend = FriendModel.fromMap(data);
+        onUpdated(friend);
+      },
+      onRemoved: (data) {
+        final FriendModel friend = FriendModel.fromMap(data);
+        onDeleted(friend);
       },
       onAllDataGet: onAllGet,
       onCompleted: (listener) {},
@@ -84,6 +94,17 @@ class FriendRepo {
       );
     } catch (e) {
       log("[debug acceptFriendRequest] $e");
+      throw throwAppException(e: e);
+    }
+  }
+
+  /// Reject or remove Friend
+  Future<void> deleteFriend({required String friendId}) async {
+    try {
+      await FirestoreService()
+          .delete(collection: FIREBASE_COLLECTION_FRIENDS, docId: friendId);
+    } catch (e) {
+      log("[debug deleteFriend] $e");
       throw throwAppException(e: e);
     }
   }

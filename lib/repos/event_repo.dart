@@ -192,10 +192,12 @@ class EventRepo {
       onError: (e) {
         onError(throwAppException(e: e));
       },
-      onData: (data) {
+      onAdded: (data) {
         final EventModel event = EventModel.fromMap(data);
         onEventRecieved(event);
       },
+      onRemoved: (p0) {},
+      onUpdated: (p0) {},
       onAllDataGet: () {
         onAllGet();
       },
