@@ -27,3 +27,24 @@ class FriendEventGet extends FriendEvent {
 
   FriendEventGet({required this.friendId});
 }
+
+// ===========================Accept Friend Request Event================================
+class FriendEventAccept extends FriendEvent {
+  final String friendId;
+
+  FriendEventAccept({required this.friendId});
+}
+
+// ===========================Reject Friend Request Event================================
+class FriendEventReject extends FriendEvent {
+  final String friendId;
+
+  FriendEventReject({required this.friendId});
+}
+
+// ===========================Remove Friend Request Event================================
+class FriendEventRemove extends FriendEvent {
+  final String friendId;
+
+  FriendEventRemove({required this.friendId});
+}

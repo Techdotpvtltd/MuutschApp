@@ -114,4 +114,4 @@ class FriendModel {
   }
 }
 
-enum FriendType { request, firend }
+enum FriendType { request, friend }

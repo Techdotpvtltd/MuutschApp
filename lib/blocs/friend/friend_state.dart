@@ -61,3 +61,47 @@ class FriendStateGot extends FriendState {
 
   FriendStateGot({required this.friend});
 }
+
+// ===========================Friend States================================
+
+class FriendStateAccepting extends FriendState {
+  FriendStateAccepting({super.isLoading = true});
+}
+
+class FriendStateAcceptFailure extends FriendState {
+  final AppException exception;
+
+  FriendStateAcceptFailure({required this.exception});
+}
+
+class FriendStateAccepted extends FriendState {
+  final FriendModel frined;
+
+  FriendStateAccepted({required this.frined});
+}
+
+// ===========================Removing or Reject Friend States================================
+
+class FriendStateRejecting extends FriendState {
+  FriendStateRejecting({super.isLoading = true});
+}
+
+class FriendStateRejectFailure extends FriendState {
+  final AppException exception;
+
+  FriendStateRejectFailure({required this.exception});
+}
+
+class FriendStateRejected extends FriendState {}
+
+class FriendStateRemoving extends FriendState {
+  FriendStateRemoving({super.isLoading = true});
+}
+
+class FriendStateRemoveFailure extends FriendState {
+  final AppException exception;
+
+  FriendStateRemoveFailure({required this.exception});
+}
+
+class FriendStateRemoved extends FriendState {}

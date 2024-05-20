@@ -41,10 +41,12 @@ class FriendRepo {
     }
   }
 
-  Future<void> fetchFriends(
-      {required Function(FriendModel) onUpdateData,
-      required Function(AppException) onError,
-      required VoidCallback onAllGet}) async {
+  /// Fetch All Friends Request
+  Future<void> fetchFriends({
+    required Function(FriendModel) onUpdateData,
+    required Function(AppException) onError,
+    required VoidCallback onAllGet,
+  }) async {
     final String userId = UserRepo().currentUser.uid;
     await FirestoreService().fetchWithListener(
       collection: FIREBASE_COLLECTION_FRIENDS,
@@ -65,5 +67,24 @@ class FriendRepo {
             type: QueryType.arrayContainsAny),
       ],
     );
+  }
+
+  /// Accept Friend Request
+  Future<void> acceptFriendRequest({
+    required String friendId,
+  }) async {
+    try {
+      await FirestoreService().updateWithDocId(
+        path: FIREBASE_COLLECTION_FRIENDS,
+        docId: friendId,
+        data: {
+          'type': FriendType.friend.name.toLowerCase(),
+          'requestAcceptTime': DateTime.now(),
+        },
+      );
+    } catch (e) {
+      log("[debug acceptFriendRequest] $e");
+      throw throwAppException(e: e);
+    }
   }
 }

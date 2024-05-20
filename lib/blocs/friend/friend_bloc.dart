@@ -51,12 +51,11 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
     /// OnPendingRequest Fetch
     on<FriendEventFetchPendingRequests>(
       (event, emit) {
-        final List<FriendModel> filteredFriends =
-            List<FriendModel>.from(friends)
-                .where((element) =>
-                    element.recieverId == userId &&
-                    element.type == FriendType.request)
-                .toList();
+        final List<FriendModel> filteredFriends = friends
+            .where((element) =>
+                element.recieverId == userId &&
+                element.type == FriendType.request)
+            .toList();
         emit(FriendStateFetchedPendingRequests(friends: filteredFriends));
       },
     );
@@ -69,7 +68,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
         await FriendRepo().fetchFriends(
           onUpdateData: (friend) {
             final int index =
-                friends.indexWhere((element) => element.uuid == friend);
+                friends.indexWhere((element) => element.uuid == friend.uuid);
             if (index > -1) {
               friends[index] = friend; // Updating
             } else {
@@ -77,16 +76,31 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
             }
             emit(FriendStateFetched());
 
-            if (friend.type == FriendType.request &&
-                friend.recieverId == userId) {
-              add(FriendEventFetchPendingRequests());
-            }
+            add(FriendEventFetchPendingRequests());
           },
           onError: (e) {
             emit(FriendStateFetchedAll());
           },
           onAllGet: () {},
         );
+      },
+    );
+
+    /// Accept Friend Request
+    on<FriendEventAccept>(
+      (event, emit) async {
+        try {
+          emit(FriendStateAccepting());
+          await FriendRepo().acceptFriendRequest(friendId: event.friendId);
+          final int index =
+              friends.indexWhere((element) => element.uuid == event.friendId);
+          if (index > -1) {
+            friends[index] = friends[index].copyWith(type: FriendType.friend);
+            emit(FriendStateAccepted(frined: friends[index]));
+          }
+        } on AppException catch (e) {
+          emit(FriendStateAcceptFailure(exception: e));
+        }
       },
     );
   }

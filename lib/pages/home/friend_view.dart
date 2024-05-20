@@ -41,6 +41,8 @@ class FriendView extends StatefulWidget {
 
 class _FriendViewState extends State<FriendView> {
   bool isSendingRequest = false;
+  bool isAcceptingRequest = false;
+  bool isRejectedRequest = false;
   late FriendModel? friend = widget.friend;
 
   void triggerSendRequestEvent(FriendBloc bloc) {
@@ -49,6 +51,10 @@ class _FriendViewState extends State<FriendView> {
 
   void triggerGetFriendEvent(FriendBloc bloc) {
     bloc.add(FriendEventGet(friendId: widget.user.uid));
+  }
+
+  void triggerAcceptFriendEvent(FriendBloc bloc) {
+    bloc.add(FriendEventAccept(friendId: friend!.uuid));
   }
 
   @override
@@ -61,6 +67,23 @@ class _FriendViewState extends State<FriendView> {
   Widget build(BuildContext context) {
     return BlocListener<FriendBloc, FriendState>(
       listener: (context, state) {
+        if (state is FriendStateAcceptFailure ||
+            state is FriendStateAccepted ||
+            state is FriendStateAccepting) {
+          setState(() {
+            isAcceptingRequest = state.isLoading;
+          });
+
+          if (state is FriendStateAcceptFailure) {
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+
+          if (state is FriendStateAccepted) {
+            setState(() {
+              friend = state.frined;
+            });
+          }
+        }
         if (state is FriendStateGot) {
           setState(() {
             friend = state.friend;
@@ -78,6 +101,9 @@ class _FriendViewState extends State<FriendView> {
           }
 
           if (state is FriendStateSent) {
+            setState(() {
+              friend = state.friend;
+            });
             CustomDialogs()
                 .successBox(message: "Your request sent successfully.");
           }
@@ -165,9 +191,10 @@ class _FriendViewState extends State<FriendView> {
                           ),
                         if ((widget.user.numberOfChildren ?? 0) > 3)
                           text_widget(
-                              "+${(widget.user.numberOfChildren ?? 0) - 3}",
-                              fontSize: 15.6.sp,
-                              fontWeight: FontWeight.w300),
+                            "+${(widget.user.numberOfChildren ?? 0) - 3}",
+                            fontSize: 15.6.sp,
+                            fontWeight: FontWeight.w300,
+                          ),
                         SizedBox(width: 1.w),
                         InkWell(
                           onTap: () {
@@ -243,7 +270,7 @@ class _FriendViewState extends State<FriendView> {
                     ),
                     SizedBox(height: 0.5.h),
                     ReadMoreText(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tellus in pretium dignissim Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tellus in pretium dignissim Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tellus in pretium dignissim ",
+                      widget.user.bio ?? "",
                       trimLines: 3,
                       style: GoogleFonts.poppins(
                           color: Color(0xff000000).withOpacity(0.46),
@@ -305,31 +332,35 @@ class _FriendViewState extends State<FriendView> {
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    widget.friend != null
-                        ? widget.friend?.senderId !=
-                                    UserRepo().currentUser.uid &&
-                                widget.friend?.type == FriendType.request
+                    friend != null
+                        ? friend?.senderId != UserRepo().currentUser.uid &&
+                                friend?.type == FriendType.request
                             ? Row(
                                 children: [
                                   Expanded(
-                                    child: gradientButton("Decline Request",
-                                        font: 15.6,
-                                        txtColor: MyColors.primary, ontap: () {
-                                      // _.loginUser();
-                                    },
-                                        width: 90,
-                                        height: 6.6,
-                                        isColor: false,
-                                        clr: MyColors.primary),
+                                    child: gradientButton(
+                                      "Decline Request",
+                                      font: 15.6,
+                                      txtColor: MyColors.primary,
+                                      ontap: () {
+                                        // _.loginUser();
+                                      },
+                                      width: 90,
+                                      height: 6.6,
+                                      isColor: false,
+                                      clr: MyColors.primary,
+                                    ),
                                   ),
                                   SizedBox(width: 2.w),
                                   Expanded(
                                     child: gradientButton(
                                       "Accept Request",
                                       font: 15.6,
+                                      isLoading: isAcceptingRequest,
                                       txtColor: MyColors.white,
                                       ontap: () {
-                                        // _.loginUser();
+                                        triggerAcceptFriendEvent(
+                                            context.read<FriendBloc>());
                                       },
                                       width: 90,
                                       height: 6.6,
@@ -339,37 +370,46 @@ class _FriendViewState extends State<FriendView> {
                                   ),
                                 ],
                               )
-                            : gradientButton(
-                                isSendingRequest
-                                    ? "Sending Request..."
-                                    : "Send Friend Request",
-                                font: 17,
-                                isLoading: isSendingRequest,
-                                txtColor: MyColors.white,
-                                ontap: () {
-                                  triggerSendRequestEvent(
-                                      context.read<FriendBloc>());
-                                },
-                                width: 90,
-                                height: 6.6,
-                                isColor: true,
-                                clr: MyColors.primary,
-                              )
-                        : widget.friend?.type == FriendType.firend
-                            ? gradientButton(
-                                "Chat",
-                                font: 17,
-                                txtColor: MyColors.white,
-                                ontap: () {
-                                  Get.to(UserChatPage(IsSupport: false));
-                                  // _.loginUser();
-                                },
-                                width: 90,
-                                height: 6.6,
-                                isColor: true,
-                                clr: MyColors.primary,
-                              )
-                            : SizedBox(),
+                            : friend?.type == FriendType.friend
+                                ? gradientButton(
+                                    "Chat",
+                                    font: 17,
+                                    txtColor: MyColors.white,
+                                    ontap: () {
+                                      Get.to(UserChatPage(IsSupport: false));
+                                      // _.loginUser();
+                                    },
+                                    width: 90,
+                                    height: 6.6,
+                                    isColor: true,
+                                    clr: MyColors.primary,
+                                  )
+                                : gradientButton(
+                                    "Withdraw Request",
+                                    font: 15.6,
+                                    txtColor: MyColors.primary,
+                                    ontap: () {},
+                                    width: 90,
+                                    height: 6.6,
+                                    isColor: false,
+                                    clr: MyColors.primary,
+                                  )
+                        : gradientButton(
+                            isSendingRequest
+                                ? "Sending Request..."
+                                : "Send Friend Request",
+                            font: 17,
+                            isLoading: isSendingRequest,
+                            txtColor: MyColors.white,
+                            ontap: () {
+                              triggerSendRequestEvent(
+                                  context.read<FriendBloc>());
+                            },
+                            width: 90,
+                            height: 6.6,
+                            isColor: true,
+                            clr: MyColors.primary,
+                          ),
                     SizedBox(height: 10.h),
                   ],
                 ),

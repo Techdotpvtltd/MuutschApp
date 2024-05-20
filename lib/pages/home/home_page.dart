@@ -293,7 +293,9 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 25.0, vertical: 0),
+                            horizontal: 25.0,
+                            vertical: 0,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -351,24 +353,29 @@ class _HomePageState extends State<HomePage> {
                                               eventId: event.id,
                                               imageUrl: event.imageUrls.first,
                                               onClickEvent: () {
-                                                Get.to(EventView(
-                                                  event: event,
-                                                  joinsModel: joinsModel,
-                                                ));
+                                                Get.to(
+                                                  EventView(
+                                                    event: event,
+                                                    joinsModel: joinsModel,
+                                                  ),
+                                                );
                                               },
                                               onClickJoinButton: () {
                                                 triggerJoinEvent(
-                                                    context.read<EventBloc>(),
-                                                    event.id);
+                                                  context.read<EventBloc>(),
+                                                  event.id,
+                                                );
                                               },
                                               isVisibleJoinButton: joinsModel
-                                                      .where((element) =>
-                                                          element.joinerId ==
-                                                              UserRepo()
-                                                                  .currentUser
-                                                                  .uid &&
-                                                          element.eventId ==
-                                                              event.id)
+                                                      .where(
+                                                        (element) =>
+                                                            element.joinerId ==
+                                                                UserRepo()
+                                                                    .currentUser
+                                                                    .uid &&
+                                                            element.eventId ==
+                                                                event.id,
+                                                      )
                                                       .length <
                                                   1,
                                             ),
