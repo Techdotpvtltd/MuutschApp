@@ -7,6 +7,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../blocs/event/event_bloc.dart';
 import '../blocs/event/event_state.dart';
+import '../models/user_model.dart';
+import '../repos/user_repo.dart';
 import 'custom_network_image.dart';
 
 Widget eventWidget({
@@ -17,6 +19,7 @@ Widget eventWidget({
   required String eventId,
   required VoidCallback onClickEvent,
   required VoidCallback onClickJoinButton,
+  required String creator,
   bool isVisibleJoinButton = true,
 }) {
   return BlocListener<EventBloc, EventState>(
@@ -73,11 +76,16 @@ Widget eventWidget({
                       ],
                     ),
                     SizedBox(height: 0.8.h),
-                    text_widget(
-                      "Created by: Hammad Habib",
-                      fontSize: 12.2.sp,
-                      color: MyColors.primary,
-                      fontWeight: FontWeight.w600,
+                    FutureBuilder<UserModel?>(
+                      future: UserRepo().fetchUser(profileId: creator),
+                      builder: (context, snapshot) {
+                        return text_widget(
+                          "Created by: ${snapshot.data?.name ?? ""}",
+                          fontSize: 12.2.sp,
+                          color: MyColors.primary,
+                          fontWeight: FontWeight.w600,
+                        );
+                      },
                     )
                   ],
                 ),

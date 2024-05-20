@@ -397,6 +397,8 @@ class _AllEventsState extends State<AllEvents> {
                                                         )
                                                       : eventWidget(
                                                           isEvent: true,
+                                                          creator:
+                                                              event.createdBy,
                                                           isVisibleJoinButton: joinsModel
                                                                   .where((element) =>
                                                                       element.joinerId ==
@@ -415,10 +417,12 @@ class _AllEventsState extends State<AllEvents> {
                                                               "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
                                                           eventId: event.id,
                                                           onClickEvent: () {
-                                                            Get.to(EventView(
-                                                                event: event,
-                                                                joinsModel:
-                                                                    joinsModel));
+                                                            Get.to(
+                                                              EventView(
+                                                                  event: event,
+                                                                  joinsModel:
+                                                                      joinsModel),
+                                                            );
                                                           },
                                                           onClickJoinButton:
                                                               () {

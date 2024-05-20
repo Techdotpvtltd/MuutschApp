@@ -351,6 +351,7 @@ class _HomePageState extends State<HomePage> {
                                                   "${event.location.city}, ${event.location.country}",
                                               eventId: event.id,
                                               imageUrl: event.imageUrls.first,
+                                              creator: event.createdBy,
                                               onClickEvent: () {
                                                 Get.to(
                                                   EventView(

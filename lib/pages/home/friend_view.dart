@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/pages/home/chat/chat_page.dart';
-import 'package:musch/pages/home/filter_screen.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 

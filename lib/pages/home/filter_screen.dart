@@ -176,7 +176,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       ),
                       SizedBox(height: 2.h),
                       textFieldWithPrefixSuffuxIconAndHintText(
-                        "Search",
+                        "Search by event name",
                         controller: searchController,
                         fillColor: Colors.white,
                         mainTxtColor: Colors.black,
