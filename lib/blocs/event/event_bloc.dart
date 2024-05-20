@@ -15,6 +15,9 @@ import '../../models/event_model.dart';
 import '../../models/join_event_model.dart';
 import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
+import '../../services/notification_services/fire_notification.dart';
+import '../../services/notification_services/push_notification_services.dart';
+import '../../utils/constants/constants.dart';
 import '../../utils/helping_methods.dart';
 import '../../utils/utils.dart';
 import 'event_state.dart';
@@ -177,6 +180,11 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
             location: event.eventLocation,
           );
           emit(EventStateUpdated(updatedEvent: updatedEvent));
+          FireNotification().sendNotification(
+              title: event.title,
+              description: "Event has been updated",
+              topic: "$PUSH_NOTIFICATION_EVENT_UPDATES${event.eventId}",
+              type: 'events');
         } on AppException catch (e) {
           emit(EventStateUpdateFailure(exception: e));
         }
@@ -242,6 +250,14 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
           final JoinEventModel joinEvent =
               await EventRepo().joinEvent(eventId: event.eventId);
           emit(EventStateJoined(joinModel: joinEvent));
+          FireNotification().sendNotification(
+              title: events
+                  .firstWhere((element) => element.id == event.eventId)
+                  .title,
+              description: "${UserRepo().currentUser.name} joined your event.",
+              topic:
+                  "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).createdBy}",
+              type: 'events');
         } on AppException catch (e) {
           emit(EventStateJoinFailure(exception: e));
         }
@@ -256,6 +272,10 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
           final List<JoinEventModel> joinsModel =
               await EventRepo().fetchJoinEvent(eventId: event.eventId);
           emit(EventStateFetchJoined(joinData: joinsModel));
+          for (final JoinEventModel event in joinsModel) {
+            PushNotificationServices().subscribe(
+                forTopic: "$PUSH_NOTIFICATION_EVENT_UPDATES${event.eventId}");
+          }
         } on AppException catch (e) {
           emit(EventStateFetchJoinFailure(exception: e));
         }
