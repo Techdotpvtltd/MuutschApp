@@ -182,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(height: 2.5.h),
                             textFieldWithPrefixSuffuxIconAndHintText(
-                              "Search products or services",
+                              "Search Events & Friends",
                               // controller: _.password,
                               fillColor: Colors.white,
                               mainTxtColor: Colors.black,

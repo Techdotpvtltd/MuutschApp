@@ -225,28 +225,28 @@ class _FriendViewState extends State<FriendView> {
                             fontWeight: FontWeight.w300,
                           ),
                         SizedBox(width: 1.w),
-                        InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              barrierColor: MyColors.primary.withOpacity(0.88),
-                              builder: (context) => ChildDetails(),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: MyColors.primary,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: text_widget(
-                              "View Detail",
-                              color: Colors.white,
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                        ),
+                        // InkWell(
+                        //   onTap: () {
+                        //     showDialog(
+                        //       context: context,
+                        //       barrierColor: MyColors.primary.withOpacity(0.88),
+                        //       builder: (context) => ChildDetails(),
+                        //     );
+                        //   },
+                        //   child: Container(
+                        //     padding: EdgeInsets.symmetric(
+                        //         horizontal: 16, vertical: 4),
+                        //     decoration: BoxDecoration(
+                        //       color: MyColors.primary,
+                        //       borderRadius: BorderRadius.circular(50),
+                        //     ),
+                        //     child: text_widget(
+                        //       "View Detail",
+                        //       color: Colors.white,
+                        //       fontSize: 13.sp,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     SizedBox(height: 2.5.h),
