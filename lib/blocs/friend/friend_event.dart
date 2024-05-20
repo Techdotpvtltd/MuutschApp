@@ -21,6 +21,8 @@ class FriendEventFetch extends FriendEvent {}
 /// FetchPendingRequest Event
 class FriendEventFetchPendingRequests extends FriendEvent {}
 
+class FriendEventFetchFriends extends FriendEvent {}
+
 /// Get Friend Info
 class FriendEventGet extends FriendEvent {
   final String friendId;

@@ -67,6 +67,12 @@ class FriendStateFetchedPendingRequests extends FriendState {
   FriendStateFetchedPendingRequests({required this.friends});
 }
 
+class FriendStateFetchedFriends extends FriendState {
+  final List<FriendModel> friends;
+
+  FriendStateFetchedFriends({required this.friends});
+}
+
 // ===========================Get Friend State================================
 class FriendStateGot extends FriendState {
   final FriendModel friend;

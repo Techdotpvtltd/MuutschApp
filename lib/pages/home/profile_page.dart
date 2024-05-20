@@ -213,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       InkWell(
                         onTap: () {
                           Get.to(
-                            AllFriends(friends: []),
+                            AllFriends(),
                           );
                         },
                         child: Container(

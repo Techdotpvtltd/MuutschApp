@@ -216,7 +216,6 @@ class _HomePageState extends State<HomePage> {
                                   onTap: () {
                                     Get.to(
                                       AllFriends(
-                                        friends: friends,
                                         isRequestFriendScreen: true,
                                       ),
                                     );

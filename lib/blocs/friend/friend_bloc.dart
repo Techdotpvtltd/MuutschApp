@@ -60,6 +60,16 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       },
     );
 
+    /// OnAccepted Frined Event Fetch
+    on<FriendEventFetchFriends>(
+      (event, emit) {
+        final List<FriendModel> filteredFriends = friends
+            .where((element) => element.type == FriendType.friend)
+            .toList();
+        emit(FriendStateFetchedFriends(friends: filteredFriends));
+      },
+    );
+
     /// OnFetch All Friends Event
     on<FriendEventFetch>(
       (event, emit) async {
