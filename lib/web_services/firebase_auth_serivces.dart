@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 
 class FirebaseAuthService {
   late FirebaseAuth _auth;
@@ -13,7 +14,9 @@ class FirebaseAuthService {
   }) async {
     final user = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
-    await _auth.currentUser?.sendEmailVerification();
+    if (kReleaseMode) {
+      await _auth.currentUser?.sendEmailVerification();
+    }
     return user;
   }
 

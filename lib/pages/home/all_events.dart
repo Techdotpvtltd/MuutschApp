@@ -17,6 +17,7 @@ import '../../blocs/event/events_event.dart';
 import '../../models/event_model.dart';
 import '../../models/join_event_model.dart';
 import '../../models/location_model.dart';
+import '../../models/user_model.dart';
 import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
@@ -350,16 +351,25 @@ class _AllEventsState extends State<AllEvents> {
                                                               SizedBox(
                                                                   height:
                                                                       0.8.h),
-                                                              text_widget(
-                                                                "Created by: Hammad Habib",
-                                                                fontSize:
-                                                                    12.2.sp,
-                                                                color: MyColors
-                                                                    .primary,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
+                                                              FutureBuilder<
+                                                                      UserModel?>(
+                                                                  future: UserRepo().fetchUser(
+                                                                      profileId:
+                                                                          event
+                                                                              .createdBy),
+                                                                  builder: (context,
+                                                                      snapshot) {
+                                                                    return text_widget(
+                                                                      "Created by: ${snapshot.data?.name ?? ""}",
+                                                                      fontSize:
+                                                                          12.2.sp,
+                                                                      color: MyColors
+                                                                          .primary,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    );
+                                                                  }),
                                                               SizedBox(
                                                                   height:
                                                                       1.4.h),

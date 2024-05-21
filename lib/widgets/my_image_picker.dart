@@ -75,7 +75,7 @@ class MyImagePicker {
       context: navKey.currentContext!,
       builder: (context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.28,
+          height: MediaQuery.of(context).size.height * 0.30,
           width: MediaQuery.of(context).size.width,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 34, horizontal: 20),

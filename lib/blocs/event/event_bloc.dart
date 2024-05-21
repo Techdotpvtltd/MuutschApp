@@ -221,6 +221,30 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
               events.sort((a, b) => a.distance.compareTo(b.distance));
               emit(EventStateFetched(events: events));
             },
+            onEventUpdated: (event) {
+              final int index =
+                  events.indexWhere((element) => element.id == event.id);
+              if (index > -1) {
+                events[index] = event;
+
+                event.distance = calculateDistance(
+                    aLat: position?.latitude ?? 0,
+                    aLong: position?.longitude ?? 0,
+                    bLat: event.location.latitude,
+                    bLong: event.location.longitude);
+
+                events.sort((a, b) => a.distance.compareTo(b.distance));
+                emit(EventStateFetched(events: events));
+              }
+            },
+            onEventDeleted: (event) {
+              final int index =
+                  events.indexWhere((element) => element.id == event.id);
+              if (index > -1) {
+                events.removeAt(index);
+                emit(EventStateFetched(events: events));
+              }
+            },
             onAllGet: () {
               emit(EventStateFetchedAll(events: events));
             },

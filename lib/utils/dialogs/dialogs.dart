@@ -40,7 +40,7 @@ class CustomDialogs {
       builder: (context) => AlertDialog(
         surfaceTintColor: Colors.transparent,
         content: Container(
-          height: SCREEN_HEIGHT * 0.40,
+          height: SCREEN_HEIGHT * 0.50,
           width: SCREEN_WIDTH,
           decoration: const BoxDecoration(
             color: Colors.white,

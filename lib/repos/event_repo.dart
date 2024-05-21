@@ -183,6 +183,8 @@ class EventRepo {
   Future<void> fetchAllEvents({
     required Function(AppException) onError,
     required Function(EventModel) onEventRecieved,
+    required Function(EventModel) onEventUpdated,
+    required Function(EventModel) onEventDeleted,
     required VoidCallback onAllGet,
   }) async {
     final String userId = UserRepo().currentUser.uid;
@@ -196,8 +198,14 @@ class EventRepo {
         final EventModel event = EventModel.fromMap(data);
         onEventRecieved(event);
       },
-      onRemoved: (p0) {},
-      onUpdated: (p0) {},
+      onRemoved: (data) {
+        final EventModel event = EventModel.fromMap(data);
+        onEventDeleted(event);
+      },
+      onUpdated: (data) {
+        final EventModel event = EventModel.fromMap(data);
+        onEventUpdated(event);
+      },
       onAllDataGet: () {
         onAllGet();
       },
