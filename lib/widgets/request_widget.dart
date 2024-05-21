@@ -25,11 +25,17 @@ Widget requestWidget({required UserModel user, required FriendModel friend}) {
       height: 30.h,
       width: 46.w,
       decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(user.avatar),
-            fit: BoxFit.cover,
+        image: DecorationImage(
+          colorFilter: ColorFilter.mode(
+            Colors.black.withOpacity(0.07),
+            BlendMode.srcOver,
           ),
-          borderRadius: BorderRadius.circular(16)),
+          image: NetworkImage(user.avatar),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        color: MyColors.primary3,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
