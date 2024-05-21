@@ -28,6 +28,7 @@ class MyEvents extends StatefulWidget {
 class _MyEventsState extends State<MyEvents> {
   bool isLoading = true;
   List<EventModel> events = [];
+  List<EventModel> filteredEvents = [];
 
   void triggerFetchOwnEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchOwn());
@@ -52,12 +53,14 @@ class _MyEventsState extends State<MyEvents> {
               events[index] = state.updatedEvent;
             });
           }
+          filteredEvents = events;
         }
 
         /// Created Event States
         if (state is EventStateCreated) {
           setState(() {
             events.insert(0, state.event);
+            filteredEvents = events;
           });
         }
 
@@ -65,6 +68,7 @@ class _MyEventsState extends State<MyEvents> {
         if (state is EventStateDeleted) {
           setState(() {
             events.removeWhere((element) => element.id == state.eventId);
+            filteredEvents = events;
           });
         }
 
@@ -83,6 +87,7 @@ class _MyEventsState extends State<MyEvents> {
           if (state is EventStateOwnFetched) {
             setState(() {
               events = state.events;
+              filteredEvents = events;
             });
           }
         }
@@ -133,14 +138,18 @@ class _MyEventsState extends State<MyEvents> {
                       Row(
                         children: [
                           InkWell(
-                              onTap: () {
-                                Get.back();
-                              },
-                              child: Icon(Remix.arrow_left_s_line,
-                                  color: Colors.white, size: 4.h)),
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Icon(
+                              Remix.arrow_left_s_line,
+                              color: Colors.white,
+                              size: 4.h,
+                            ),
+                          ),
                           SizedBox(width: 2.w),
                           text_widget(
-                            "All Events",
+                            "My Events",
                             color: Colors.white,
                             fontSize: 18.sp,
                           ),
@@ -154,6 +163,19 @@ class _MyEventsState extends State<MyEvents> {
                         prefixIcon: "assets/nav/s1.png",
                         mainTxtColor: Colors.black,
                         radius: 12,
+                        onSubmitted: (search) {
+                          setState(() {
+                            if (search == "") {
+                              filteredEvents = events;
+                            } else {
+                              filteredEvents = events
+                                  .where((element) => element.title
+                                      .toLowerCase()
+                                      .contains(search.toLowerCase()))
+                                  .toList();
+                            }
+                          });
+                        },
                         bColor: Colors.transparent,
                       ),
                       Expanded(
@@ -164,15 +186,15 @@ class _MyEventsState extends State<MyEvents> {
                                 ),
                               )
                             : Center(
-                                child: events.isEmpty
+                                child: filteredEvents.isEmpty
                                     ? Text("No Events.")
                                     : ListView.builder(
-                                        itemCount: events.length,
+                                        itemCount: filteredEvents.length,
                                         padding: EdgeInsets.only(
                                             top: 20, bottom: 60),
                                         itemBuilder: (context, index) {
                                           final EventModel event =
-                                              events[index];
+                                              filteredEvents[index];
 
                                           return InkWell(
                                             onTap: () {
@@ -209,7 +231,6 @@ class _MyEventsState extends State<MyEvents> {
                                                           SCREEN_HEIGHT * 0.2,
                                                       width: SCREEN_WIDTH,
                                                       child: CustomNetworkImage(
-                                                        // ignore: sdk_version_since
                                                         imageUrl: event
                                                                 .imageUrls
                                                                 // ignore: sdk_version_since

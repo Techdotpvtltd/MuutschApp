@@ -25,6 +25,8 @@ class AllFriends extends StatefulWidget {
 
 class _AllFriendsState extends State<AllFriends> {
   List<FriendModel> friends = [];
+  List<FriendModel> filteredFriends = [];
+  List<UserModel> filteredUsers = [];
 
   void triggerFetchFriends(FriendBloc bloc) {
     bloc.add(widget.isRequestFriendScreen
@@ -49,11 +51,13 @@ class _AllFriendsState extends State<AllFriends> {
         if (state is FriendStateFetchedFriends) {
           setState(() {
             friends = state.friends;
+            filteredFriends = state.friends;
           });
         }
         if (state is FriendStateFetchedPendingRequests) {
           setState(() {
             friends = state.friends;
+            filteredFriends = state.friends;
           });
         }
       },
@@ -119,6 +123,27 @@ class _AllFriendsState extends State<AllFriends> {
                             prefixIcon: "assets/nav/s1.png",
                             mainTxtColor: Colors.black,
                             radius: 12,
+                            onSubmitted: (search) {
+                              setState(() {
+                                if (search == "") {
+                                  filteredFriends = friends;
+                                } else {
+                                  final users = filteredUsers.where((element) =>
+                                      element.name
+                                          .toLowerCase()
+                                          .contains(search.toLowerCase()));
+                                  if (users.isEmpty) {
+                                    filteredFriends = [];
+                                  }
+                                  for (final user in users) {
+                                    filteredFriends = friends
+                                        .where((element) => element.participants
+                                            .contains(user.uid))
+                                        .toList();
+                                  }
+                                }
+                              });
+                            },
                             bColor: Colors.transparent,
                           ),
                           SizedBox(height: 3.h),
@@ -143,7 +168,7 @@ class _AllFriendsState extends State<AllFriends> {
                                     vertical: 6,
                                   ),
                                   child: text_widget(
-                                    "${friends.length}",
+                                    "${filteredFriends.length}",
                                     color: Colors.white,
                                     fontSize: 15.sp,
                                   ),
@@ -152,20 +177,22 @@ class _AllFriendsState extends State<AllFriends> {
                             ],
                           ),
                           SizedBox(height: 3.h),
-                          if (friends.isEmpty)
+                          if (filteredFriends.isEmpty)
                             Center(
                               child: Text(
                                   "No ${widget.isRequestFriendScreen ? "Friend Requests" : "Friends"} found."),
                             ),
-                          if (friends.isNotEmpty)
+                          if (filteredFriends.isNotEmpty)
                             ...List.generate(
-                              friends.length,
+                              filteredFriends.length,
                               (index) => FutureBuilder<UserModel?>(
                                 future: UserRepo().fetchUser(
-                                    profileId: friends[index].senderId),
+                                    profileId: filteredFriends[index].senderId),
                                 builder: (context, snapshot) {
                                   final UserModel? user = snapshot.data;
-
+                                  if (user != null) {
+                                    filteredUsers.add(user);
+                                  }
                                   return InkWell(
                                     onTap: () {
                                       if (user != null)
@@ -174,7 +201,7 @@ class _AllFriendsState extends State<AllFriends> {
                                             isFriend: false,
                                             isChat: true,
                                             user: user,
-                                            friend: friends[index],
+                                            friend: filteredFriends[index],
                                           ),
                                         );
                                     },
@@ -215,7 +242,8 @@ class _AllFriendsState extends State<AllFriends> {
                                                   triggerAcceptedFriendRequestEvent(
                                                       context
                                                           .read<FriendBloc>(),
-                                                      friends[index].uuid);
+                                                      filteredFriends[index]
+                                                          .uuid);
                                                 },
                                                 icon: Icon(
                                                   Icons.check,
