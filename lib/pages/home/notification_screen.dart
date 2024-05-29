@@ -8,6 +8,9 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../config/colors.dart';
+import '../../widgets/avatar_widget.dart';
+
 class NotificationScreen extends StatelessWidget {
   final bool isDrawer;
   const NotificationScreen({super.key, required this.isDrawer});
@@ -45,117 +48,74 @@ class NotificationScreen extends StatelessWidget {
             child: SafeArea(
               child: Scaffold(
                 backgroundColor: Colors.transparent,
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 18.0, vertical: 4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            InkWell(
-                                onTap: () {
-                                  Get.find<MyDrawerController>().closeDrawer();
-                                  Get.to(HomeDrawer());
-                                },
-                                child: Icon(Remix.arrow_left_s_line,
-                                    color: Colors.white, size: 4.h)),
-                            SizedBox(width: 2.w),
-                            text_widget("Notifications",
-                                color: Colors.white, fontSize: 18.sp),
-                          ],
+                body: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18.0, vertical: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Get.find<MyDrawerController>().closeDrawer();
+                              Get.to(HomeDrawer());
+                            },
+                            child: Icon(
+                              Remix.arrow_left_s_line,
+                              color: Colors.white,
+                              size: 4.h,
+                            ),
+                          ),
+                          SizedBox(width: 2.w),
+                          text_widget(
+                            "Notifications",
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 3.h),
+                      Expanded(
+                        child: ListView.builder(
+                          physics: ScrollPhysics(),
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ListTile(
+                                leading: SizedBox(
+                                  width: 55,
+                                  height: 55,
+                                  child: Center(
+                                    child: AvatarWidget(
+                                      backgroundColor: MyColors.primary,
+                                      placeholderChar: "A",
+                                      avatarUrl: "",
+                                    ),
+                                  ),
+                                ),
+                                title: text_widget(
+                                  'Password Update Successful',
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                subtitle: text_widget(
+                                    "Notify customers when a product is dropping",
+                                    fontSize: 13.sp,
+                                    color: Color(0xff8F8F8F)),
+                              ),
+                            );
+                          },
                         ),
-                        SizedBox(height: 6.h),
-                        Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: ListTile(
-                                leading: Image.asset("assets/icons/n1.png"),
-                                title: text_widget(
-                                  'Password Update Successful',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                subtitle: text_widget(
-                                    "Notify customers when a product is dropping",
-                                    fontSize: 13.sp,
-                                    color: Color(0xff8F8F8F)),
-                              ),
-                            )),
-                        SizedBox(height: 2.h),
-                        Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: ListTile(
-                                leading: Image.asset("assets/icons/n2.png"),
-                                title: text_widget(
-                                  'Account Setup Successful',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                subtitle: text_widget(
-                                    "Notify customers when a product is dropping",
-                                    fontSize: 13.sp,
-                                    color: Color(0xff8F8F8F)),
-                              ),
-                            )),
-                        SizedBox(height: 2.h),
-                        Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: ListTile(
-                                leading: Image.asset("assets/icons/n3.png"),
-                                title: text_widget(
-                                  'Debit Card added Successfully',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                subtitle: text_widget(
-                                    "Notify customers when a product is dropping",
-                                    fontSize: 13.sp,
-                                    color: Color(0xff8F8F8F)),
-                              ),
-                            )),
-                        SizedBox(height: 2.h),
-                        Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: ListTile(
-                                leading: Image.asset("assets/icons/n4.png"),
-                                title: text_widget(
-                                  'Password Update Successful',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                subtitle: text_widget(
-                                    "Notify customers when a product is dropping",
-                                    fontSize: 13.sp,
-                                    color: Color(0xff8F8F8F)),
-                              ),
-                            )),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
