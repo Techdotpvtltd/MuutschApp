@@ -392,93 +392,102 @@ class _FriendViewState extends State<FriendView> {
                               },
                             ),
                           ),
-                          SizedBox(height: 4.h),
-                          friend != null
-                              ? friend?.senderId !=
-                                          UserRepo().currentUser.uid &&
-                                      friend?.type == FriendType.request
-                                  ? Row(
-                                      children: [
-                                        Expanded(
-                                          child: gradientButton(
-                                            "Decline Request",
-                                            font: 15.6,
-                                            txtColor: MyColors.primary,
-                                            isLoading: isRejectedRequest,
-                                            ontap: () {
-                                              triggerRemoveFriendEvent(
-                                                  context.read<FriendBloc>());
-                                            },
-                                            width: 90,
-                                            height: 6.6,
-                                            isColor: false,
-                                            clr: MyColors.primary,
-                                          ),
-                                        ),
-                                        SizedBox(width: 2.w),
-                                        Expanded(
-                                          child: gradientButton(
-                                            "Accept Request",
-                                            font: 15.6,
-                                            isLoading: isAcceptingRequest,
-                                            txtColor: MyColors.white,
-                                            ontap: () {
-                                              triggerAcceptFriendEvent(
-                                                  context.read<FriendBloc>());
-                                            },
-                                            width: 90,
-                                            height: 6.6,
-                                            isColor: true,
-                                            clr: MyColors.primary,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : friend?.type == FriendType.friend
-                                      ? gradientButton(
-                                          "Chat",
-                                          font: 17,
-                                          txtColor: MyColors.white,
-                                          ontap: () {
-                                            Get.to(
-                                                UserChatPage(IsSupport: false));
-                                            // _.loginUser();
-                                          },
-                                          width: 90,
-                                          height: 6.6,
-                                          isColor: true,
-                                          clr: MyColors.primary,
-                                        )
-                                      : gradientButton(
-                                          "Withdraw Request",
-                                          font: 15.6,
-                                          isLoading: isRejectedRequest,
-                                          txtColor: MyColors.primary,
-                                          ontap: () {
-                                            triggerRemoveFriendEvent(
-                                                context.read<FriendBloc>());
-                                          },
-                                          width: 90,
-                                          height: 6.6,
-                                          isColor: false,
-                                          clr: MyColors.primary,
-                                        )
-                              : gradientButton(
-                                  isSendingRequest
-                                      ? "Sending Request..."
-                                      : "Send Friend Request",
-                                  font: 17,
-                                  isLoading: isSendingRequest,
-                                  txtColor: MyColors.white,
-                                  ontap: () {
-                                    triggerSendRequestEvent(
-                                        context.read<FriendBloc>());
-                                  },
-                                  width: 90,
-                                  height: 6.6,
-                                  isColor: true,
-                                  clr: MyColors.primary,
-                                ),
+                          if (user?.uid != UserRepo().currentUser.uid)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 4.h),
+                                friend != null
+                                    ? friend?.senderId !=
+                                                UserRepo().currentUser.uid &&
+                                            friend?.type == FriendType.request
+                                        ? Row(
+                                            children: [
+                                              Expanded(
+                                                child: gradientButton(
+                                                  "Decline Request",
+                                                  font: 15.6,
+                                                  txtColor: MyColors.primary,
+                                                  isLoading: isRejectedRequest,
+                                                  ontap: () {
+                                                    triggerRemoveFriendEvent(
+                                                        context.read<
+                                                            FriendBloc>());
+                                                  },
+                                                  width: 90,
+                                                  height: 6.6,
+                                                  isColor: false,
+                                                  clr: MyColors.primary,
+                                                ),
+                                              ),
+                                              SizedBox(width: 2.w),
+                                              Expanded(
+                                                child: gradientButton(
+                                                  "Accept Request",
+                                                  font: 15.6,
+                                                  isLoading: isAcceptingRequest,
+                                                  txtColor: MyColors.white,
+                                                  ontap: () {
+                                                    triggerAcceptFriendEvent(
+                                                        context.read<
+                                                            FriendBloc>());
+                                                  },
+                                                  width: 90,
+                                                  height: 6.6,
+                                                  isColor: true,
+                                                  clr: MyColors.primary,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : friend?.type == FriendType.friend
+                                            ? gradientButton(
+                                                "Chat",
+                                                font: 17,
+                                                txtColor: MyColors.white,
+                                                ontap: () {
+                                                  Get.to(UserChatPage(
+                                                      IsSupport: false));
+                                                  // _.loginUser();
+                                                },
+                                                width: 90,
+                                                height: 6.6,
+                                                isColor: true,
+                                                clr: MyColors.primary,
+                                              )
+                                            : gradientButton(
+                                                "Withdraw Request",
+                                                font: 15.6,
+                                                isLoading: isRejectedRequest,
+                                                txtColor: MyColors.primary,
+                                                ontap: () {
+                                                  triggerRemoveFriendEvent(
+                                                      context
+                                                          .read<FriendBloc>());
+                                                },
+                                                width: 90,
+                                                height: 6.6,
+                                                isColor: false,
+                                                clr: MyColors.primary,
+                                              )
+                                    : gradientButton(
+                                        isSendingRequest
+                                            ? "Sending Request..."
+                                            : "Send Friend Request",
+                                        font: 17,
+                                        isLoading: isSendingRequest,
+                                        txtColor: MyColors.white,
+                                        ontap: () {
+                                          triggerSendRequestEvent(
+                                              context.read<FriendBloc>());
+                                        },
+                                        width: 90,
+                                        height: 6.6,
+                                        isColor: true,
+                                        clr: MyColors.primary,
+                                      ),
+                              ],
+                            ),
                           SizedBox(height: 10.h),
                         ],
                       ),
