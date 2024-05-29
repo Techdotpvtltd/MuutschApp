@@ -13,7 +13,9 @@ import 'package:place_picker/uuid.dart';
 import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
 import '../../models/join_event_model.dart';
+import '../../models/notification_model.dart';
 import '../../repos/event_repo.dart';
+import '../../repos/notification_repo.dart';
 import '../../repos/user_repo.dart';
 import '../../services/notification_services/fire_notification.dart';
 import '../../services/notification_services/push_notification_services.dart';
@@ -282,6 +284,13 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
               topic:
                   "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).createdBy}",
               type: 'events');
+          NotificationRepo().save(
+              recieverId: events
+                  .firstWhere((element) => element.id == event.eventId)
+                  .createdBy,
+              title: "Event Joined",
+              message: " joined your event.",
+              type: NotificationType.event);
         } on AppException catch (e) {
           emit(EventStateJoinFailure(exception: e));
         }

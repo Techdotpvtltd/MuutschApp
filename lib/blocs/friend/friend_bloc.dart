@@ -11,7 +11,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/friend_model.dart';
+import '../../models/notification_model.dart';
 import '../../repos/friend_repo.dart';
+import '../../repos/notification_repo.dart';
 import '../../repos/user_repo.dart';
 import '../../services/notification_services/fire_notification.dart';
 import '../../utils/constants/constants.dart';
@@ -37,6 +39,11 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
               description:
                   "${UserRepo().currentUser.name} sends you a friend request.",
               topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST${friend.recieverId}");
+          NotificationRepo().save(
+              recieverId: event.recieverId,
+              title: "Friend Request",
+              message: " sends you a friend request.",
+              type: NotificationType.user);
         } on AppException catch (e) {
           emit(FriendStateSendFailure(exception: e));
         }
@@ -133,6 +140,12 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
                     "${UserRepo().currentUser.name} accepted your friend request.",
                 topic:
                     "$PUSH_NOTIFICATION_FRIEND_REQUEST${friends[index].senderId}");
+            NotificationRepo().save(
+                recieverId: friends[index].senderId,
+                title: "Friend Request Accepted",
+                message:
+                    " accepted your friend request. Now you can start chat.",
+                type: NotificationType.user);
           }
         } on AppException catch (e) {
           emit(FriendStateAcceptFailure(exception: e));
