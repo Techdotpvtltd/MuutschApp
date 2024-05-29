@@ -288,8 +288,9 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
               recieverId: events
                   .firstWhere((element) => element.id == event.eventId)
                   .createdBy,
-              title: "Event Joined",
-              message: " joined your event.",
+              title: "Event Update",
+              message:
+                  " joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
               type: NotificationType.event);
         } on AppException catch (e) {
           emit(EventStateJoinFailure(exception: e));

@@ -34,7 +34,7 @@ class NotificationRepo {
           QueryModel(
               field: "receiverId", value: userId, type: QueryType.isEqual),
           QueryModel(field: "", value: 20, type: QueryType.limit),
-          QueryModel(field: "createdAt", value: false, type: QueryType.orderBy),
+          QueryModel(field: "createdAt", value: true, type: QueryType.orderBy),
         ],
       );
 
@@ -56,7 +56,7 @@ class NotificationRepo {
       final NotificationModel model = NotificationModel(
           uuid: "",
           title: title,
-          message: "${user.name} $message",
+          message: "${user.name}$message",
           senderId: user.uid,
           receiverId: recieverId,
           type: type,

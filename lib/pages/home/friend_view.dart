@@ -441,19 +441,46 @@ class _FriendViewState extends State<FriendView> {
                                             ],
                                           )
                                         : friend?.type == FriendType.friend
-                                            ? gradientButton(
-                                                "Chat",
-                                                font: 17,
-                                                txtColor: MyColors.white,
-                                                ontap: () {
-                                                  Get.to(UserChatPage(
-                                                      IsSupport: false));
-                                                  // _.loginUser();
-                                                },
-                                                width: 90,
-                                                height: 6.6,
-                                                isColor: true,
-                                                clr: MyColors.primary,
+                                            ? Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: gradientButton(
+                                                      "Remove",
+                                                      font: 15.6,
+                                                      txtColor:
+                                                          MyColors.primary,
+                                                      isLoading:
+                                                          isRejectedRequest,
+                                                      ontap: () {
+                                                        triggerRemoveFriendEvent(
+                                                            context.read<
+                                                                FriendBloc>());
+                                                      },
+                                                      width: 90,
+                                                      height: 6.6,
+                                                      isColor: false,
+                                                      clr: MyColors.primary,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 2.w),
+                                                  Expanded(
+                                                    child: gradientButton(
+                                                      "Chat",
+                                                      font: 15.6,
+                                                      isLoading:
+                                                          isAcceptingRequest,
+                                                      txtColor: MyColors.white,
+                                                      ontap: () {
+                                                        Get.to(UserChatPage(
+                                                            IsSupport: false));
+                                                      },
+                                                      width: 90,
+                                                      height: 6.6,
+                                                      isColor: true,
+                                                      clr: MyColors.primary,
+                                                    ),
+                                                  ),
+                                                ],
                                               )
                                             : gradientButton(
                                                 "Withdraw Request",

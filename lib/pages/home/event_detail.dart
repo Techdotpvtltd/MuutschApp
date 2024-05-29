@@ -119,14 +119,15 @@ class _EventViewState extends State<EventView> {
                     Row(
                       children: [
                         InkWell(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: Icon(
-                              Remix.arrow_left_s_line,
-                              color: Colors.black,
-                              size: 4.h,
-                            )),
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: Icon(
+                            Remix.arrow_left_s_line,
+                            color: Colors.black,
+                            size: 4.h,
+                          ),
+                        ),
                         SizedBox(width: 3.w),
                         text_widget(
                           "Events Detail",

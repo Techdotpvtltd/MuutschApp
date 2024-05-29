@@ -12,6 +12,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/event/event_bloc.dart';
 import 'blocs/friend/friend_bloc.dart';
+import 'blocs/notification/notification_bloc.dart';
 import 'blocs/push_notification/push_notification_bloc.dart';
 import 'blocs/user/user_bloc.dart';
 import 'manager/app_bloc_observer.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => EventBloc()),
             BlocProvider(create: (context) => FriendBloc()),
             BlocProvider(create: (context) => PushNotificationBloc()),
+            BlocProvider(create: (context) => NotificationBloc()),
           ],
           child: GetMaterialApp(
             navigatorKey: navKey,
