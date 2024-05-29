@@ -92,6 +92,7 @@ class _FriendViewState extends State<FriendView> {
                   setState(() {
                     user = state.user;
                   });
+                  triggerGetFriendEvent(context.read<FriendBloc>());
                 }
               }
             },
