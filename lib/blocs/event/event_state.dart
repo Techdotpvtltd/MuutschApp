@@ -170,7 +170,7 @@ class EventStateJoinFailure extends EventState {
 }
 
 class EventStateJoined extends EventState {
-  final JoinEventModel joinModel;
+  final JoinMemberModel joinModel;
 
   EventStateJoined({required this.joinModel});
 }
@@ -189,7 +189,7 @@ class EventStateFetchJoinFailure extends EventState {
 }
 
 class EventStateFetchJoined extends EventState {
-  final List<JoinEventModel> joinData;
+  final List<JoinMemberModel> joinData;
 
   EventStateFetchJoined({required this.joinData});
 }

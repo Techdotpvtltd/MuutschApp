@@ -62,6 +62,7 @@ class AuthRepo {
         role: role,
         // phoneNumber: phoenNumber,
       );
+      sendEmailVerifcationLink();
     } catch (e) {
       throw throwAppException(e: e);
     }

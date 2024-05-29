@@ -80,5 +80,23 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         }
       },
     );
+
+    /// FetchSingleUser
+    on<UserEventFetchDetail>(
+      (event, emit) async {
+        try {
+          emit(UserStateFetchingSingle());
+          final UserModel? user =
+              await UserRepo().fetchUser(profileId: event.uid);
+          if (user != null) {
+            emit(UserStateFetchedSingle(user: user));
+          } else {
+            emit(UserStateFetchedSingleEmpty());
+          }
+        } on AppException catch (e) {
+          emit(UserStateFetchSingleFailure(exception: e));
+        }
+      },
+    );
   }
 }

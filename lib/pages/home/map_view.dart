@@ -460,11 +460,7 @@ class UserDetailDialog extends StatelessWidget {
                         child: gradientButton("See Info", ontap: () async {
                           Navigator.pop(context);
                           Get.to(
-                            FriendView(
-                              isFriend: false,
-                              isChat: false,
-                              user: user,
-                            ),
+                            FriendView(userId: user.uid),
                           );
                         },
                             height: 4.8,

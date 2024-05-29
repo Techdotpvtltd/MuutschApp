@@ -271,7 +271,7 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
       (event, emit) async {
         try {
           emit(EventStateJoining(eventId: event.eventId));
-          final JoinEventModel joinEvent =
+          final JoinMemberModel joinEvent =
               await EventRepo().joinEvent(eventId: event.eventId);
           emit(EventStateJoined(joinModel: joinEvent));
           FireNotification().sendNotification(
@@ -293,10 +293,10 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
       (event, emit) async {
         try {
           emit(EventStateFetchJoining(eventId: event.eventId));
-          final List<JoinEventModel> joinsModel =
+          final List<JoinMemberModel> joinsModel =
               await EventRepo().fetchJoinEvent(eventId: event.eventId);
           emit(EventStateFetchJoined(joinData: joinsModel));
-          for (final JoinEventModel event in joinsModel) {
+          for (final JoinMemberModel event in joinsModel) {
             PushNotificationServices().subscribe(
                 forTopic: "$PUSH_NOTIFICATION_EVENT_UPDATES${event.eventId}");
           }

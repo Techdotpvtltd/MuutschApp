@@ -65,3 +65,22 @@ class UserStateFinded extends UserState {
 
   UserStateFinded({required this.users});
 }
+
+// ===========================Fetching Single User States================================
+
+class UserStateFetchingSingle extends UserState {
+  UserStateFetchingSingle({super.isLoading = true});
+}
+
+class UserStateFetchSingleFailure extends UserState {
+  final AppException exception;
+
+  UserStateFetchSingleFailure({required this.exception});
+}
+
+class UserStateFetchedSingle extends UserState {
+  final UserModel user;
+  UserStateFetchedSingle({required this.user});
+}
+
+class UserStateFetchedSingleEmpty extends UserState {}

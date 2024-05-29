@@ -20,6 +20,7 @@ import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/custom_network_image.dart';
 import 'add_event.dart';
+import 'event_member_list.dart';
 
 class EventView extends StatefulWidget {
   const EventView(
@@ -29,7 +30,7 @@ class EventView extends StatefulWidget {
       required this.joinsModel});
   final EventModel event;
   final bool isFromMyEvents;
-  final List<JoinEventModel> joinsModel;
+  final List<JoinMemberModel> joinsModel;
 
   @override
   State<EventView> createState() => _EventViewState();
@@ -154,10 +155,16 @@ class _EventViewState extends State<EventView> {
                           fontWeight: FontWeight.w600,
                         ),
                         Spacer(),
-                        text_widget(
-                          "Joined: ${widget.joinsModel.length}/${event.maxPersons}",
-                          fontSize: 13.6.sp,
-                          fontWeight: FontWeight.w300,
+                        InkWell(
+                          onTap: () {
+                            Get.to(
+                                EventMemberList(joinsModel: widget.joinsModel));
+                          },
+                          child: text_widget(
+                            "Joined: ${widget.joinsModel.length}/${event.maxPersons}",
+                            fontSize: 13.6.sp,
+                            fontWeight: FontWeight.w300,
+                          ),
                         ),
                       ],
                     ),

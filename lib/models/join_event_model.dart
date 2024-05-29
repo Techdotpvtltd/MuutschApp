@@ -10,29 +10,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // Date:        16-05-24 15:39:03 -- Thursday
 // Description:
 
-class JoinEventModel {
+class JoinMemberModel {
   final String uuid;
   final String joinerId;
   final DateTime joinTime;
   final String eventId;
-  JoinEventModel({
+  final String name;
+  final String avatar;
+
+  JoinMemberModel({
     required this.uuid,
     required this.joinerId,
     required this.joinTime,
     required this.eventId,
+    required this.name,
+    required this.avatar,
   });
 
-  JoinEventModel copyWith({
+  JoinMemberModel copyWith({
     String? uuid,
     String? joinerId,
     DateTime? joinTime,
     String? eventId,
+    String? name,
+    String? avatar,
   }) {
-    return JoinEventModel(
+    return JoinMemberModel(
       uuid: uuid ?? this.uuid,
       joinerId: joinerId ?? this.joinerId,
       joinTime: joinTime ?? this.joinTime,
       eventId: eventId ?? this.eventId,
+      name: name ?? this.name,
+      avatar: avatar ?? this.avatar,
     );
   }
 
@@ -42,30 +51,34 @@ class JoinEventModel {
       'joinerId': joinerId,
       'joinTime': Timestamp.fromDate(joinTime),
       'eventId': eventId,
+      'name': name,
+      'avatar': avatar,
     };
   }
 
-  factory JoinEventModel.fromMap(Map<String, dynamic> map) {
-    return JoinEventModel(
+  factory JoinMemberModel.fromMap(Map<String, dynamic> map) {
+    return JoinMemberModel(
       uuid: map['uuid'] as String,
       joinerId: map['joinerId'] as String,
       joinTime: (map['joinTime'] as Timestamp).toDate(),
       eventId: map['eventId'] as String,
+      name: map['name'] as String? ?? "",
+      avatar: map['avatar'] as String? ?? "",
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory JoinEventModel.fromJson(String source) =>
-      JoinEventModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory JoinMemberModel.fromJson(String source) =>
+      JoinMemberModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'JoinEventModel(uuid: $uuid, joinerId: $joinerId, joinTime: $joinTime, eventId: $eventId)';
+    return 'JoinEventModel(uuid: $uuid, joinerId: $joinerId, joinTime: $joinTime, eventId: $eventId, name: $name, avatar: $avatar)';
   }
 
   @override
-  bool operator ==(covariant JoinEventModel other) {
+  bool operator ==(covariant JoinMemberModel other) {
     if (identical(this, other)) return true;
 
     return other.uuid == uuid &&

@@ -124,25 +124,28 @@ class _AllFriendsState extends State<AllFriends> {
                             mainTxtColor: Colors.black,
                             radius: 12,
                             onSubmitted: (search) {
-                              setState(() {
-                                if (search == "") {
-                                  filteredFriends = friends;
-                                } else {
-                                  final users = filteredUsers.where((element) =>
-                                      element.name
-                                          .toLowerCase()
-                                          .contains(search.toLowerCase()));
-                                  if (users.isEmpty) {
-                                    filteredFriends = [];
+                              setState(
+                                () {
+                                  if (search == "") {
+                                    filteredFriends = friends;
+                                  } else {
+                                    final users = filteredUsers.where(
+                                        (element) => element.name
+                                            .toLowerCase()
+                                            .contains(search.toLowerCase()));
+                                    if (users.isEmpty) {
+                                      filteredFriends = [];
+                                    }
+                                    for (final user in users) {
+                                      filteredFriends = friends
+                                          .where((element) => element
+                                              .participants
+                                              .contains(user.uid))
+                                          .toList();
+                                    }
                                   }
-                                  for (final user in users) {
-                                    filteredFriends = friends
-                                        .where((element) => element.participants
-                                            .contains(user.uid))
-                                        .toList();
-                                  }
-                                }
-                              });
+                                },
+                              );
                             },
                             bColor: Colors.transparent,
                           ),
@@ -187,20 +190,27 @@ class _AllFriendsState extends State<AllFriends> {
                               filteredFriends.length,
                               (index) => FutureBuilder<UserModel?>(
                                 future: UserRepo().fetchUser(
-                                    profileId: filteredFriends[index].senderId),
+                                    profileId: filteredFriends[index]
+                                        .participants
+                                        .firstWhere((e) =>
+                                            e != UserRepo().currentUser.uid)),
                                 builder: (context, snapshot) {
+                                  final String userId = filteredFriends[index]
+                                      .participants
+                                      .firstWhere((e) =>
+                                          e != UserRepo().currentUser.uid);
+
                                   final UserModel? user = snapshot.data;
                                   if (user != null) {
                                     filteredUsers.add(user);
                                   }
+
                                   return InkWell(
                                     onTap: () {
                                       if (user != null)
                                         Get.to(
                                           FriendView(
-                                            isFriend: false,
-                                            isChat: true,
-                                            user: user,
+                                            userId: userId,
                                             friend: filteredFriends[index],
                                           ),
                                         );

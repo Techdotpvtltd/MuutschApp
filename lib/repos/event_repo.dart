@@ -137,22 +137,25 @@ class EventRepo {
   }
 
   /// Join Event
-  Future<JoinEventModel> joinEvent({
+  Future<JoinMemberModel> joinEvent({
     required String eventId,
   }) async {
     try {
       final String userId = UserRepo().currentUser.uid;
-      final JoinEventModel eventModel = JoinEventModel(
-          uuid: "",
-          joinerId: userId,
-          joinTime: DateTime.now(),
-          eventId: eventId);
+      final JoinMemberModel eventModel = JoinMemberModel(
+        uuid: "",
+        joinerId: userId,
+        joinTime: DateTime.now(),
+        eventId: eventId,
+        name: UserRepo().currentUser.name,
+        avatar: UserRepo().currentUser.avatar,
+      );
       final Map<String, dynamic> data = await FirestoreService()
           .saveWithSpecificIdFiled(
               path: FIREBASE_COLLECTION_JOIN_EVENTS,
               data: eventModel.toMap(),
               docIdFiled: 'uuid');
-      return JoinEventModel.fromMap(data);
+      return JoinMemberModel.fromMap(data);
     } catch (e) {
       log("[debug JoinEventError] ${e.toString}");
       throw throwAppException(e: e);
@@ -222,7 +225,8 @@ class EventRepo {
 
   /// Fetch Joined Members Data
 
-  Future<List<JoinEventModel>> fetchJoinEvent({required String eventId}) async {
+  Future<List<JoinMemberModel>> fetchJoinEvent(
+      {required String eventId}) async {
     try {
       final List<Map<String, dynamic>> data =
           await FirestoreService().fetchWithMultipleConditions(
@@ -232,7 +236,7 @@ class EventRepo {
         ],
       );
 
-      return data.map((e) => JoinEventModel.fromMap(e)).toList();
+      return data.map((e) => JoinMemberModel.fromMap(e)).toList();
     } catch (e) {
       log("[debug JoinFetchEventError] ${e.toString}");
       throw throwAppException(e: e);

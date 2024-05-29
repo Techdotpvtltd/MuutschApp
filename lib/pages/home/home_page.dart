@@ -341,7 +341,7 @@ class _HomePageState extends State<HomePage> {
                                           future: EventRepo().fetchJoinEvent(
                                               eventId: event.id),
                                           builder: (context, snapshot) {
-                                            final List<JoinEventModel>
+                                            final List<JoinMemberModel>
                                                 joinsModel =
                                                 snapshot.data ?? [];
 

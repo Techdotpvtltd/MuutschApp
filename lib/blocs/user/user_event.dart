@@ -43,3 +43,9 @@ class UserEventFindBy extends UserEvent {
 
   UserEventFindBy({this.bounds, this.searchText});
 }
+
+class UserEventFetchDetail extends UserEvent {
+  final String uid;
+
+  UserEventFetchDetail({required this.uid});
+}
