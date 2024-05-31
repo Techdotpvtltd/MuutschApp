@@ -284,10 +284,12 @@ class _AllEventsState extends State<AllEvents> {
                                                   return isGrid
                                                       ? InkWell(
                                                           onTap: () {
-                                                            Get.to(EventView(
-                                                                event: event,
-                                                                joinsModel:
-                                                                    joinsModel));
+                                                            Get.to(
+                                                              EventView(
+                                                                  event: event,
+                                                                  joinsModel:
+                                                                      joinsModel),
+                                                            );
                                                           },
                                                           child: Column(
                                                             crossAxisAlignment:

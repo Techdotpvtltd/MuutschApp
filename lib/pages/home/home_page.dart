@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Image.asset(
                                   "assets/nav/d3.png",
                                   color: Colors.white,
-                                  height: 4.5.h,
+                                  height: 4.0.h,
                                 ),
                               ),
                               SizedBox(

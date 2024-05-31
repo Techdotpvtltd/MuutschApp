@@ -41,12 +41,27 @@ class _EventViewState extends State<EventView> {
   bool isDeleting = false;
   bool isJoiningEvent = false;
   String? joiningEventId;
+  List<JoinMemberModel> joinsModel = [];
+
   void triggerDeleteEvent(EventBloc bloc) {
     bloc.add(EventsEventDelete(eventId: event.id));
   }
 
   void triggerJoinEvent(EventBloc bloc) {
     bloc.add(EventsEventJoin(eventId: event.id));
+  }
+
+  void triggerGetJoinnedMembers(EventBloc bloc) {
+    bloc.add(EventsEventFetchJoin(eventId: event.id));
+  }
+
+  @override
+  void initState() {
+    joinsModel = widget.joinsModel;
+    if (joinsModel.isEmpty) {
+      triggerGetJoinnedMembers(context.read<EventBloc>());
+    }
+    super.initState();
   }
 
   @override
@@ -56,7 +71,8 @@ class _EventViewState extends State<EventView> {
         /// Join Event States
         if (state is EventStateJoinFailure ||
             state is EventStateJoined ||
-            state is EventStateJoining) {
+            state is EventStateJoining ||
+            state is EventStateFetchJoined) {
           setState(() {
             isJoiningEvent = state.isLoading;
             if (state is EventStateJoining) {
@@ -65,7 +81,11 @@ class _EventViewState extends State<EventView> {
           });
 
           if (state is EventStateJoined) {}
-
+          if (state is EventStateFetchJoined) {
+            setState(() {
+              joinsModel = state.joinData;
+            });
+          }
           if (state is EventStateJoinFailure) {
             CustomDialogs().errorBox(message: state.exception.message);
           }
@@ -158,11 +178,10 @@ class _EventViewState extends State<EventView> {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            Get.to(
-                                EventMemberList(joinsModel: widget.joinsModel));
+                            Get.to(EventMemberList(joinsModel: joinsModel));
                           },
                           child: text_widget(
-                            "Joined: ${widget.joinsModel.length}/${event.maxPersons}",
+                            "Joined: ${joinsModel.length}/${event.maxPersons}",
                             fontSize: 13.6.sp,
                             fontWeight: FontWeight.w300,
                           ),
