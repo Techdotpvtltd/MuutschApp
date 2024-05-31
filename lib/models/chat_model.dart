@@ -23,7 +23,7 @@ class ChatModel {
   final bool isGroup;
   final String? groupTitle;
   final String? groupAvatar;
-
+  final String compositeKey;
   ChatModel({
     required this.uuid,
     required this.createdAt,
@@ -34,6 +34,7 @@ class ChatModel {
     required this.isGroup,
     this.groupTitle,
     this.groupAvatar,
+    required this.compositeKey,
   });
 
   ChatModel copyWith({
@@ -46,6 +47,7 @@ class ChatModel {
     bool? isGroup,
     String? groupTitle,
     String? groupAvatar,
+    String? compositeKey,
   }) {
     return ChatModel(
       uuid: uuid ?? this.uuid,
@@ -57,6 +59,7 @@ class ChatModel {
       isGroup: isGroup ?? this.isGroup,
       groupTitle: groupTitle ?? this.groupTitle,
       groupAvatar: groupAvatar ?? this.groupAvatar,
+      compositeKey: compositeKey ?? this.compositeKey,
     );
   }
 
@@ -71,6 +74,7 @@ class ChatModel {
       'isGroup': isGroup,
       'groupTitle': groupTitle,
       'groupAvatar': groupAvatar,
+      'compositeKey': compositeKey,
     };
   }
 
@@ -87,6 +91,7 @@ class ChatModel {
       isGroup: map['isGroup'] as bool,
       groupTitle: map['groupTitle'] as String?,
       groupAvatar: map['groupAvatar'] as String?,
+      compositeKey: map['compositeKey'] as String? ?? "",
     );
   }
 
@@ -97,7 +102,7 @@ class ChatModel {
 
   @override
   String toString() {
-    return 'ChatModel(uuid: $uuid, createdAt: $createdAt, createdBy: $createdBy, participants: $participants, participantUids: $participantUids, isChatEnabled: $isChatEnabled, isGroup: $isGroup, groupTitle: $groupTitle, groupAvatar: $groupAvatar)';
+    return 'ChatModel(uuid: $uuid, createdAt: $createdAt, createdBy: $createdBy, participants: $participants, participantUids: $participantUids, isChatEnabled: $isChatEnabled, isGroup: $isGroup, groupTitle: $groupTitle, groupAvatar: $groupAvatar, compositeKey: $compositeKey)';
   }
 
   @override
@@ -112,6 +117,7 @@ class ChatModel {
         other.isChatEnabled == isChatEnabled &&
         other.isGroup == isGroup &&
         other.groupTitle == groupTitle &&
+        other.compositeKey == compositeKey &&
         other.groupAvatar == groupAvatar;
   }
 
@@ -125,6 +131,7 @@ class ChatModel {
         isChatEnabled.hashCode ^
         isGroup.hashCode ^
         groupTitle.hashCode ^
+        compositeKey.hashCode ^
         groupAvatar.hashCode;
   }
 }

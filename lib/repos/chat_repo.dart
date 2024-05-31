@@ -33,9 +33,10 @@ class ChatRepo {
 
       final List<QueryModel> queries = [
         QueryModel(
-            field: "participantUids",
-            value: userId,
-            type: QueryType.arrayContains),
+          field: "participantUids",
+          value: userId,
+          type: QueryType.arrayContains,
+        ),
         QueryModel(field: "createdAt", value: false, type: QueryType.orderBy),
         QueryModel(
             field: "isChatEnabled", value: true, type: QueryType.isEqual),
@@ -68,6 +69,7 @@ class ChatRepo {
     try {
       final String userId = UserRepo().currentUser.uid;
       final List<String> participants = [userId, friendUid];
+      participants.sort();
 
       /// Check if chat exists and already fetched
       final int index = _chats
@@ -82,9 +84,10 @@ class ChatRepo {
         collection: FIREBASE_COLLECTION_CHAT,
         queries: [
           QueryModel(
-              field: "participantUids",
-              value: participants,
-              type: QueryType.arrayContainsAny),
+            field: "compositeKey",
+            value: participants.join("_").toString(),
+            type: QueryType.isEqual,
+          ),
           QueryModel(field: "", value: 1, type: QueryType.limit),
         ],
       );
@@ -121,6 +124,7 @@ class ChatRepo {
       participants.add(LightUserModel(
           uid: user.uid, name: user.name, avatarUrl: user.avatar));
 
+      participantIds.sort();
       final ChatModel chatModel = ChatModel(
         uuid: "",
         createdAt: DateTime.now(),
@@ -131,6 +135,7 @@ class ChatRepo {
         isGroup: isGroup,
         groupAvatar: chatAvatar,
         groupTitle: chatTitle,
+        compositeKey: participantIds.join("_"),
       );
 
       final Map<String, dynamic> map =

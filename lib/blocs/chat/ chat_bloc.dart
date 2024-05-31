@@ -35,6 +35,18 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       },
     );
 
+    on<ChatEventFetchAll>(
+      (event, emit) async {
+        try {
+          emit(ChatStateFetchingAll());
+          await ChatRepo().fetchChats();
+          emit(ChatStateFetchedAll());
+        } on AppException catch (e) {
+          emit(ChatStateFetchAllFailure(exception: e));
+        }
+      },
+    );
+
     /// Create Chat Event
     on<ChatEventCreate>(
       (event, emit) async {
