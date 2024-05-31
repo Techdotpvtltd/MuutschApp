@@ -26,9 +26,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             emit(ChatStateFetched(chat: chat));
             return;
           }
-          add(ChatEventCreate(friendProfile: event.friendProfile));
 
           /// Otherwise called create event to create the chat
+          add(ChatEventCreate(friendProfile: event.friendProfile));
         } on AppException catch (e) {
           emit(ChatStateFetchFailure(exception: e));
         }

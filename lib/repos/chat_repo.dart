@@ -67,7 +67,7 @@ class ChatRepo {
   Future<ChatModel?> fetchChat({required String friendUid}) async {
     try {
       final String userId = UserRepo().currentUser.uid;
-      final List<String> participants = [friendUid, userId];
+      final List<String> participants = [userId, friendUid];
 
       /// Check if chat exists and already fetched
       final int index = _chats
@@ -84,7 +84,7 @@ class ChatRepo {
           QueryModel(
               field: "participantUids",
               value: participants,
-              type: QueryType.arrayContains),
+              type: QueryType.arrayContainsAny),
           QueryModel(field: "", value: 1, type: QueryType.limit),
         ],
       );

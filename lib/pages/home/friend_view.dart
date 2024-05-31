@@ -11,6 +11,9 @@ import 'package:musch/widgets/text_widget.dart';
 import 'package:readmore/readmore.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../blocs/chat/ chat_bloc.dart';
+import '../../blocs/chat/chat_event.dart';
+import '../../blocs/chat/chat_state.dart';
 import '../../blocs/friend/friend_bloc.dart';
 import '../../blocs/friend/friend_event.dart';
 import '../../blocs/friend/friend_state.dart';
@@ -19,6 +22,7 @@ import '../../blocs/user/user_event.dart';
 import '../../blocs/user/user_state.dart';
 import '../../manager/app_manager.dart';
 import '../../models/friend_model.dart';
+import '../../models/light_user_model.dart';
 import '../../models/user_model.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
@@ -45,6 +49,7 @@ class _FriendViewState extends State<FriendView> {
   late FriendModel? friend = widget.friend;
   UserModel? user;
   bool isLoadingUserDetail = true;
+  bool isLoadingChat = false;
 
   void triggerSendRequestEvent(FriendBloc bloc) {
     bloc.add(FriendEventSend(recieverId: widget.userId));
@@ -66,6 +71,20 @@ class _FriendViewState extends State<FriendView> {
     bloc.add(UserEventFetchDetail(uid: widget.userId));
   }
 
+  void triggerFetchChatEvent(ChatBloc bloc) {
+    if (user != null) {
+      bloc.add(
+        ChatEventFetch(
+          friendProfile: LightUserModel(
+            uid: user!.uid,
+            name: user!.name,
+            avatarUrl: user!.avatar,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     triggerUserFetchEvent(context.read<UserBloc>());
@@ -78,6 +97,38 @@ class _FriendViewState extends State<FriendView> {
       backgroundColor: Color(0xffF2F2F2),
       body: MultiBlocListener(
         listeners: [
+          /// Chat Bloc
+          BlocListener<ChatBloc, ChatState>(
+            listener: (context, state) {
+              if (state is ChatStateCreating ||
+                  state is ChatStateCreated ||
+                  state is ChatStateCreateFailure ||
+                  state is ChatStateFetched ||
+                  state is ChatStateFetching ||
+                  state is ChatStateFetchFailure) {
+                setState(() {
+                  isLoadingChat = state.isLoading;
+                });
+
+                if (state is ChatStateCreateFailure) {
+                  CustomDialogs().errorBox(message: state.exception.message);
+                }
+
+                if (state is ChatStateFetchFailure) {
+                  CustomDialogs().errorBox(message: state.exception.message);
+                }
+
+                if (state is ChatStateCreated) {
+                  Get.to(UserChatPage(IsSupport: false));
+                }
+
+                if (state is ChatStateFetched) {
+                  Get.to(UserChatPage(IsSupport: false));
+                }
+              }
+            },
+          ),
+
           /// User Bloc
           BlocListener<UserBloc, UserState>(
             listener: (context, state) {
@@ -468,12 +519,12 @@ class _FriendViewState extends State<FriendView> {
                                                     child: gradientButton(
                                                       "Chat",
                                                       font: 15.6,
-                                                      isLoading:
-                                                          isAcceptingRequest,
+                                                      isLoading: isLoadingChat,
                                                       txtColor: MyColors.white,
                                                       ontap: () {
-                                                        Get.to(UserChatPage(
-                                                            IsSupport: false));
+                                                        triggerFetchChatEvent(
+                                                            context.read<
+                                                                ChatBloc>());
                                                       },
                                                       width: 90,
                                                       height: 6.6,

@@ -79,11 +79,10 @@ class ChatModel {
       uuid: map['uuid'] as String,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       createdBy: map['createdBy'] as String,
-      participants: (map['participants'] as List<Map<String, dynamic>>)
+      participants: (map['participants'] as List<dynamic>)
           .map((e) => LightUserModel.fromMap(e))
           .toList(),
-      participantUids:
-          List<String>.from(map['participantUids'] as List<String>),
+      participantUids: List<String>.from(map['participantUids'] as List),
       isChatEnabled: map['isChatEnabled'] as bool,
       isGroup: map['isGroup'] as bool,
       groupTitle: map['groupTitle'] as String?,
