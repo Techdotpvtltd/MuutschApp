@@ -16,3 +16,5 @@ const String FIREBASE_COLLECTION_FRIENDS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Friends";
 const String FIREBASE_COLLECTION_NOTIFICATION =
     "${kReleaseMode ? "Rel-" : "Dev-"}Notifications";
+const String FIREBASE_COLLECTION_CHAT =
+    "${kReleaseMode ? "Rel-" : "Dev-"}Chats";

@@ -38,6 +38,8 @@ enum QueryType {
   limitToLast,
   startAt,
   startAfter,
+  startAtDocument,
+  startAfterDocument,
   endAt,
   endBefore,
 }

@@ -95,6 +95,11 @@ class MapSampleState extends State<MapSample> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant MapSample oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
   LatLng startLocation = LatLng(27.6602292, 85.308027);
   LatLng endLocation = LatLng(27.6599592, 85.3102498);
 

@@ -158,6 +158,16 @@ class FirestoreService {
         case QueryType.limitToLast: // Add OrderBy query first
           query = query.limitToLast(condition.value);
           break;
+        case QueryType.startAfterDocument:
+          // Take document as value and fetch after that document. he starting position is relative to the order of the query.
+          // The [documentSnapshot] must contain all of the fields provided in the orderBy of this query.
+          query = query.startAfterDocument(condition.value);
+          break;
+        case QueryType.startAtDocument:
+          //Creates and returns a new [Query] that starts at the provided document (inclusive). The starting position is relative to the order of the query. The document must contain all of the fields provided in the orderBy of this query.
+          ///Calling this method will replace any existing cursor "start" query modifiers.
+          query = query.startAtDocument(condition.value);
+          break;
         default:
           query = collectionReference;
           break;
