@@ -27,8 +27,12 @@ class MessageRepo {
   MessageRepo._internal();
   factory MessageRepo() => _instance;
   // ====================================================================
+  StreamSubscription? listener;
 
   final List<MessageModel> _messages = [];
+  // Create a Completer to signal completion
+  Completer<void> completer = Completer<void>();
+
   List<GroupedMessageModel> get messages {
     final List<GroupedMessageModel> groupedMessages = [];
     for (final message in _messages) {
@@ -47,6 +51,11 @@ class MessageRepo {
     return groupedMessages;
   }
 
+  void onDisposed() {
+    listener?.cancel();
+    _messages.clear();
+  }
+
   // Fetch Messages
   Future<void> fetchMessages(
       {required VoidCallback onData,
@@ -57,10 +66,7 @@ class MessageRepo {
         .collection(FIREBASE_COLLECTION_MESSAGES)
         .where('conversationId', isEqualTo: conversationId);
 
-    // Create a Completer to signal completion
-    Completer<void> completer = Completer<void>();
-
-    ref.snapshots().listen(
+    listener = ref.snapshots().listen(
           (querySnapshot) {
             for (final change in querySnapshot.docChanges) {
               final Map<String, dynamic>? data = change.doc.data();
@@ -116,6 +122,8 @@ class MessageRepo {
           content: content,
           messageTime: DateTime.now(),
           type: type,
+          senderAvatar: UserRepo().currentUser.avatar,
+          senderName: UserRepo().currentUser.name,
           senderId: userId);
       _messages.add(messageModel);
       onMessagePrepareToSend();

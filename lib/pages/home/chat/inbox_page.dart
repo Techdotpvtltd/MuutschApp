@@ -167,9 +167,7 @@ Widget chatList({required ChatModel chat}) {
     child: InkWell(
       onTap: () {
         Get.to(
-          UserChatPage(
-            IsSupport: false,
-          ),
+          UserChatPage(chat: chat),
         );
       },
       child: Container(

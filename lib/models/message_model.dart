@@ -26,7 +26,8 @@ class MessageModel {
   final DateTime messageTime;
   final MessageType type;
   final String senderId;
-
+  final String senderName;
+  final String senderAvatar;
   MessageModel({
     required this.messageId,
     required this.conversationId,
@@ -34,6 +35,8 @@ class MessageModel {
     required this.messageTime,
     required this.type,
     required this.senderId,
+    required this.senderName,
+    required this.senderAvatar,
   });
 
   MessageModel copyWith({
@@ -43,6 +46,8 @@ class MessageModel {
     DateTime? messageTime,
     MessageType? type,
     String? senderId,
+    String? senderName,
+    String? senderAvatar,
   }) {
     return MessageModel(
       messageId: messageId ?? this.messageId,
@@ -51,6 +56,8 @@ class MessageModel {
       messageTime: messageTime ?? this.messageTime,
       type: type ?? this.type,
       senderId: senderId ?? this.senderId,
+      senderName: senderName ?? this.senderName,
+      senderAvatar: senderAvatar ?? this.senderAvatar,
     );
   }
 
@@ -62,6 +69,8 @@ class MessageModel {
       'messageTime': Timestamp.fromDate(messageTime),
       'type': type.name.toLowerCase(),
       'senderId': senderId,
+      'senderName': senderName,
+      'senderAvatar': senderAvatar,
     };
   }
 
@@ -69,6 +78,8 @@ class MessageModel {
     return MessageModel(
         messageId: map['messageId'] as String,
         conversationId: map['conversationId'] as String,
+        senderName: map['senderName'] as String? ?? "",
+        senderAvatar: map['senderAvatar'] as String? ?? "",
         content: map['content'] as String,
         messageTime: (map['messageTime'] as Timestamp).toDate(),
         type: MessageType.values.firstWhere((element) =>
@@ -78,7 +89,7 @@ class MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel(messageId: $messageId, conversationId: $conversationId, content: $content, messageTime: $messageTime, type: $type, senderId: $senderId)';
+    return 'MessageModel(messageId: $messageId, conversationId: $conversationId, content: $content, messageTime: $messageTime, type: $type, senderId: $senderId, senderName: $senderName, senderAvatar: $senderAvatar)';
   }
 
   @override
