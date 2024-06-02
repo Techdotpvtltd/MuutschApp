@@ -113,7 +113,7 @@ class _InboxPageState extends State<InboxPage> {
                             ),
                           ),
                           SizedBox(width: 2.w),
-                          text_widget(
+                          textWidget(
                             "Chat",
                             color: Colors.white,
                             fontSize: 18.sp,
@@ -189,12 +189,12 @@ Widget chatList({required ChatModel chat}) {
                     (chat.isGroup ? chat.groupAvatar : senderUser?.avatarUrl) ??
                         ""),
           ),
-          title: text_widget(
+          title: textWidget(
             (chat.isGroup ? chat.groupTitle : senderUser?.name) ?? "",
             fontWeight: FontWeight.w500,
             fontSize: 16.sp,
           ),
-          subtitle: text_widget(
+          subtitle: textWidget(
             "",
             fontSize: 14.4.sp,
             color: Color(0xff9CA3AF),
@@ -204,7 +204,7 @@ Widget chatList({required ChatModel chat}) {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 1.h),
-              text_widget(
+              textWidget(
                 "---",
                 fontSize: 13.5.sp,
                 color: Color(
@@ -215,7 +215,7 @@ Widget chatList({required ChatModel chat}) {
               CircleAvatar(
                 radius: 1.h,
                 backgroundColor: MyColors.primary,
-                child: text_widget(
+                child: textWidget(
                   "1",
                   color: Colors.white,
                   fontSize: 13.6.sp,

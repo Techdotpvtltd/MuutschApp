@@ -94,7 +94,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                               size: 4.h,
                             )),
                         SizedBox(width: 3.w),
-                        text_widget("Subscription Plan",
+                        textWidget("Subscription Plan",
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                             fontSize: 20.sp),
@@ -177,24 +177,24 @@ class CardFb1 extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            text_widget(
+            textWidget(
               text,
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
             ),
             SizedBox(height: 0.5.h),
-            text_widget(subtitle, color: Color(0xff979797), fontSize: 15.sp),
+            textWidget(subtitle, color: Color(0xff979797), fontSize: 15.sp),
             SizedBox(height: 2.5.h),
             Row(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                text_widget(
+                textWidget(
                   "\$4.45",
                   fontSize: 21.sp,
                   fontWeight: FontWeight.bold,
                   color: MyColors.primary,
                 ),
-                text_widget(
+                textWidget(
                   "/Package",
                   fontSize: 15.sp,
                   color: Color(0xffB9B9B9),
@@ -218,7 +218,7 @@ class CardFb1 extends StatelessWidget {
                     ),
                     SizedBox(width: 2.w),
                     Expanded(
-                      child: text_widget(txts[index],
+                      child: textWidget(txts[index],
                           color: Color(0xff8A8A8A),
                           fontSize: 14.5.sp,
                           fontWeight: FontWeight.w400),

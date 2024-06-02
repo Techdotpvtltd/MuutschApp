@@ -148,7 +148,7 @@ class _MyEventsState extends State<MyEvents> {
                             ),
                           ),
                           SizedBox(width: 2.w),
-                          text_widget(
+                          textWidget(
                             "My Events",
                             color: Colors.white,
                             fontSize: 18.sp,
@@ -240,7 +240,7 @@ class _MyEventsState extends State<MyEvents> {
                                                     ),
                                                   ),
                                                   SizedBox(height: 1.h),
-                                                  text_widget(
+                                                  textWidget(
                                                     event.title,
                                                     fontSize: 16.sp,
                                                     maxline: 2,
@@ -255,7 +255,7 @@ class _MyEventsState extends State<MyEvents> {
                                                       ),
                                                       SizedBox(width: 1.w),
                                                       Expanded(
-                                                        child: text_widget(
+                                                        child: textWidget(
                                                           event.location
                                                                   .address ??
                                                               "",

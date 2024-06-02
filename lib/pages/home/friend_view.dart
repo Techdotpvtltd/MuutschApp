@@ -268,13 +268,13 @@ class _FriendViewState extends State<FriendView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          text_widget(
+                          textWidget(
                             user?.name ?? "---",
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w600,
                           ),
                           SizedBox(height: 3.h),
-                          text_widget(
+                          textWidget(
                             "Total Children",
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -302,7 +302,7 @@ class _FriendViewState extends State<FriendView> {
                                   ],
                                 ),
                               if ((user?.numberOfChildren ?? 0) > 3)
-                                text_widget(
+                                textWidget(
                                   "+${(user?.numberOfChildren ?? 0) - 3}",
                                   fontSize: 15.6.sp,
                                   fontWeight: FontWeight.w300,
@@ -335,7 +335,7 @@ class _FriendViewState extends State<FriendView> {
                           SizedBox(height: 2.5.h),
                           Row(
                             children: [
-                              text_widget(
+                              textWidget(
                                 "Location",
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
@@ -357,7 +357,7 @@ class _FriendViewState extends State<FriendView> {
                                       height: 1.7.h,
                                     ),
                                     SizedBox(width: 1.w),
-                                    text_widget(
+                                    textWidget(
                                       "${calculateDistance(aLat: AppManager().currentLocationPosition?.latitude ?? 0, aLong: AppManager().currentLocationPosition?.longitude ?? 0, bLat: user?.location?.latitude ?? 0, bLong: user?.location?.longitude ?? 0).toInt()} KM",
                                       color: MyColors.primary,
                                       fontSize: 13.sp,
@@ -369,13 +369,13 @@ class _FriendViewState extends State<FriendView> {
                             ],
                           ),
                           SizedBox(height: 0.5.h),
-                          text_widget(
+                          textWidget(
                             user?.location?.address ?? "",
                             fontSize: 15.6.sp,
                             fontWeight: FontWeight.w300,
                           ),
                           SizedBox(height: 3.h),
-                          text_widget(
+                          textWidget(
                             "About",
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -404,7 +404,7 @@ class _FriendViewState extends State<FriendView> {
                             ),
                           ),
                           SizedBox(height: 3.h),
-                          text_widget(
+                          textWidget(
                             "Interests",
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -433,7 +433,7 @@ class _FriendViewState extends State<FriendView> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Center(
-                                    child: text_widget(
+                                    child: textWidget(
                                       user?.interests?[index] ?? "",
                                       textAlign: TextAlign.center,
                                       fontWeight: FontWeight.w400,

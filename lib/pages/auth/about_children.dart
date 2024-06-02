@@ -109,10 +109,10 @@ class _AboutChildrenState extends State<AboutChildren> {
                           height: 10.h,
                         )),
                         SizedBox(height: 4.h),
-                        text_widget("About Children",
+                        textWidget("About Children",
                             fontSize: 21.sp, fontWeight: FontWeight.w600),
                         SizedBox(height: 0.4.h),
-                        text_widget(
+                        textWidget(
                             "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                             fontSize: 15.sp,
                             color: Color(0xff8C8C8C)),

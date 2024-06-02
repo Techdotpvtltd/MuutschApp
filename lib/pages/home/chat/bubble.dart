@@ -58,7 +58,7 @@ class Bubble extends StatelessWidget {
                           style: GoogleFonts.poppins(
                               fontSize: 12.8.sp, color: MyColors.grey)),
                       Spacer(),
-                      text_widget("Jenifer Alex",
+                      textWidget("Jenifer Alex",
                           fontSize: 13.4.sp, fontWeight: FontWeight.w400),
                       SizedBox(width: 2.w),
                       CircleAvatar(
@@ -113,7 +113,7 @@ class Bubble extends StatelessWidget {
                         backgroundImage: AssetImage("assets/images/girl.png"),
                       ),
                       SizedBox(width: 2.w),
-                      text_widget("Jenifer Alex",
+                      textWidget("Jenifer Alex",
                           fontSize: 13.4.sp, fontWeight: FontWeight.w400),
                       Spacer(),
                       Text('1:' '${index + 30}' ' PM',

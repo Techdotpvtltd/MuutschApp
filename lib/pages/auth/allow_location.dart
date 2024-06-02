@@ -154,13 +154,13 @@ class _AllowLocationState extends State<AllowLocation> {
                         ),
                       ),
                       SizedBox(height: 4.h),
-                      text_widget(
+                      textWidget(
                         "Help them find you!",
                         fontSize: 21.sp,
                         fontWeight: FontWeight.w600,
                       ),
                       SizedBox(height: 0.4.h),
-                      text_widget(
+                      textWidget(
                         "Allow us to access your location while you’re using the app so we can help you find and meet members.",
                         fontSize: 15.sp,
                         color: Color(

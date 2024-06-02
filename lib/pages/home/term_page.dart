@@ -48,18 +48,18 @@ class _TermPageState extends State<TermPage> {
                             child: Icon(Remix.arrow_left_s_line,
                                 color: Colors.black, size: 4.h)),
                         SizedBox(width: 2.w),
-                        text_widget("Terms and condition",
+                        textWidget("Terms and condition",
                             color: Colors.black, fontSize: 18.sp),
                       ],
                     ),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries",
                         color: Color(0xff000000).withOpacity(0.46),
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries",
                         color: Color(0xff000000).withOpacity(0.46),
                         fontSize: 15.sp,
@@ -74,7 +74,7 @@ class _TermPageState extends State<TermPage> {
                         ),
                         SizedBox(width: 3.w),
                         Expanded(
-                          child: text_widget(
+                          child: textWidget(
                               "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                               color: Color(0xff000000).withOpacity(0.46),
                               fontSize: 15.sp,
@@ -92,7 +92,7 @@ class _TermPageState extends State<TermPage> {
                         ),
                         SizedBox(width: 3.w),
                         Expanded(
-                          child: text_widget(
+                          child: textWidget(
                               "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                               color: Color(0xff000000).withOpacity(0.46),
                               fontSize: 15.sp,
@@ -110,7 +110,7 @@ class _TermPageState extends State<TermPage> {
                         ),
                         SizedBox(width: 3.w),
                         Expanded(
-                          child: text_widget(
+                          child: textWidget(
                               "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                               color: Color(0xff000000).withOpacity(0.46),
                               fontSize: 15.sp,
@@ -128,7 +128,7 @@ class _TermPageState extends State<TermPage> {
                         ),
                         SizedBox(width: 3.w),
                         Expanded(
-                          child: text_widget(
+                          child: textWidget(
                               "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                               color: Color(0xff000000).withOpacity(0.46),
                               fontSize: 15.sp,
@@ -146,7 +146,7 @@ class _TermPageState extends State<TermPage> {
                         ),
                         SizedBox(width: 3.w),
                         Expanded(
-                          child: text_widget(
+                          child: textWidget(
                               "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                               color: Color(0xff000000).withOpacity(0.46),
                               fontSize: 15.sp,
@@ -164,7 +164,7 @@ class _TermPageState extends State<TermPage> {
                         ),
                         SizedBox(width: 3.w),
                         Expanded(
-                          child: text_widget(
+                          child: textWidget(
                               "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                               color: Color(0xff000000).withOpacity(0.46),
                               fontSize: 15.sp,

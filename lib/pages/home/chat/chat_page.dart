@@ -71,13 +71,13 @@ class _UserChatPageState extends State<UserChatPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              text_widget(
+                              textWidget(
                                 "Jenifer Alex",
                                 fontSize: 16.4.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
-                              text_widget(
+                              textWidget(
                                 "Granactive Retinoid ",
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
@@ -105,7 +105,7 @@ class _UserChatPageState extends State<UserChatPage> {
           children: [
             // isService?    serviceWidget(context,isPrice: false,isEdit: false):SizedBox(),
             SizedBox(height: 3.h),
-            text_widget("Today", fontSize: 15.sp),
+            textWidget("Today", fontSize: 15.sp),
             _buildContainer(context)
           ],
         ),

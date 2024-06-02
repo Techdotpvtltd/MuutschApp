@@ -106,7 +106,7 @@ class _AllFriendsState extends State<AllFriends> {
                                 ),
                               ),
                               SizedBox(width: 2.w),
-                              text_widget(
+                              textWidget(
                                 widget.isRequestFriendScreen
                                     ? "Requests"
                                     : "Friends",
@@ -152,7 +152,7 @@ class _AllFriendsState extends State<AllFriends> {
                           SizedBox(height: 3.h),
                           Row(
                             children: [
-                              text_widget(
+                              textWidget(
                                 widget.isRequestFriendScreen
                                     ? "Requests"
                                     : "Friends",
@@ -170,7 +170,7 @@ class _AllFriendsState extends State<AllFriends> {
                                     horizontal: 18.0,
                                     vertical: 6,
                                   ),
-                                  child: text_widget(
+                                  child: textWidget(
                                     "${filteredFriends.length}",
                                     color: Colors.white,
                                     fontSize: 15.sp,
@@ -237,7 +237,7 @@ class _AllFriendsState extends State<AllFriends> {
                                                 user?.avatar ?? "",
                                               ),
                                             ),
-                                            title: text_widget(
+                                            title: textWidget(
                                               user?.name ?? "---",
                                               fontSize: 16.5.sp,
                                               fontWeight: FontWeight.w500,

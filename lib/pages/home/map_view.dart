@@ -202,7 +202,7 @@ class MapSampleState extends State<MapSample> {
                                   ),
                                 ),
                                 SizedBox(width: 3.w),
-                                text_widget(
+                                textWidget(
                                   "Find Near by",
                                   fontSize: 19.sp,
                                 )
@@ -377,12 +377,12 @@ class NotAccess extends StatelessWidget {
                     height: 8.h,
                   ),
                   SizedBox(height: 1.4.h),
-                  text_widget("Couldn't access This Feiends",
+                  textWidget("Couldn't access This Feiends",
                       color: MyColors.black,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold),
                   SizedBox(height: 1.5.h),
-                  text_widget(
+                  textWidget(
                       " In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full function",
                       textAlign: TextAlign.center,
                       color: Color(0xff2F3342).withOpacity(0.50),
@@ -444,14 +444,14 @@ class UserDetailDialog extends StatelessWidget {
                     avatarUrl: user.avatar,
                   ),
                   SizedBox(height: 1.4.h),
-                  text_widget(
+                  textWidget(
                     user.name,
                     color: MyColors.black,
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
                   SizedBox(height: 1.5.h),
-                  text_widget(
+                  textWidget(
                     user.location?.address ?? "",
                     textAlign: TextAlign.center,
                     color: Color(0xff2F3342).withOpacity(0.50),

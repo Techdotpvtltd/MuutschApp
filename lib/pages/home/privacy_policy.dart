@@ -48,30 +48,30 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
                             child: Icon(Remix.arrow_left_s_line,
                                 color: Colors.black, size: 4.h)),
                         SizedBox(width: 2.w),
-                        text_widget("Privacy Policy",
+                        textWidget("Privacy Policy",
                             color: Colors.black, fontSize: 18.sp),
                       ],
                     ),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                         "A dwarf who brings a standard along with him to measure his own size, take my word,",
                         color: Color(0xff000000).withOpacity(0.46),
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. ",
                         color: Color(0xff000000).withOpacity(0.46),
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
                         color: Color(0xff000000).withOpacity(0.46),
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
                         color: Color(0xff000000).withOpacity(0.46),
                         fontSize: 15.sp,

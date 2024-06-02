@@ -176,13 +176,13 @@ class _HomePageState extends State<HomePage> {
                               color: MyColors.primary,
                               borderRadius: BorderRadius.circular(50),
                             ),
-                            child: text_widget(
+                            child: textWidget(
                                 "Hello, ${UserRepo().currentUser.name}",
                                 color: Colors.white,
                                 fontSize: 15.sp),
                           ),
                           SizedBox(height: 1.h),
-                          text_widget(
+                          textWidget(
                             "Find Amazing Friends",
                             color: Colors.white,
                             fontSize: 18.sp,
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               child: Row(
                                 children: [
-                                  text_widget(
+                                  textWidget(
                                     "Friend Requests",
                                     color: Colors.white,
                                     fontSize: 17.5.sp,
@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     },
-                                    child: text_widget(
+                                    child: textWidget(
                                       "View All",
                                       fontSize: 14.sp,
                                       color: MyColors.white,
@@ -314,7 +314,7 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       Row(
                                         children: [
-                                          text_widget(
+                                          textWidget(
                                             "Nearby Events",
                                             color: Colors.black,
                                             fontSize: 17.5.sp,
@@ -324,7 +324,7 @@ class _HomePageState extends State<HomePage> {
                                             onTap: () {
                                               Get.to(AllEvents());
                                             },
-                                            child: text_widget(
+                                            child: textWidget(
                                               "View All",
                                               fontSize: 14.sp,
                                               color: MyColors.primary,

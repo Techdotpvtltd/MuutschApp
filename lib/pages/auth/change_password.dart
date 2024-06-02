@@ -59,7 +59,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             child: Icon(Remix.arrow_left_s_line,
                                 color: Colors.black, size: 4.h)),
                         SizedBox(width: 2.w),
-                        text_widget("Change Password",
+                        textWidget("Change Password",
                             color: Colors.black, fontSize: 18.sp),
                       ],
                     ),
@@ -71,11 +71,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                     )),
                     SizedBox(height: 4.h),
                     Center(
-                      child: text_widget("Reset Your Password",
+                      child: textWidget("Reset Your Password",
                           fontSize: 21.sp, fontWeight: FontWeight.w600),
                     ),
                     SizedBox(height: 0.4.h),
-                    text_widget(
+                    textWidget(
                         "Please check your inbox and follow the instructions to reset your password.",
                         fontSize: 15.sp,
                         color: Color(0xff8C8C8C),

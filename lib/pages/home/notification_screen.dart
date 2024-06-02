@@ -111,7 +111,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                           ),
                           SizedBox(width: 2.w),
-                          text_widget(
+                          textWidget(
                             "Notifications",
                             color: Colors.white,
                             fontSize: 18.sp,
@@ -168,12 +168,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             ),
                                           ),
                                         ),
-                                        title: text_widget(
+                                        title: textWidget(
                                           notification.title,
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.w400,
                                         ),
-                                        subtitle: text_widget(
+                                        subtitle: textWidget(
                                           notification.message,
                                           fontSize: 13.sp,
                                           color: Color(0xff8F8F8F),

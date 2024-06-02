@@ -44,7 +44,7 @@ class SearchPage extends StatelessWidget {
                           Icon(Remix.arrow_left_s_line,
                               color: Colors.white, size: 4.h),
                           SizedBox(width: 2.w),
-                          text_widget("Search",
+                          textWidget("Search",
                               color: Colors.white, fontSize: 18.sp),
                           Spacer(),
                           Image.asset("assets/icons/list.png", height: 2.5.h),

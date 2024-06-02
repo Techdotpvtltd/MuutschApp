@@ -39,7 +39,7 @@ Widget requestWidget({required user, required FriendModel friend}) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Spacer(),
-            text_widget(
+            textWidget(
               user.name,
               color: Colors.white,
               fontSize: 15.7.sp,
@@ -50,7 +50,7 @@ Widget requestWidget({required user, required FriendModel friend}) {
               children: [
                 Image.asset("assets/icons/p1.png", height: 1.6.h),
                 SizedBox(width: 1.w),
-                text_widget(
+                textWidget(
                   user.location?.city ?? user.location?.country ?? "---",
                   fontSize: 14.sp,
                   color: Colors.white,
@@ -75,7 +75,7 @@ Widget requestWidget({required user, required FriendModel friend}) {
                             color: MyColors.white,
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          child: text_widget(
+                          child: textWidget(
                             user.interests?[i] ?? "",
                             color: MyColors.primary,
                             fontSize: 12.5.sp,

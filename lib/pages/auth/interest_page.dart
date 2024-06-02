@@ -150,19 +150,19 @@ class _InterestPageState extends State<InterestPage> {
                         ),
                       ),
                       SizedBox(height: 4.h),
-                      text_widget(
+                      textWidget(
                         "Your Interest",
                         fontSize: 21.sp,
                         fontWeight: FontWeight.w600,
                       ),
                       SizedBox(height: 0.4.h),
-                      text_widget(
+                      textWidget(
                         "Allow us to access your location while you’re using the app so we can help you find and meet members.",
                         fontSize: 15.sp,
                         color: Color(0xff8C8C8C),
                       ),
                       SizedBox(height: 2.h),
-                      text_widget(
+                      textWidget(
                         "Your Bio",
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
@@ -205,7 +205,7 @@ class _InterestPageState extends State<InterestPage> {
                                                 ? MyColors.primary
                                                 : Colors.transparent,
 
-                                        label: text_widget(txt1[index],
+                                        label: textWidget(txt1[index],
                                             fontSize: 14.sp,
                                             color: current2.contains(index)
                                                 ? Colors.white

@@ -169,7 +169,7 @@ class _EditProfileState extends State<EditProfile> {
                             size: 3.8.h,
                           )),
                       SizedBox(width: 3.w),
-                      text_widget(
+                      textWidget(
                         "Edit Profile",
                         fontWeight: FontWeight.w600,
                         fontSize: 18.sp,
@@ -200,13 +200,13 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   SizedBox(height: 2.h),
                   Center(
-                    child: text_widget(
+                    child: textWidget(
                       user.name,
                       fontSize: 17.8.sp,
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  text_widget(
+                  textWidget(
                     "Name",
                     fontSize: 15.6.sp,
                   ),
@@ -222,7 +222,7 @@ class _EditProfileState extends State<EditProfile> {
                   ),
 
                   SizedBox(height: 3.h),
-                  text_widget(
+                  textWidget(
                     "Email",
                     fontSize: 15.6.sp,
                   ),
@@ -238,7 +238,7 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   SizedBox(height: 3.h),
 
-                  text_widget(
+                  textWidget(
                     "Location",
                     fontSize: 15.6.sp,
                   ),
@@ -262,7 +262,7 @@ class _EditProfileState extends State<EditProfile> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      text_widget(
+                      textWidget(
                         "Interest",
                         fontSize: 15.6.sp,
                       ),
@@ -303,7 +303,7 @@ class _EditProfileState extends State<EditProfile> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
-                            child: text_widget(
+                            child: textWidget(
                               interests[index],
                               textAlign: TextAlign.center,
                               fontWeight: FontWeight.w400,

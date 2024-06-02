@@ -50,7 +50,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             child: Icon(Remix.arrow_left_s_line,
                                 color: Colors.black, size: 4.h)),
                         SizedBox(width: 2.w),
-                        text_widget("Contact us",
+                        textWidget("Contact us",
                             color: Colors.black, fontSize: 18.sp),
                       ],
                     ),
@@ -61,7 +61,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       height: 24.h,
                     )),
                     SizedBox(height: 1.h),
-                    text_widget(
+                    textWidget(
                       "Name",
                       fontSize: 15.6.sp,
                     ),
@@ -77,7 +77,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       isPrefix: false,
                     ),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                       "Email",
                       fontSize: 15.6.sp,
                     ),
@@ -93,7 +93,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       isPrefix: false,
                     ),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                       "Phone",
                       fontSize: 15.6.sp,
                     ),
@@ -109,7 +109,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       isPrefix: false,
                     ),
                     SizedBox(height: 2.h),
-                    text_widget(
+                    textWidget(
                       "Message",
                       fontSize: 15.6.sp,
                     ),

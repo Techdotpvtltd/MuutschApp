@@ -127,7 +127,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                         ),
                                       ),
                                       SizedBox(width: 2.w),
-                                      text_widget(
+                                      textWidget(
                                         "Setting",
                                         fontSize: 18.sp,
                                       ),
@@ -152,7 +152,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                                 UserRepo().currentUser.avatar,
                                           ),
                                           SizedBox(height: 1.h),
-                                          text_widget(
+                                          textWidget(
                                             UserRepo().currentUser.name,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w600,

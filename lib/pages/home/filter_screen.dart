@@ -156,7 +156,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       Row(
                         children: [
                           Spacer(),
-                          text_widget(
+                          textWidget(
                             "Filter",
                             fontSize: 18.sp,
                             fontWeight: FontWeight.w400,
@@ -186,7 +186,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         isPrefix: true,
                       ),
                       SizedBox(height: 2.h),
-                      text_widget(
+                      textWidget(
                         "Location & Address",
                         fontSize: 18.sp,
                       ),
@@ -258,12 +258,12 @@ class DeleteService extends StatelessWidget {
                       height: 8.h,
                     ),
                     SizedBox(height: 1.4.h),
-                    text_widget("Delete Service",
+                    textWidget("Delete Service",
                         color: MyColors.black,
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold),
                     SizedBox(height: 1.5.h),
-                    text_widget("Are you sure to want delete this Event",
+                    textWidget("Are you sure to want delete this Event",
                         textAlign: TextAlign.center,
                         color: Color(0xff2F3342).withOpacity(0.50),
                         fontWeight: FontWeight.w400,
@@ -330,7 +330,7 @@ class ChildDetails extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(height: 1.4.h),
-                    text_widget("Child Details ",
+                    textWidget("Child Details ",
                         color: MyColors.black,
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold),
@@ -344,7 +344,7 @@ class ChildDetails extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 18.0),
                         child: Row(
                           children: [
-                            text_widget("Total num of children",
+                            textWidget("Total num of children",
                                 fontSize: 15.sp, fontWeight: FontWeight.w400),
                             Spacer(),
                             Container(
@@ -388,7 +388,7 @@ class ChildDetails extends StatelessWidget {
                                     Image.asset("assets/icons/dp.png",
                                         height: 2.4.h),
                                     SizedBox(width: 3.w),
-                                    text_widget(
+                                    textWidget(
                                       "12 years old",
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w400,
@@ -410,7 +410,7 @@ class ChildDetails extends StatelessWidget {
                                     Image.asset("assets/icons/date.png",
                                         height: 2.4.h),
                                     SizedBox(width: 3.w),
-                                    text_widget(
+                                    textWidget(
                                       "12-3-2016",
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w400,

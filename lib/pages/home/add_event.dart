@@ -222,7 +222,7 @@ class _AddEventState extends State<AddEvent> {
                         ),
                       ),
                       SizedBox(width: 3.w),
-                      text_widget(
+                      textWidget(
                         isEditEvent ? "Update Event" : "Create Event",
                         fontWeight: FontWeight.w600,
                         fontSize: 18.sp,
@@ -255,7 +255,7 @@ class _AddEventState extends State<AddEvent> {
                       onClickCard: (index) {},
                     ),
                   ),
-                  text_widget(
+                  textWidget(
                     "Event Title",
                     fontSize: 15.6.sp,
                   ),
@@ -279,7 +279,7 @@ class _AddEventState extends State<AddEvent> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              text_widget(
+                              textWidget(
                                 "Date",
                                 fontSize: 15.6.sp,
                               ),
@@ -321,7 +321,7 @@ class _AddEventState extends State<AddEvent> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              text_widget(
+                              textWidget(
                                 "Time",
                                 fontSize: 15.6.sp,
                               ),
@@ -344,7 +344,7 @@ class _AddEventState extends State<AddEvent> {
                     ],
                   ),
                   SizedBox(height: 2.h),
-                  text_widget(
+                  textWidget(
                     "Location",
                     fontSize: 15.6.sp,
                   ),
@@ -378,7 +378,7 @@ class _AddEventState extends State<AddEvent> {
                       ),
                     ),
                   SizedBox(height: 2.h),
-                  text_widget(
+                  textWidget(
                     "Description",
                     fontSize: 15.6.sp,
                   ),

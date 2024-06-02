@@ -103,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 size: 3.h,
                               )),
                           SizedBox(width: 3.w),
-                          text_widget("Profile",
+                          textWidget("Profile",
                               fontWeight: FontWeight.w600, fontSize: 18.sp),
                         ],
                       ),
@@ -142,13 +142,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        text_widget(
+                                        textWidget(
                                           (statedData ?? user).name,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
                                         ),
                                         SizedBox(height: 0.5.h),
-                                        text_widget(
+                                        textWidget(
                                           (statedData ?? user).email,
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w400,
@@ -181,7 +181,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 "assets/icons/lock.png",
                                 height: 2.8.h,
                               ),
-                              title: text_widget("Change password",
+                              title: textWidget("Change password",
                                   fontSize: 15.2.sp),
                             ),
                           ),
@@ -205,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   height: 2.8.h,
                                 ),
                                 title:
-                                    text_widget("My Event", fontSize: 15.2.sp),
+                                    textWidget("My Event", fontSize: 15.2.sp),
                               ),
                             ),
                           )),
@@ -229,7 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 2.8.h,
                               ),
                               title:
-                                  text_widget("My Friends", fontSize: 15.2.sp),
+                                  textWidget("My Friends", fontSize: 15.2.sp),
                             ),
                           ),
                         ),
@@ -251,8 +251,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 "assets/icons/sub1.png",
                                 height: 2.8.h,
                               ),
-                              title: text_widget("Subscription",
-                                  fontSize: 15.2.sp),
+                              title:
+                                  textWidget("Subscription", fontSize: 15.2.sp),
                             ),
                           ),
                         ),

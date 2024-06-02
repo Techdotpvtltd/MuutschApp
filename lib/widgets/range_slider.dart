@@ -66,14 +66,14 @@ class _RangeSliderLabelWidgetState extends State<RangeSliderLabelWidget> {
             SizedBox(height: .5.h),
             Row(
               children: [
-                text_widget(
+                textWidget(
                   "0KM",
                   fontSize: 15.5.sp,
                   fontWeight: FontWeight.w400,
                   color: Color(0xff8C8C8C),
                 ),
                 Spacer(),
-                text_widget(
+                textWidget(
                   "50KM",
                   fontSize: 15.5.sp,
                   fontWeight: FontWeight.w400,

@@ -52,7 +52,7 @@ Widget eventWidget({
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    text_widget(
+                    textWidget(
                       title,
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -66,7 +66,7 @@ Widget eventWidget({
                         ),
                         SizedBox(width: 1.w),
                         Expanded(
-                          child: text_widget(
+                          child: textWidget(
                             address,
                             fontSize: 12.8.sp,
                             maxline: 1,
@@ -79,7 +79,7 @@ Widget eventWidget({
                     FutureBuilder<UserModel?>(
                       future: UserRepo().fetchUser(profileId: creator),
                       builder: (context, snapshot) {
-                        return text_widget(
+                        return textWidget(
                           "Created by: ${snapshot.data?.name ?? ""}",
                           fontSize: 12.2.sp,
                           color: MyColors.primary,
@@ -102,7 +102,7 @@ Widget eventWidget({
                       color: MyColors.primary,
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    child: text_widget(
+                    child: textWidget(
                       "Join",
                       color: Colors.white,
                       fontSize: 14.sp,

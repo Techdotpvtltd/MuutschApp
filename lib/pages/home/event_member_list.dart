@@ -71,7 +71,7 @@ class EventMemberList extends StatelessWidget {
                               backgroundImage:
                                   NetworkImage(joinsModel[index].avatar),
                             ),
-                            title: text_widget(
+                            title: textWidget(
                               UserRepo().currentUser.uid ==
                                       joinsModel[index].joinerId
                                   ? "You"

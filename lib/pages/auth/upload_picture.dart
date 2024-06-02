@@ -123,13 +123,13 @@ class _UploadPictureState extends State<UploadPicture> {
                         ),
                       ),
                       SizedBox(height: 4.h),
-                      text_widget(
+                      textWidget(
                         "Upload Picture",
                         fontSize: 21.sp,
                         fontWeight: FontWeight.w600,
                       ),
                       SizedBox(height: 0.4.h),
-                      text_widget(
+                      textWidget(
                         "Please Upload Your Profile picture to create an account.",
                         fontSize: 15.sp,
                         color: Color(

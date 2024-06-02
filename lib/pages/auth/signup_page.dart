@@ -129,13 +129,13 @@ class _SignupPageState extends State<SignupPage> {
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        text_widget(
+                        textWidget(
                           "Registration",
                           fontSize: 21.sp,
                           fontWeight: FontWeight.w600,
                         ),
                         SizedBox(height: 0.4.h),
-                        text_widget(
+                        textWidget(
                           "Are you sign up as a business or a person",
                           fontSize: 15.sp,
                           color: Color(0xff8C8C8C),
@@ -180,7 +180,7 @@ class _SignupPageState extends State<SignupPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            text_widget("Sign up as: "),
+                            textWidget("Sign up as: "),
                             Row(
                               children: [
                                 Radio(
@@ -194,7 +194,7 @@ class _SignupPageState extends State<SignupPage> {
                                     );
                                   },
                                 ),
-                                text_widget("User", fontSize: 16.0),
+                                textWidget("User", fontSize: 16.0),
                                 Radio(
                                   value: isUser == false,
                                   groupValue: true,
@@ -204,7 +204,7 @@ class _SignupPageState extends State<SignupPage> {
                                     });
                                   },
                                 ),
-                                text_widget("Business", fontSize: 16.0),
+                                textWidget("Business", fontSize: 16.0),
                               ],
                             ),
                           ],
@@ -262,7 +262,7 @@ class _SignupPageState extends State<SignupPage> {
                                 thickness: 1,
                               ),
                             ),
-                            text_widget(" OR ", color: MyColors.primary),
+                            textWidget(" OR ", color: MyColors.primary),
                             Expanded(
                               child: Divider(
                                 color: MyColors.primary,

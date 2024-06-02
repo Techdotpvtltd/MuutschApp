@@ -96,14 +96,14 @@ class _ResetPasswordState extends State<ResetPassword> {
                       ),
                       SizedBox(height: 4.h),
                       Center(
-                        child: text_widget(
+                        child: textWidget(
                           "Reset Your Password",
                           fontSize: 21.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(height: 0.4.h),
-                      text_widget(
+                      textWidget(
                           "Please check your inbox and follow the instructions to reset your password.",
                           fontSize: 15.sp,
                           color: Color(0xff8C8C8C),

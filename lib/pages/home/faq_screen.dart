@@ -46,13 +46,13 @@ class _FaqScreenState extends State<FaqScreen> {
                           size: 4.h,
                         )),
                     SizedBox(width: 3.w),
-                    text_widget("FAQ’S",
+                    textWidget("FAQ’S",
                         fontWeight: FontWeight.w600, fontSize: 20.sp),
                   ],
                 ),
                 // SizedBox(height: 1.h),
                 SizedBox(height: 2.h),
-                text_widget(
+                textWidget(
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown",
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
@@ -113,7 +113,7 @@ class _FaqScreenState extends State<FaqScreen> {
                     faqs[index] = value;
                   });
                 },
-                title: text_widget("Lorem Ipsum is simply dummy text",
+                title: textWidget("Lorem Ipsum is simply dummy text",
                     fontWeight: FontWeight.w500,
                     color: faqs[index] == true ? Colors.white : MyColors.black,
                     fontSize: 15.5.sp),
@@ -121,7 +121,7 @@ class _FaqScreenState extends State<FaqScreen> {
                     ? Icon(Remix.arrow_up_s_line, color: MyColors.white)
                     : Icon(Remix.arrow_down_s_line, color: MyColors.black),
                 children: [
-                  text_widget(
+                  textWidget(
                       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled ",
                       color: MyColors.white.withOpacity(0.9),
                       fontWeight: FontWeight.w400,

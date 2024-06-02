@@ -167,7 +167,7 @@ class _AllEventsState extends State<AllEvents> {
                               ),
                             ),
                             SizedBox(width: 2.w),
-                            text_widget(
+                            textWidget(
                               "All Events",
                               color: Colors.white,
                               fontSize: 18.sp,
@@ -315,7 +315,7 @@ class _AllEventsState extends State<AllEvents> {
                                                               ),
                                                               SizedBox(
                                                                   height: 1.h),
-                                                              text_widget(
+                                                              textWidget(
                                                                 event.title,
                                                                 fontSize: 16.sp,
                                                                 fontWeight:
@@ -337,7 +337,7 @@ class _AllEventsState extends State<AllEvents> {
                                                                           1.w),
                                                                   Flexible(
                                                                     child:
-                                                                        text_widget(
+                                                                        textWidget(
                                                                       "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
                                                                       maxline:
                                                                           1,
@@ -361,7 +361,7 @@ class _AllEventsState extends State<AllEvents> {
                                                                               .createdBy),
                                                                   builder: (context,
                                                                       snapshot) {
-                                                                    return text_widget(
+                                                                    return textWidget(
                                                                       "Created by: ${snapshot.data?.name ?? ""}",
                                                                       fontSize:
                                                                           12.2.sp,

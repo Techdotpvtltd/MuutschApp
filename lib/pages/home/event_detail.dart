@@ -149,7 +149,7 @@ class _EventViewState extends State<EventView> {
                           ),
                         ),
                         SizedBox(width: 3.w),
-                        text_widget(
+                        textWidget(
                           "Events Detail",
                           fontSize: 19.sp,
                         ),
@@ -170,7 +170,7 @@ class _EventViewState extends State<EventView> {
                     SizedBox(height: 2.h),
                     Row(
                       children: [
-                        text_widget(
+                        textWidget(
                           event.title,
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w600,
@@ -180,7 +180,7 @@ class _EventViewState extends State<EventView> {
                           onTap: () {
                             Get.to(EventMemberList(joinsModel: joinsModel));
                           },
-                          child: text_widget(
+                          child: textWidget(
                             "Joined: ${joinsModel.length}/${event.maxPersons}",
                             fontSize: 13.6.sp,
                             fontWeight: FontWeight.w300,
@@ -193,7 +193,7 @@ class _EventViewState extends State<EventView> {
                       children: [
                         Image.asset("assets/icons/d2.png", height: 1.8.h),
                         SizedBox(width: 2.w),
-                        text_widget(
+                        textWidget(
                           (event.dateTime).dateToString('dd MMMM, yyyy'),
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w300,
@@ -201,7 +201,7 @@ class _EventViewState extends State<EventView> {
                         SizedBox(width: 6.w),
                         Image.asset("assets/icons/cl.png", height: 1.8.h),
                         SizedBox(width: 2.w),
-                        text_widget(
+                        textWidget(
                           (event.dateTime).dateToString('hh:mm a'),
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w300,
@@ -211,7 +211,7 @@ class _EventViewState extends State<EventView> {
                     if (event.description != "" || event.description == null)
                       SizedBox(height: 3.h),
                     if (event.description != "" || event.description == null)
-                      text_widget(
+                      textWidget(
                         "Description",
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -219,7 +219,7 @@ class _EventViewState extends State<EventView> {
                     if (event.description != "" || event.description == null)
                       SizedBox(height: 0.5.h),
                     if (event.description != "" || event.description == null)
-                      text_widget(
+                      textWidget(
                         event.description ?? "",
                         fontSize: 14.6.sp,
                         fontWeight: FontWeight.w400,
@@ -230,7 +230,7 @@ class _EventViewState extends State<EventView> {
                     SizedBox(height: 3.h),
                     Row(
                       children: [
-                        text_widget(
+                        textWidget(
                           "Location",
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
@@ -246,7 +246,7 @@ class _EventViewState extends State<EventView> {
                         ),
                         SizedBox(width: 2.w),
                         Flexible(
-                          child: text_widget(
+                          child: textWidget(
                             event.location.address ?? "",
                             fontSize: 15.6.sp,
                             fontWeight: FontWeight.w300,

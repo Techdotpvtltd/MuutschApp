@@ -155,10 +155,10 @@ class _LoginPageState extends State<LoginPage> {
                         height: 10.h,
                       )),
                       SizedBox(height: 4.h),
-                      text_widget("Login for Business",
+                      textWidget("Login for Business",
                           fontSize: 21.sp, fontWeight: FontWeight.w600),
                       SizedBox(height: 0.4.h),
-                      text_widget("Enter your credentials  to log in",
+                      textWidget("Enter your credentials  to log in",
                           fontSize: 15.sp, color: Color(0xff8C8C8C)),
                       SizedBox(height: 6.h),
                       textFieldWithPrefixSuffuxIconAndHintText(
@@ -190,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                             onTap: () {
                               Get.to(ResetPassword());
                             },
-                            child: text_widget(
+                            child: textWidget(
                               "Forgot Password?",
                               fontSize: 13.5.sp,
                               color: Color(
@@ -256,7 +256,7 @@ class _LoginPageState extends State<LoginPage> {
                             color: MyColors.primary,
                             thickness: 1,
                           )),
-                          text_widget(" OR ", color: MyColors.primary),
+                          textWidget(" OR ", color: MyColors.primary),
                           Expanded(
                             child: Divider(
                               color: MyColors.primary,
