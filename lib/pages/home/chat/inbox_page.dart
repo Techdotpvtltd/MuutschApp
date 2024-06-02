@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -15,8 +17,11 @@ import '../../../blocs/chat/chat_event.dart';
 import '../../../blocs/chat/chat_state.dart';
 import '../../../models/chat_model.dart';
 import '../../../models/light_user_model.dart';
+import '../../../models/message_model.dart';
 import '../../../repos/chat_repo.dart';
+import '../../../repos/message_repo.dart';
 import '../../../repos/user_repo.dart';
+import '../../../utils/helping_methods.dart';
 import '../../../widgets/avatar_widget.dart';
 
 class InboxPage extends StatefulWidget {
@@ -173,55 +178,70 @@ Widget chatList({required ChatModel chat}) {
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(12)),
-        child: ListTile(
-          // isThreeLine: true,
-          leading: SizedBox(
-            height: 50,
-            width: 50,
-            child: AvatarWidget(
-                placeholderChar:
-                    ((chat.isGroup ? chat.groupTitle : senderUser?.name) ?? "")
-                        .characters
-                        .first,
-                avatarUrl:
-                    (chat.isGroup ? chat.groupAvatar : senderUser?.avatarUrl) ??
+        child: StreamBuilder<MessageModel?>(
+          stream: MessageRepo().getLastMessageStream(chat.uuid),
+          builder: (context, stream) {
+            if (stream.hasError) {
+              log(stream.error.toString());
+            }
+            MessageModel? lastMessage = stream.data;
+            return ListTile(
+              // isThreeLine: true,
+              leading: SizedBox(
+                height: 50,
+                width: 50,
+                child: AvatarWidget(
+                    placeholderChar:
+                        ((chat.isGroup ? chat.groupTitle : senderUser?.name) ??
+                                "")
+                            .characters
+                            .first,
+                    avatarUrl: (chat.isGroup
+                            ? chat.groupAvatar
+                            : senderUser?.avatarUrl) ??
                         ""),
-          ),
-          title: textWidget(
-            (chat.isGroup ? chat.groupTitle : senderUser?.name) ?? "",
-            fontWeight: FontWeight.w500,
-            fontSize: 16.sp,
-          ),
-          subtitle: textWidget(
-            "",
-            fontSize: 14.4.sp,
-            color: Color(0xff9CA3AF),
-          ),
-          trailing: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 1.h),
-              textWidget(
-                "---",
-                fontSize: 13.5.sp,
-                color: Color(
-                  0xff9CA3AF,
-                ),
               ),
-              SizedBox(height: 1.h),
-              CircleAvatar(
-                radius: 1.h,
-                backgroundColor: MyColors.primary,
-                child: textWidget(
-                  "1",
-                  color: Colors.white,
-                  fontSize: 13.6.sp,
-                ),
+              title: textWidget(
+                (chat.isGroup ? chat.groupTitle : senderUser?.name) ?? "",
+                fontWeight: FontWeight.w500,
+                fontSize: 16.sp,
               ),
-              Spacer(),
-            ],
-          ),
+              subtitle: textWidget(
+                lastMessage?.senderId == UserRepo().currentUser.uid
+                    ? "You: ${lastMessage?.type == MessageType.text ? lastMessage?.content ?? "" : "Sent media"}"
+                    : lastMessage?.type == MessageType.text
+                        ? lastMessage?.content ?? ""
+                        : "Received media",
+                fontSize: 14.4.sp,
+                color: Color(0xff9CA3AF),
+              ),
+              trailing: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 1.h),
+                  textWidget(
+                    formatChatDateToString(lastMessage?.messageTime) ?? "",
+                    fontSize: 13.5.sp,
+                    color: Color(
+                      0xff9CA3AF,
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
+                  // CircleAvatar(
+                  //   radius: 1.h,
+                  //   backgroundColor: MyColors.primary,
+                  //   child: textWidget(
+                  //     "1",
+                  //     color: Colors.white,
+                  //     fontSize: 13.6.sp,
+                  //   ),
+                  // ),
+                  Spacer(),
+                ],
+              ),
+            );
+          },
         ),
       ),
     ),

@@ -7,6 +7,8 @@
 //
 import 'dart:math';
 
+import 'package:musch/utils/extensions/date_extension.dart';
+
 //// Haversine formula for calculating the distance between two geographical points
 double calculateDistance({
   required double aLat,
@@ -29,4 +31,20 @@ double calculateDistance({
 
 double _deg2rad(double deg) {
   return deg * (pi / 180);
+}
+
+
+String? formatChatDateToString(DateTime? dateTime) {
+  if (dateTime == null) {
+    return "";
+  }
+  final days = DateTime.now().difference(dateTime).inDays;
+  if (days == 0) {
+    return dateTime.dateToString("hh:mm a");
+  }
+  if (days == 1) {
+    return "Yesterday at ${dateTime.dateToString("hh:mm a")}";
+  }
+
+  return dateTime.dateToString("dd-MMM-yyyy hh:mm a");
 }

@@ -56,6 +56,27 @@ class MessageRepo {
     _messages.clear();
   }
 
+  /// Stream Last Message
+  Stream<MessageModel?> getLastMessageStream(String conversationId) {
+    final FirebaseFirestore instance = FirebaseFirestore.instance;
+    final ref = instance
+        .collection(FIREBASE_COLLECTION_MESSAGES)
+        .where('conversationId', isEqualTo: conversationId)
+        .orderBy('messageTime', descending: true)
+        .limit(1);
+
+    return ref.snapshots().map(
+      (querySnapshot) {
+        if (querySnapshot.docs.isNotEmpty) {
+          final data = querySnapshot.docs.first.data();
+          return MessageModel.fromMap(data);
+        } else {
+          return null;
+        }
+      },
+    );
+  }
+
   // Fetch Messages
   Future<void> fetchMessages(
       {required VoidCallback onData,
