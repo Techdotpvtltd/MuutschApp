@@ -13,6 +13,7 @@ import 'blocs/auth/auth_bloc.dart';
 import 'blocs/chat/ chat_bloc.dart';
 import 'blocs/event/event_bloc.dart';
 import 'blocs/friend/friend_bloc.dart';
+import 'blocs/message/mesaage_bloc.dart';
 import 'blocs/notification/notification_bloc.dart';
 import 'blocs/push_notification/push_notification_bloc.dart';
 import 'blocs/user/user_bloc.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => PushNotificationBloc()),
             BlocProvider(create: (context) => NotificationBloc()),
             BlocProvider(create: (context) => ChatBloc()),
+            BlocProvider(create: (context) => MessageBloc()),
           ],
           child: GetMaterialApp(
             navigatorKey: navKey,
