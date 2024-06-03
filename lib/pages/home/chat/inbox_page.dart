@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:musch/config/colors.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/chat/chat_page.dart';
 import 'package:musch/widgets/text_field.dart';

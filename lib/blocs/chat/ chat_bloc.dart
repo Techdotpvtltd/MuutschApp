@@ -6,6 +6,8 @@
 // Description:
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musch/services/notification_services/push_notification_services.dart';
+import 'package:musch/utils/constants/constants.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/chat_model.dart';
@@ -22,8 +24,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatStateFetching());
           final ChatModel? chat =
               await ChatRepo().fetchChat(friendUid: event.friendProfile.uid);
+
           if (chat != null) {
             emit(ChatStateFetched(chat: chat));
+
             return;
           }
 
@@ -41,6 +45,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatStateFetchingAll());
           await ChatRepo().fetchChats();
           emit(ChatStateFetchedAll());
+          for (final String id in ChatRepo().chats.map((e) => e.uuid)) {
+            PushNotificationServices()
+                .subscribe(forTopic: "$PUSH_NOTIFICATION_EVENT_CHATS$id");
+          }
         } on AppException catch (e) {
           emit(ChatStateFetchAllFailure(exception: e));
         }

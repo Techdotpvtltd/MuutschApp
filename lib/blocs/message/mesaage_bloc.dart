@@ -1,8 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musch/models/message_model.dart';
+import 'package:musch/repos/user_repo.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../exceptions/exception_parsing.dart';
 import '../../repos/message_repo.dart';
+import '../../services/notification_services/fire_notification.dart';
+import '../../utils/constants/constants.dart';
 import 'message_event.dart';
 import 'message_state.dart';
 
@@ -47,6 +51,13 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
             },
           );
           emit(MessageStateSent());
+          FireNotification().sendNotification(
+              title: UserRepo().currentUser.name,
+              type: "chat",
+              description: event.type == MessageType.text
+                  ? event.content
+                  : "Sent a media.",
+              topic: "$PUSH_NOTIFICATION_EVENT_CHATS${event.conversationId}");
         } on AppException catch (e) {
           emit(MessageStateSendFailure(exception: e));
         }
