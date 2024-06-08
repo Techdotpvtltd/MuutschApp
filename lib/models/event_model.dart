@@ -101,17 +101,20 @@ class EventModel {
           (e) => e.toString(),
         )),
         title: map['title'] as String,
-        joinMemberIds:
-            (map['joinMemberIds'] as List).map((e) => (e as String)).toList(),
+        joinMemberIds: map['joinMemberIds'] == null
+            ? []
+            : (map['joinMemberIds'] as List).map((e) => (e as String)).toList(),
         dateTime: (map['dateTime'] as Timestamp).toDate(),
         location:
             LocationModel.fromMap(map['location'] as Map<String, dynamic>),
         description:
             map['description'] != null ? map['description'] as String : null,
         maxPersons: map['maxPersons'] as int? ?? 0,
-        joinMemberDetails: (map['joinMemberDetails'] as List)
-            .map((e) => OtherUserModel.fromMap((e as Map<String, dynamic>)))
-            .toList());
+        joinMemberDetails: map['joinMemberDetails'] == null
+            ? []
+            : (map['joinMemberDetails'] as List)
+                .map((e) => OtherUserModel.fromMap((e as Map<String, dynamic>)))
+                .toList());
   }
   @override
   String toString() {

@@ -107,11 +107,5 @@ class EventsEventJoin extends EventsEvent {
   EventsEventJoin({required this.eventId});
 }
 
-class EventsEventFetchJoin extends EventsEvent {
-  final String eventId;
-
-  EventsEventFetchJoin({required this.eventId});
-}
-
 /// Clear And UnSubscribe All events
 class EventsEventClearAndUnSubscribe extends EventsEvent {}

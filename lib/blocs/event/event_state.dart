@@ -10,7 +10,6 @@ import 'package:geolocator/geolocator.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/event_model.dart';
-import '../../models/join_event_model.dart';
 import '../../models/location_model.dart';
 
 abstract class EventState {
@@ -169,27 +168,4 @@ class EventStateJoinFailure extends EventState {
   EventStateJoinFailure({required this.exception});
 }
 
-class EventStateJoined extends EventState {
-  final JoinMemberModel joinModel;
-
-  EventStateJoined({required this.joinModel});
-}
-
-/// Fetch Info
-class EventStateFetchJoining extends EventState {
-  final String eventId;
-  EventStateFetchJoining(
-      {super.isLoading = true, super.loadingText, required this.eventId});
-}
-
-class EventStateFetchJoinFailure extends EventState {
-  final AppException exception;
-
-  EventStateFetchJoinFailure({required this.exception});
-}
-
-class EventStateFetchJoined extends EventState {
-  final List<JoinMemberModel> joinData;
-
-  EventStateFetchJoined({required this.joinData});
-}
+class EventStateJoined extends EventState {}

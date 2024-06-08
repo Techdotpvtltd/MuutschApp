@@ -9,9 +9,6 @@ const String FIREBASE_COLLECTION_USER_PROFILES =
 const String FIREBASE_COLLECTION_EVENTS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Events";
 
-const String FIREBASE_COLLECTION_JOIN_EVENTS =
-    "${kReleaseMode ? "Rel-" : "Dev-"}Join_Events";
-
 const String FIREBASE_COLLECTION_FRIENDS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Friends";
 const String FIREBASE_COLLECTION_NOTIFICATION =

@@ -23,7 +23,7 @@ Widget eventWidget({
   return BlocListener<EventBloc, EventState>(
     listener: (context, state) {
       if (state is EventStateJoined) {
-        isVisibleJoinButton = state.joinModel.eventId == eventId;
+        isVisibleJoinButton = false;
       }
     },
     child: InkWell(

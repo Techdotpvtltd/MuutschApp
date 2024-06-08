@@ -199,11 +199,14 @@ class _MyEventsState extends State<MyEvents> {
                                           return InkWell(
                                             onTap: () {
                                               // Get.to(EditEvent());
-                                              Get.to(EventView(
-                                                event: event,
-                                                isFromMyEvents: true,
-                                                joinsModel: [],
-                                              ));
+                                              Get.to(
+                                                EventView(
+                                                  event: event,
+                                                  isFromMyEvents: true,
+                                                  joinMembers:
+                                                      event.joinMemberDetails,
+                                                ),
+                                              );
                                             },
                                             child: Container(
                                               margin: EdgeInsets.symmetric(

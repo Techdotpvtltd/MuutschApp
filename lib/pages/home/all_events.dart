@@ -15,10 +15,8 @@ import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
 import '../../models/event_model.dart';
-import '../../models/join_event_model.dart';
 import '../../models/location_model.dart';
 import '../../models/user_model.dart';
-import '../../repos/event_repo.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/custom_network_image.dart';
@@ -256,199 +254,147 @@ class _AllEventsState extends State<AllEvents> {
                                           final EventModel event =
                                               events[index];
 
-                                          return FutureBuilder(
-                                            future: EventRepo().fetchJoinEvent(
-                                                eventId: event.id),
-                                            builder: (context, snapshot) {
-                                              final List<JoinMemberModel>
-                                                  joinsModel =
-                                                  snapshot.data ?? [];
-
-                                              return BlocSelector<EventBloc,
-                                                  EventState, bool?>(
-                                                selector: (state) {
-                                                  if (state
-                                                      is EventStateJoined) {
-                                                    if (state.joinModel
-                                                            .eventId ==
-                                                        event.id) {
-                                                      joinsModel
-                                                          .add(state.joinModel);
-                                                      return true;
-                                                    }
-                                                  }
-
-                                                  return null;
-                                                },
-                                                builder: (context, isJoined) {
-                                                  return isGrid
-                                                      ? InkWell(
-                                                          onTap: () {
-                                                            Get.to(
-                                                              EventView(
-                                                                  event: event,
-                                                                  joinsModel:
-                                                                      joinsModel),
-                                                            );
-                                                          },
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                                child: SizedBox(
-                                                                  height: 10.h,
-                                                                  width:
-                                                                      Get.width,
-                                                                  child:
-                                                                      CustomNetworkImage(
-                                                                    imageUrl: event
-                                                                        .imageUrls
-                                                                        .first,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                  height: 1.h),
-                                                              textWidget(
-                                                                event.title,
-                                                                fontSize: 16.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                              SizedBox(
-                                                                  height:
-                                                                      0.5.h),
-                                                              Row(
-                                                                children: [
-                                                                  Image.asset(
-                                                                    "assets/images/p2.png",
-                                                                    height:
-                                                                        1.4.h,
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                          1.w),
-                                                                  Flexible(
-                                                                    child:
-                                                                        textWidget(
-                                                                      "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
-                                                                      maxline:
-                                                                          1,
-                                                                      fontSize:
-                                                                          12.8.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w300,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                  height:
-                                                                      0.8.h),
-                                                              FutureBuilder<
-                                                                      UserModel?>(
-                                                                  future: UserRepo().fetchUser(
-                                                                      profileId: event
-                                                                          .creatorDetail
-                                                                          .uid),
-                                                                  builder: (context,
-                                                                      snapshot) {
-                                                                    return textWidget(
-                                                                      "Created by: ${snapshot.data?.name ?? ""}",
-                                                                      fontSize:
-                                                                          12.2.sp,
-                                                                      color: MyColors
-                                                                          .primary,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                    );
-                                                                  }),
-                                                              SizedBox(
-                                                                  height:
-                                                                      1.4.h),
-                                                              Visibility(
-                                                                visible: joinsModel
-                                                                        .where((element) =>
-                                                                            element.joinerId == UserRepo().currentUser.uid &&
-                                                                            element.eventId ==
-                                                                                event.id)
-                                                                        .length <
-                                                                    1,
-                                                                child:
-                                                                    gradientButton(
-                                                                  "Join Event",
-                                                                  font: 15,
-                                                                  txtColor:
-                                                                      MyColors
-                                                                          .white,
-                                                                  ontap: () {
-                                                                    triggerJoinEvent(
-                                                                        context.read<
-                                                                            EventBloc>(),
-                                                                        event
-                                                                            .id);
-                                                                  },
-                                                                  width: 90,
-                                                                  height: 3.5,
-                                                                  isColor: true,
-                                                                  clr: MyColors
-                                                                      .primary,
-                                                                ),
-                                                              ),
-                                                            ],
+                                          return isGrid
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    Get.to(
+                                                      EventView(
+                                                          event: event,
+                                                          joinMembers: event
+                                                              .joinMemberDetails),
+                                                    );
+                                                  },
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        child: SizedBox(
+                                                          height: 10.h,
+                                                          width: Get.width,
+                                                          child:
+                                                              CustomNetworkImage(
+                                                            imageUrl: event
+                                                                .imageUrls
+                                                                .first,
                                                           ),
-                                                        )
-                                                      : eventWidget(
-                                                          isEvent: true,
-                                                          creator: event
-                                                              .creatorDetail
-                                                              .uid,
-                                                          isVisibleJoinButton: joinsModel
-                                                                  .where((element) =>
-                                                                      element.joinerId ==
-                                                                          UserRepo()
-                                                                              .currentUser
-                                                                              .uid &&
-                                                                      element.eventId ==
-                                                                          event
-                                                                              .id)
-                                                                  .length <
-                                                              1,
-                                                          title: event.title,
-                                                          imageUrl: event
-                                                              .imageUrls.first,
-                                                          address:
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 1.h),
+                                                      textWidget(
+                                                        event.title,
+                                                        fontSize: 16.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                      SizedBox(height: 0.5.h),
+                                                      Row(
+                                                        children: [
+                                                          Image.asset(
+                                                            "assets/images/p2.png",
+                                                            height: 1.4.h,
+                                                          ),
+                                                          SizedBox(width: 1.w),
+                                                          Flexible(
+                                                            child: textWidget(
                                                               "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
-                                                          eventId: event.id,
-                                                          onClickEvent: () {
-                                                            Get.to(
-                                                              EventView(
-                                                                  event: event,
-                                                                  joinsModel:
-                                                                      joinsModel),
+                                                              maxline: 1,
+                                                              fontSize: 12.8.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 0.8.h),
+                                                      FutureBuilder<UserModel?>(
+                                                          future: UserRepo()
+                                                              .fetchUser(
+                                                                  profileId: event
+                                                                      .creatorDetail
+                                                                      .uid),
+                                                          builder: (context,
+                                                              snapshot) {
+                                                            return textWidget(
+                                                              "Created by: ${snapshot.data?.name ?? ""}",
+                                                              fontSize: 12.2.sp,
+                                                              color: MyColors
+                                                                  .primary,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                             );
-                                                          },
-                                                          onClickJoinButton:
-                                                              () {
+                                                          }),
+                                                      SizedBox(height: 1.4.h),
+                                                      Visibility(
+                                                        visible: event
+                                                                .joinMemberIds
+                                                                .where((element) =>
+                                                                    element ==
+                                                                    UserRepo()
+                                                                        .currentUser
+                                                                        .uid)
+                                                                .length <
+                                                            1,
+                                                        child: gradientButton(
+                                                          "Join Event",
+                                                          font: 15,
+                                                          txtColor:
+                                                              MyColors.white,
+                                                          ontap: () {
                                                             triggerJoinEvent(
                                                                 context.read<
                                                                     EventBloc>(),
                                                                 event.id);
                                                           },
-                                                        );
-                                                },
-                                              );
-                                            },
-                                          );
+                                                          width: 90,
+                                                          height: 3.5,
+                                                          isColor: true,
+                                                          clr: MyColors.primary,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : eventWidget(
+                                                  isEvent: true,
+                                                  creator:
+                                                      event.creatorDetail.uid,
+                                                  isVisibleJoinButton: event
+                                                          .joinMemberIds
+                                                          .where((element) =>
+                                                              element ==
+                                                              UserRepo()
+                                                                  .currentUser
+                                                                  .uid)
+                                                          .length <
+                                                      1,
+                                                  title: event.title,
+                                                  imageUrl:
+                                                      event.imageUrls.first,
+                                                  address:
+                                                      "${event.location.city}, ${event.location.country != null ? "${event.location.country}" : ""}",
+                                                  eventId: event.id,
+                                                  onClickEvent: () {
+                                                    Get.to(
+                                                      EventView(
+                                                          event: event,
+                                                          joinMembers: event
+                                                              .joinMemberDetails),
+                                                    );
+                                                  },
+                                                  onClickJoinButton: () {
+                                                    triggerJoinEvent(
+                                                        context
+                                                            .read<EventBloc>(),
+                                                        event.id);
+                                                  },
+                                                );
                                         },
                                       ),
                                     ),

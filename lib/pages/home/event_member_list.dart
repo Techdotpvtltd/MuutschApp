@@ -7,17 +7,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musch/models/other_user_model.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../config/colors.dart';
-import '../../models/join_event_model.dart';
 import '../../repos/user_repo.dart';
 import '../../widgets/text_widget.dart';
 import 'friend_view.dart';
 
 class EventMemberList extends StatelessWidget {
-  const EventMemberList({super.key, required this.joinsModel});
-  final List<JoinMemberModel> joinsModel;
+  const EventMemberList({super.key, required this.joinMembers});
+  final List<OtherUserModel> joinMembers;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class EventMemberList extends StatelessWidget {
           horizontal: 18.0,
           vertical: 8,
         ),
-        child: joinsModel.isEmpty
+        child: joinMembers.isEmpty
             ? Center(
                 child: Text(
                   "Oops!\nOur system couldn't locate any members.",
@@ -43,7 +43,7 @@ class EventMemberList extends StatelessWidget {
                 ),
               )
             : ListView.builder(
-                itemCount: joinsModel.length,
+                itemCount: joinMembers.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
@@ -52,7 +52,7 @@ class EventMemberList extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         Get.to(
-                          FriendView(userId: joinsModel[index].joinerId),
+                          FriendView(userId: joinMembers[index].uid),
                         );
                       },
                       child: Container(
@@ -69,13 +69,13 @@ class EventMemberList extends StatelessWidget {
                               backgroundColor: MyColors.primary,
                               radius: 2.4.h,
                               backgroundImage:
-                                  NetworkImage(joinsModel[index].avatar),
+                                  NetworkImage(joinMembers[index].avatarUrl),
                             ),
                             title: textWidget(
                               UserRepo().currentUser.uid ==
-                                      joinsModel[index].joinerId
+                                      joinMembers[index].uid
                                   ? "You"
-                                  : joinsModel[index].name,
+                                  : joinMembers[index].name,
                               fontSize: 16.5.sp,
                               fontWeight: FontWeight.w500,
                             ),

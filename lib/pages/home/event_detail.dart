@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/models/other_user_model.dart';
 import 'package:musch/utils/extensions/date_extension.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/map_sample.dart';
@@ -14,7 +15,6 @@ import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
 import '../../models/event_model.dart';
-import '../../models/join_event_model.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
@@ -27,10 +27,10 @@ class EventView extends StatefulWidget {
       {super.key,
       required this.event,
       this.isFromMyEvents = false,
-      required this.joinsModel});
+      required this.joinMembers});
   final EventModel event;
   final bool isFromMyEvents;
-  final List<JoinMemberModel> joinsModel;
+  final List<OtherUserModel> joinMembers;
 
   @override
   State<EventView> createState() => _EventViewState();
@@ -41,7 +41,7 @@ class _EventViewState extends State<EventView> {
   bool isDeleting = false;
   bool isJoiningEvent = false;
   String? joiningEventId;
-  List<JoinMemberModel> joinsModel = [];
+  List<OtherUserModel> joinMembers = [];
 
   void triggerDeleteEvent(EventBloc bloc) {
     bloc.add(EventsEventDelete(eventId: event.id));
@@ -51,16 +51,9 @@ class _EventViewState extends State<EventView> {
     bloc.add(EventsEventJoin(eventId: event.id));
   }
 
-  void triggerGetJoinnedMembers(EventBloc bloc) {
-    bloc.add(EventsEventFetchJoin(eventId: event.id));
-  }
-
   @override
   void initState() {
-    joinsModel = widget.joinsModel;
-    if (joinsModel.isEmpty) {
-      triggerGetJoinnedMembers(context.read<EventBloc>());
-    }
+    joinMembers = widget.joinMembers;
     super.initState();
   }
 
@@ -71,8 +64,7 @@ class _EventViewState extends State<EventView> {
         /// Join Event States
         if (state is EventStateJoinFailure ||
             state is EventStateJoined ||
-            state is EventStateJoining ||
-            state is EventStateFetchJoined) {
+            state is EventStateJoining) {
           setState(() {
             isJoiningEvent = state.isLoading;
             if (state is EventStateJoining) {
@@ -81,11 +73,7 @@ class _EventViewState extends State<EventView> {
           });
 
           if (state is EventStateJoined) {}
-          if (state is EventStateFetchJoined) {
-            setState(() {
-              joinsModel = state.joinData;
-            });
-          }
+
           if (state is EventStateJoinFailure) {
             CustomDialogs().errorBox(message: state.exception.message);
           }
@@ -178,10 +166,10 @@ class _EventViewState extends State<EventView> {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            Get.to(EventMemberList(joinsModel: joinsModel));
+                            Get.to(EventMemberList(joinMembers: joinMembers));
                           },
                           child: textWidget(
-                            "Joined: ${joinsModel.length}/${event.maxPersons}",
+                            "Joined: ${joinMembers.length}/${event.maxPersons}",
                             fontSize: 13.6.sp,
                             fontWeight: FontWeight.w300,
                           ),
@@ -311,11 +299,10 @@ class _EventViewState extends State<EventView> {
                             ],
                           )
                         : Visibility(
-                            visible: widget.joinsModel
+                            visible: widget.joinMembers
                                     .where((element) =>
-                                        element.eventId == event.id &&
-                                        UserRepo().currentUser.uid ==
-                                            element.joinerId)
+                                        element.uid ==
+                                        UserRepo().currentUser.uid)
                                     .length <
                                 1,
                             child: gradientButton(
