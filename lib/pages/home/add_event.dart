@@ -81,26 +81,25 @@ class _AddEventState extends State<AddEvent> {
   }
 
   void pickLocation() async {
-    setState(() {
-      selectedLocation = null;
-    });
     final LocationResult result = await Get.to(
       PlacePicker(
         "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
-        defaultLocation: (selectedLocation?.latitude != null &&
+        displayLocation: (selectedLocation?.latitude != null &&
                 selectedLocation?.longitude != null)
             ? LatLng(selectedLocation!.latitude, selectedLocation!.longitude)
             : null,
       ),
     );
 
-    selectedLocation = LocationModel(
-      address: result.formattedAddress,
-      city: result.city?.name,
-      country: result.country?.name,
-      latitude: result.latLng?.latitude ?? 0,
-      longitude: result.latLng?.longitude ?? 0,
-    );
+    setState(() {
+      selectedLocation = LocationModel(
+        address: result.formattedAddress,
+        city: result.city?.name,
+        country: result.country?.name,
+        latitude: result.latLng?.latitude ?? 0,
+        longitude: result.latLng?.longitude ?? 0,
+      );
+    });
 
     setState(() {
       locationController.text = selectedLocation?.address ?? "";

@@ -22,7 +22,7 @@ import '../../blocs/user/user_event.dart';
 import '../../blocs/user/user_state.dart';
 import '../../manager/app_manager.dart';
 import '../../models/friend_model.dart';
-import '../../models/light_user_model.dart';
+import '../../models/other_user_model.dart';
 import '../../models/user_model.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
@@ -75,10 +75,12 @@ class _FriendViewState extends State<FriendView> {
     if (user != null) {
       bloc.add(
         ChatEventFetch(
-          friendProfile: LightUserModel(
+          friendProfile: OtherUserModel(
             uid: user!.uid,
             name: user!.name,
             avatarUrl: user!.avatar,
+            about: user?.bio ?? "",
+            createdAt: DateTime.now(),
           ),
         ),
       );

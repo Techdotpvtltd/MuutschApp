@@ -7,8 +7,6 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../blocs/event/event_bloc.dart';
 import '../blocs/event/event_state.dart';
-import '../models/user_model.dart';
-import '../repos/user_repo.dart';
 import 'custom_network_image.dart';
 
 Widget eventWidget({
@@ -76,16 +74,11 @@ Widget eventWidget({
                       ],
                     ),
                     SizedBox(height: 0.8.h),
-                    FutureBuilder<UserModel?>(
-                      future: UserRepo().fetchUser(profileId: creator),
-                      builder: (context, snapshot) {
-                        return textWidget(
-                          "Created by: ${snapshot.data?.name ?? ""}",
-                          fontSize: 12.2.sp,
-                          color: MyColors.primary,
-                          fontWeight: FontWeight.w600,
-                        );
-                      },
+                    textWidget(
+                      "Created by: $creator",
+                      fontSize: 12.2.sp,
+                      color: MyColors.primary,
+                      fontWeight: FontWeight.w600,
                     )
                   ],
                 ),

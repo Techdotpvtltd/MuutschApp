@@ -15,7 +15,7 @@ import '../../../blocs/chat/ chat_bloc.dart';
 import '../../../blocs/chat/chat_event.dart';
 import '../../../blocs/chat/chat_state.dart';
 import '../../../models/chat_model.dart';
-import '../../../models/light_user_model.dart';
+import '../../../models/other_user_model.dart';
 import '../../../models/message_model.dart';
 import '../../../repos/chat_repo.dart';
 import '../../../repos/message_repo.dart';
@@ -161,7 +161,7 @@ class _InboxPageState extends State<InboxPage> {
 }
 
 Widget chatList({required ChatModel chat}) {
-  LightUserModel? senderUser;
+  OtherUserModel? senderUser;
   if (!chat.isGroup) {
     senderUser = chat.participants
         .firstWhere((e) => e.uid != UserRepo().currentUser.uid);

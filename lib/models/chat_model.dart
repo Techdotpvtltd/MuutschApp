@@ -11,13 +11,13 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-import 'light_user_model.dart';
+import 'other_user_model.dart';
 
 class ChatModel {
   final String uuid;
   final DateTime createdAt;
   final String createdBy;
-  final List<LightUserModel> participants;
+  final List<OtherUserModel> participants;
   final List<String> participantUids;
   final bool isChatEnabled;
   final bool isGroup;
@@ -41,7 +41,7 @@ class ChatModel {
     String? uuid,
     DateTime? createdAt,
     String? createdBy,
-    List<LightUserModel>? participants,
+    List<OtherUserModel>? participants,
     List<String>? participantUids,
     bool? isChatEnabled,
     bool? isGroup,
@@ -84,7 +84,7 @@ class ChatModel {
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       createdBy: map['createdBy'] as String,
       participants: (map['participants'] as List<dynamic>)
-          .map((e) => LightUserModel.fromMap(e))
+          .map((e) => OtherUserModel.fromMap(e))
           .toList(),
       participantUids: List<String>.from(map['participantUids'] as List),
       isChatEnabled: map['isChatEnabled'] as bool,

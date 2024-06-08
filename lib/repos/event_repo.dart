@@ -10,8 +10,9 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
+import 'package:musch/models/other_user_model.dart';
 
-import '../exceptions/app_exceptions.dart';
 import '../exceptions/exception_parsing.dart';
 import '../models/event_model.dart';
 import '../models/join_event_model.dart';
@@ -25,9 +26,9 @@ import 'validations/check_validation.dart';
 
 class EventRepo {
   // // ===========================Singleton Instance================================
-  // static final EventRepo _instance = EventRepo._internal();
-  // EventRepo._internal();
-  // factory EventRepo() => _instance;
+  static final EventRepo _instance = EventRepo._internal();
+  EventRepo._internal();
+  factory EventRepo() => _instance;
 
   // // ===========================Properties================================
   // List<EventModel> _events = [];
@@ -41,8 +42,8 @@ class EventRepo {
     LocationModel? location,
     String? description,
     String? maxPersons,
-    required String userId,
     required String uuid,
+    required OtherUserModel user,
   }) async {
     try {
       await CheckVaidation.onCreateEvent(
@@ -55,7 +56,7 @@ class EventRepo {
 
       final EventModel event = EventModel(
         id: uuid,
-        createdBy: userId,
+        creatorDetail: user,
         createdAt: DateTime.now(),
         imageUrls: imageUrls,
         title: eventTitle,
@@ -63,12 +64,18 @@ class EventRepo {
         location: location!,
         description: description,
         maxPersons: int.tryParse(maxPersons!) ?? 0,
+        joinMemberDetails: [],
+        joinMemberIds: [],
+        createdBy: user.uid,
       );
+      final map = event.toMap();
+      map['position'] = GeoFlutterFire()
+          .point(latitude: location.latitude, longitude: location.longitude)
+          .data;
+
       final Map<String, dynamic> mapped = await FirestoreService()
           .saveWithDocId(
-              path: FIREBASE_COLLECTION_EVENTS,
-              data: event.toMap(),
-              docId: uuid);
+              path: FIREBASE_COLLECTION_EVENTS, data: map, docId: uuid);
       return EventModel.fromMap(mapped);
     } catch (e) {
       throw throwAppException(e: e);
@@ -114,6 +121,11 @@ class EventRepo {
           'location': location?.toMap(),
           'description': description,
           'maxPersons': int.tryParse(maxPersons ?? "0") ?? 0,
+          'position': GeoFlutterFire()
+              .point(
+                  latitude: location?.latitude ?? 0,
+                  longitude: location?.longitude ?? 0)
+              .data,
         },
       );
     } catch (e) {
@@ -177,50 +189,54 @@ class EventRepo {
               collection: FIREBASE_COLLECTION_EVENTS, queries: queries);
       return data.map((e) => EventModel.fromMap(e)).toList();
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       throw throwAppException(e: e);
     }
   }
 
   /// Fetch All Events
-  Future<void> fetchAllEvents({
-    required Function(AppException) onError,
-    required Function(EventModel) onEventRecieved,
-    required Function(EventModel) onEventUpdated,
-    required Function(EventModel) onEventDeleted,
-    required VoidCallback onAllGet,
+  /// Fetch All Events Within Radius
+  Future<List<EventModel>> fetchAllEvents({
+    required double userLat,
+    required double userLng,
+    EventModel? lastEvent,
   }) async {
-    final String userId = UserRepo().currentUser.uid;
+    try {
+      final String userId = UserRepo().currentUser.uid;
+      final geoflutterfire = GeoFlutterFire();
+      final center =
+          geoflutterfire.point(latitude: userLat, longitude: userLng);
 
-    await FirestoreService().fetchWithListener(
-      collection: FIREBASE_COLLECTION_EVENTS,
-      onError: (e) {
-        onError(throwAppException(e: e));
-      },
-      onAdded: (data) {
-        final EventModel event = EventModel.fromMap(data);
-        onEventRecieved(event);
-      },
-      onRemoved: (data) {
-        final EventModel event = EventModel.fromMap(data);
-        onEventDeleted(event);
-      },
-      onUpdated: (data) {
-        final EventModel event = EventModel.fromMap(data);
-        onEventUpdated(event);
-      },
-      onAllDataGet: () {
-        onAllGet();
-      },
-      onCompleted: (listener) {
-        listener?.cancel();
-      },
-      queries: [
-        QueryModel(field: 'createdAt', value: true, type: QueryType.orderBy),
-        QueryModel(
-            field: 'createdBy', value: userId, type: QueryType.isNotEqual),
-      ],
-    );
+      Query collectionReference =
+          FirebaseFirestore.instance.collection(FIREBASE_COLLECTION_EVENTS);
+      final Stream<List<DocumentSnapshot>> stream = geoflutterfire
+          .collection(collectionRef: collectionReference)
+          .withinAsSingleStreamSubscription(
+            center: center,
+            radius: 5, // IN Killo Meters
+            field: 'position',
+            strictMode: true,
+          );
+
+      final List<DocumentSnapshot> documents = await stream.first;
+
+      // Filter documents to ensure they are within the radius
+      final List<Map<String, dynamic>?> maps =
+          documents.map((e) => (e.data() as Map<String, dynamic>?)).toList();
+
+      final List<EventModel> events = maps
+          .where((data) => data != null)
+          .toList()
+          .map((e) => EventModel.fromMap(e!))
+          .where((element) => element.createdBy != userId)
+          .toList();
+      events.sort((a, b) => b.createdAt.millisecondsSinceEpoch
+          .compareTo(a.createdAt.millisecondsSinceEpoch));
+      return events;
+    } catch (e) {
+      debugPrint("[debug EventFetchAll] $e");
+      throw throwAppException(e: e);
+    }
   }
 
   /// Fetch Joined Members Data
@@ -238,7 +254,7 @@ class EventRepo {
 
       return data.map((e) => JoinMemberModel.fromMap(e)).toList();
     } catch (e) {
-      log("[debug JoinFetchEventError] ${e.toString}");
+      debugPrint("[debug JoinFetchEventError] ${e.toString}");
       throw throwAppException(e: e);
     }
   }

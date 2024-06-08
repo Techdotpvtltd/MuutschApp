@@ -8,11 +8,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:musch/models/other_user_model.dart';
 
 import 'location_model.dart';
 
 class EventModel {
   final String id;
+  final OtherUserModel creatorDetail;
   final String createdBy;
   final DateTime createdAt;
   final List<String> imageUrls;
@@ -21,78 +23,99 @@ class EventModel {
   final LocationModel location;
   final String? description;
   final int maxPersons;
+  final List<OtherUserModel> joinMemberDetails;
+  final List<String> joinMemberIds;
+
   double distance;
   EventModel({
     required this.id,
-    required this.createdBy,
+    required this.creatorDetail,
     required this.createdAt,
     required this.imageUrls,
     required this.title,
+    required this.createdBy,
     required this.dateTime,
     required this.location,
+    required this.joinMemberDetails,
     this.description,
     required this.maxPersons,
     this.distance = 0,
+    required this.joinMemberIds,
   });
 
   EventModel copyWith({
     String? id,
-    String? createdBy,
+    OtherUserModel? creatorDetail,
     DateTime? createdAt,
     List<String>? imageUrls,
     String? title,
+    String? createdBy,
     DateTime? dateTime,
     LocationModel? location,
     String? description,
     int? maxPersons,
+    List<String>? joinMemberIds,
+    List<OtherUserModel>? joinMemberDetails,
   }) {
     return EventModel(
       id: id ?? this.id,
-      createdBy: createdBy ?? this.createdBy,
+      creatorDetail: creatorDetail ?? this.creatorDetail,
       createdAt: createdAt ?? this.createdAt,
       imageUrls: imageUrls ?? this.imageUrls,
       title: title ?? this.title,
+      createdBy: createdBy ?? this.createdBy,
       dateTime: dateTime ?? this.dateTime,
       location: location ?? this.location,
       description: description ?? this.description,
       maxPersons: maxPersons ?? this.maxPersons,
+      joinMemberIds: joinMemberIds ?? this.joinMemberIds,
+      joinMemberDetails: joinMemberDetails ?? this.joinMemberDetails,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'createdBy': createdBy,
-      // ignore: sdk_version_since
+      'creatorDetail': creatorDetail.toMap(),
       'createdAt': Timestamp.fromDate(createdAt),
       'imageUrls': imageUrls,
       'title': title,
+      'createdBy': createdBy,
       'dateTime': Timestamp.fromDate(dateTime),
       'location': location.toMap(),
       'description': description,
       'maxPersons': maxPersons,
+      'joinMemberIds': joinMemberIds,
+      'joinMemberDetails': joinMemberDetails.map((e) => e.toMap()).toList(),
     };
   }
 
   factory EventModel.fromMap(Map<String, dynamic> map) {
     return EventModel(
-      id: map['id'] as String,
-      createdBy: map['createdBy'] as String,
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
-      imageUrls: List<String>.from((map['imageUrls'] as List<dynamic>).map(
-        (e) => e.toString(),
-      )),
-      title: map['title'] as String,
-      dateTime: (map['dateTime'] as Timestamp).toDate(),
-      location: LocationModel.fromMap(map['location'] as Map<String, dynamic>),
-      description:
-          map['description'] != null ? map['description'] as String : null,
-      maxPersons: map['maxPersons'] as int? ?? 0,
-    );
+        id: map['id'] as String,
+        createdBy: map['createdBy'] as String,
+        creatorDetail: OtherUserModel.fromMap(
+            map['creatorDetail'] as Map<String, dynamic>),
+        createdAt: (map['createdAt'] as Timestamp).toDate(),
+        imageUrls: List<String>.from((map['imageUrls'] as List<dynamic>).map(
+          (e) => e.toString(),
+        )),
+        title: map['title'] as String,
+        joinMemberIds:
+            (map['joinMemberIds'] as List).map((e) => (e as String)).toList(),
+        dateTime: (map['dateTime'] as Timestamp).toDate(),
+        location:
+            LocationModel.fromMap(map['location'] as Map<String, dynamic>),
+        description:
+            map['description'] != null ? map['description'] as String : null,
+        maxPersons: map['maxPersons'] as int? ?? 0,
+        joinMemberDetails: (map['joinMemberDetails'] as List)
+            .map((e) => OtherUserModel.fromMap((e as Map<String, dynamic>)))
+            .toList());
   }
   @override
   String toString() {
-    return 'EventModel(id: $id, createdBy: $createdBy, createdAt: $createdAt, imageUrls: $imageUrls, title: $title, dateTime: $dateTime, location: $location, description: $description, maxPersons: $maxPersons)';
+    return 'EventModel(id: $id, createdBy: $creatorDetail, createdAt: $createdAt, imageUrls: $imageUrls, title: $title, dateTime: $dateTime, location: $location, description: $description, maxPersons: $maxPersons, joinMemberDetails: $joinMemberDetails)';
   }
 
   @override
@@ -100,7 +123,7 @@ class EventModel {
     if (identical(this, other)) return true;
 
     return other.id == id &&
-        other.createdBy == createdBy &&
+        other.creatorDetail == creatorDetail &&
         other.createdAt == createdAt &&
         listEquals(other.imageUrls, imageUrls) &&
         other.title == title &&
@@ -113,7 +136,7 @@ class EventModel {
   @override
   int get hashCode {
     return id.hashCode ^
-        createdBy.hashCode ^
+        creatorDetail.hashCode ^
         createdAt.hashCode ^
         imageUrls.hashCode ^
         title.hashCode ^

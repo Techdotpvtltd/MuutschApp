@@ -5,7 +5,7 @@
 // Date:        31-05-24 13:34:57 -- Friday
 // Description:
 
-import '../../models/light_user_model.dart';
+import '../../models/other_user_model.dart';
 
 abstract class ChatEvent {}
 
@@ -14,7 +14,7 @@ class ChatEventFetchAll extends ChatEvent {}
 
 /// Fetch Single Chat Event
 class ChatEventFetch extends ChatEvent {
-  final LightUserModel friendProfile;
+  final OtherUserModel friendProfile;
 
   ChatEventFetch({required this.friendProfile});
 }
@@ -25,7 +25,7 @@ class ChatEventCreate extends ChatEvent {
   final bool isChatEnabled;
   String? chatTitle;
   String? chatAvatar;
-  LightUserModel? friendProfile;
+  OtherUserModel? friendProfile;
 
   ChatEventCreate(
       {this.isGroup = false,

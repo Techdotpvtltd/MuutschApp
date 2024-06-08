@@ -356,9 +356,9 @@ class _AllEventsState extends State<AllEvents> {
                                                               FutureBuilder<
                                                                       UserModel?>(
                                                                   future: UserRepo().fetchUser(
-                                                                      profileId:
-                                                                          event
-                                                                              .createdBy),
+                                                                      profileId: event
+                                                                          .creatorDetail
+                                                                          .uid),
                                                                   builder: (context,
                                                                       snapshot) {
                                                                     return textWidget(
@@ -409,8 +409,9 @@ class _AllEventsState extends State<AllEvents> {
                                                         )
                                                       : eventWidget(
                                                           isEvent: true,
-                                                          creator:
-                                                              event.createdBy,
+                                                          creator: event
+                                                              .creatorDetail
+                                                              .uid,
                                                           isVisibleJoinButton: joinsModel
                                                                   .where((element) =>
                                                                       element.joinerId ==

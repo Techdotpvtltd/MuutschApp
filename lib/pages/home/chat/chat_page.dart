@@ -12,7 +12,7 @@ import '../../../blocs/message/mesaage_bloc.dart';
 import '../../../blocs/message/message_event.dart';
 import '../../../blocs/message/message_state.dart';
 import '../../../models/chat_model.dart';
-import '../../../models/light_user_model.dart';
+import '../../../models/other_user_model.dart';
 import '../../../models/message_model.dart';
 import '../../../repos/user_repo.dart';
 import '../../../utils/constants/constants.dart';
@@ -30,7 +30,7 @@ class UserChatPage extends StatefulWidget {
 TextEditingController messageController = TextEditingController();
 
 class _UserChatPageState extends State<UserChatPage> {
-  late final LightUserModel friend = widget.chat.participants
+  late final OtherUserModel friend = widget.chat.participants
       .firstWhere((element) => element.uid != UserRepo().currentUser.uid);
 
   void triggerSenderMediaMessageEvent(

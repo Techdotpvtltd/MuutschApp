@@ -6,8 +6,6 @@
 // Description:
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:musch/services/notification_services/push_notification_services.dart';
-import 'package:musch/utils/constants/constants.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/chat_model.dart';
@@ -17,7 +15,7 @@ import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(ChatStateInitial()) {
-    /// Fetch Single Chat Event
+    /// Fetch Single Chat Evenst
     on<ChatEventFetch>(
       (event, emit) async {
         try {
@@ -27,7 +25,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
           if (chat != null) {
             emit(ChatStateFetched(chat: chat));
-
             return;
           }
 

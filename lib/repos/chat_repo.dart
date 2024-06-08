@@ -9,7 +9,7 @@ import 'dart:developer';
 
 import '../exceptions/exception_parsing.dart';
 import '../models/chat_model.dart';
-import '../models/light_user_model.dart';
+import '../models/other_user_model.dart';
 import '../models/user_model.dart';
 import '../utils/constants/firebase_collections.dart';
 import '../web_services/firestore_services.dart';
@@ -115,11 +115,11 @@ class ChatRepo {
     required bool isChatEnabled,
     String? chatTitle,
     String? chatAvatar,
-    LightUserModel? friendProfile,
+    OtherUserModel? friendProfile,
   }) async {
     try {
       final UserModel user = UserRepo().currentUser;
-      final List<LightUserModel> participants = [];
+      final List<OtherUserModel> participants = [];
       final List<String> participantIds = [];
       if (friendProfile != null) {
         participants.add(friendProfile);
@@ -128,8 +128,13 @@ class ChatRepo {
 
       // Current User Info
       participantIds.add(user.uid);
-      participants.add(LightUserModel(
-          uid: user.uid, name: user.name, avatarUrl: user.avatar));
+      participants.add(OtherUserModel(
+        uid: user.uid,
+        name: user.name,
+        avatarUrl: user.avatar,
+        about: user.bio ?? "",
+        createdAt: DateTime.now(),
+      ));
 
       participantIds.sort();
       final ChatModel chatModel = ChatModel(

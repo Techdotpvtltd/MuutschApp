@@ -5,9 +5,13 @@
 // Date:        14-05-24 15:50:34 -- Tuesday
 // Description:
 
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:musch/models/other_user_model.dart';
+import 'package:musch/models/user_model.dart';
 import 'package:place_picker/uuid.dart';
 
 import '../../exceptions/app_exceptions.dart';
@@ -43,7 +47,7 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
     on<EventsEventCreate>(
       (event, emit) async {
         try {
-          final String userId = UserRepo().currentUser.uid;
+          final UserModel user = UserRepo().currentUser;
           final String eventId = Uuid().generateV4();
           final List<String> uploadedImageUrls = [];
           for (int i = 0; i < event.imageUrls.length; i++) {
@@ -67,7 +71,12 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
               maxPersons: event.maxPersons,
               description: event.description,
               location: event.eventLocation,
-              userId: userId,
+              user: OtherUserModel(
+                  uid: user.uid,
+                  name: user.name,
+                  avatarUrl: user.avatar,
+                  about: user.bio ?? "",
+                  createdAt: user.createdAt),
               uuid: eventId);
           emit(EventStateCreated(event: model));
         } on AppException catch (e) {
@@ -196,61 +205,34 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
     /// Fetch All Data Event
     on<EventsEventFetchAll>(
       (event, emit) async {
-        if (events.isNotEmpty) {
-          /// Avoid call api if data is already fetched
-          emit(EventStateFetched(events: events));
-        } else {
-          /// called api for first time
+        try {
+          if (events.isNotEmpty) {
+            emit(EventStateFetched(events: events));
+            emit(EventStateFetchedAll(events: events));
+            return;
+          }
           emit(EventStateFetching());
-          await EventRepo().fetchAllEvents(
-            onError: (exception) {
-              emit(EventStateFetchFailure(exception: exception));
-            },
-            onEventRecieved: (event) {
-              final int index =
-                  events.indexWhere((element) => element.id == event.id);
-              if (index > -1) {
-                events[index] = event;
-              } else {
-                events.add(event);
-              }
-              event.distance = calculateDistance(
-                  aLat: position?.latitude ?? 0,
-                  aLong: position?.longitude ?? 0,
-                  bLat: event.location.latitude,
-                  bLong: event.location.longitude);
-
-              events.sort((a, b) => a.distance.compareTo(b.distance));
-              emit(EventStateFetched(events: events));
-            },
-            onEventUpdated: (event) {
-              final int index =
-                  events.indexWhere((element) => element.id == event.id);
-              if (index > -1) {
-                events[index] = event;
-
-                event.distance = calculateDistance(
-                    aLat: position?.latitude ?? 0,
-                    aLong: position?.longitude ?? 0,
-                    bLat: event.location.latitude,
-                    bLong: event.location.longitude);
-
-                events.sort((a, b) => a.distance.compareTo(b.distance));
-                emit(EventStateFetched(events: events));
-              }
-            },
-            onEventDeleted: (event) {
-              final int index =
-                  events.indexWhere((element) => element.id == event.id);
-              if (index > -1) {
-                events.removeAt(index);
-                emit(EventStateFetched(events: events));
-              }
-            },
-            onAllGet: () {
-              emit(EventStateFetchedAll(events: events));
-            },
+          final List<EventModel> fetchEvents = await EventRepo().fetchAllEvents(
+            userLat: position?.latitude ?? 0,
+            userLng: position?.longitude ?? 0,
           );
+          for (final event in fetchEvents) {
+            if (events.contains(event)) {
+              continue; // skip the process
+            }
+            event.distance = calculateDistance(
+                aLat: position?.latitude ?? 0,
+                aLong: position?.longitude ?? 0,
+                bLat: event.location.latitude,
+                bLong: event.location.longitude);
+            events.add(event);
+          }
+          events.sort((a, b) => a.distance.compareTo(b.distance));
+          emit(EventStateFetched(events: events));
+          emit(EventStateFetchedAll(events: events));
+          log(fetchEvents.toString());
+        } on AppException catch (e) {
+          emit(EventStateFetchFailure(exception: e));
         }
       },
     );
@@ -282,17 +264,19 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
                   .title,
               description: "${UserRepo().currentUser.name} joined your event.",
               topic:
-                  "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).createdBy}",
+                  "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).creatorDetail}",
               type: 'events');
           NotificationRepo().save(
               recieverId: events
                   .firstWhere((element) => element.id == event.eventId)
-                  .createdBy,
+                  .creatorDetail
+                  .uid,
               title: "Event Update",
               message:
                   " joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
               type: NotificationType.event);
         } on AppException catch (e) {
+          log("[debug EventFetchAll] $e");
           emit(EventStateJoinFailure(exception: e));
         }
       },
