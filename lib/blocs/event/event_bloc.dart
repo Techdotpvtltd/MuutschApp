@@ -315,5 +315,15 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
         }
       },
     );
+
+    /// Clear And UnSubscribe All events
+    on<EventsEventClearAndUnSubscribe>(
+      (event, emit) {
+        for (final EventModel event in events) {
+          PushNotificationServices().unsubscribe(
+              forTopic: "$PUSH_NOTIFICATION_EVENT_UPDATES${event.id}");
+        }
+      },
+    );
   }
 }

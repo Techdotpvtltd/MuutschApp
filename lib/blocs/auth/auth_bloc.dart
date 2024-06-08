@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../exceptions/auth_exceptions.dart';
 import '../../pages/auth/splash_screen.dart';
 import '../../repos/auth_repo.dart';
 import '../../repos/user_repo.dart';
-import '../../utils/extensions/navigation_service.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -21,8 +21,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // On Logout Request  ============================================
     on<AuthEventPerformLogout>(
       (event, emit) async {
-        await AuthRepo().performLogout();
-        NavigationService.offAll(const SplashScreen());
+        Get.offAll(const SplashScreen());
+        AuthRepo().performLogout();
         emit(AuthStateInitialize());
       },
     );

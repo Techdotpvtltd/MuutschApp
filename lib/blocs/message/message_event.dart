@@ -23,11 +23,13 @@ class MessageEventSend extends MessageEvent {
   final String content;
   final MessageType type;
   final String conversationId;
+  final String friendId;
 
   MessageEventSend(
       {required this.content,
       required this.type,
-      required this.conversationId});
+      required this.conversationId,
+      required this.friendId});
 }
 
 class MessageEventNew extends MessageEvent {

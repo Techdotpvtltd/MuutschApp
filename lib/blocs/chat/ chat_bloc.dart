@@ -45,10 +45,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatStateFetchingAll());
           await ChatRepo().fetchChats();
           emit(ChatStateFetchedAll());
-          for (final String id in ChatRepo().chats.map((e) => e.uuid)) {
-            PushNotificationServices()
-                .subscribe(forTopic: "$PUSH_NOTIFICATION_EVENT_CHATS$id");
-          }
         } on AppException catch (e) {
           emit(ChatStateFetchAllFailure(exception: e));
         }

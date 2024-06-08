@@ -112,3 +112,6 @@ class EventsEventFetchJoin extends EventsEvent {
 
   EventsEventFetchJoin({required this.eventId});
 }
+
+/// Clear And UnSubscribe All events
+class EventsEventClearAndUnSubscribe extends EventsEvent {}

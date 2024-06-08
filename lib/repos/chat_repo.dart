@@ -11,8 +11,6 @@ import '../exceptions/exception_parsing.dart';
 import '../models/chat_model.dart';
 import '../models/light_user_model.dart';
 import '../models/user_model.dart';
-import '../services/notification_services/push_notification_services.dart';
-import '../utils/constants/constants.dart';
 import '../utils/constants/firebase_collections.dart';
 import '../web_services/firestore_services.dart';
 import '../web_services/query_model.dart';
@@ -28,6 +26,10 @@ class ChatRepo {
   List<ChatModel> get chats => _chats;
 
   // ===========================Methods================================
+
+  void clearAll() {
+    _chats = [];
+  }
 
   Future<void> fetchChats({ChatModel? lastChat}) async {
     try {
@@ -95,9 +97,9 @@ class ChatRepo {
       );
 
       if (mappedData.isNotEmpty) {
-        PushNotificationServices().subscribe(
-            forTopic:
-                "$PUSH_NOTIFICATION_EVENT_CHATS${mappedData.first["uuid"]}");
+        // PushNotificationServices().subscribe(
+        //     forTopic:
+        //         "$PUSH_NOTIFICATION_EVENT_CHATS${mappedData.first["uuid"]}");
         return ChatModel.fromMap(mappedData.first);
       }
     } catch (e) {

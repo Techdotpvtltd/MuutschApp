@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:musch/blocs/event/event_bloc.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/auth/change_password.dart';
@@ -18,6 +19,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
+import '../../blocs/event/events_event.dart';
 import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_state.dart';
 import '../../models/user_model.dart';
@@ -51,6 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
       positiveTitle: "Yes",
       onPositivePressed: () {
         bloc.add(AuthEventPerformLogout());
+        context.read<EventBloc>().add(EventsEventClearAndUnSubscribe());
       },
     );
   }

@@ -57,7 +57,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
               description: event.type == MessageType.text
                   ? event.content
                   : "Sent a media.",
-              topic: "$PUSH_NOTIFICATION_EVENT_CHATS${event.conversationId}");
+              topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST${event.friendId}");
         } on AppException catch (e) {
           emit(MessageStateSendFailure(exception: e));
         }

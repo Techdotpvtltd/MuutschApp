@@ -137,7 +137,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                   SizedBox(height: 3.h),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
+                                      horizontal: 12.0,
+                                    ),
                                     child: SizedBox(
                                       width: 100,
                                       child: Column(
@@ -155,6 +156,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                           textWidget(
                                             UserRepo().currentUser.name,
                                             color: Colors.black,
+                                            maxline: 1,
                                             fontWeight: FontWeight.w600,
                                           )
                                         ],

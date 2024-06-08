@@ -17,6 +17,7 @@ Widget textWidget(String text,
     text,
     maxLines: maxline,
     textAlign: textAlign,
+    overflow: TextOverflow.ellipsis,
     style: GoogleFonts.poppins(
       color: color ?? Colors.black,
       fontSize: fontSize ?? 17.sp,
