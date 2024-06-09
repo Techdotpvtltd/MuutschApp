@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +17,7 @@ import 'blocs/event/event_bloc.dart';
 import 'blocs/friend/friend_bloc.dart';
 import 'blocs/message/mesaage_bloc.dart';
 import 'blocs/notification/notification_bloc.dart';
+import 'blocs/notification/notification_event.dart';
 import 'blocs/push_notification/push_notification_bloc.dart';
 import 'blocs/user/user_bloc.dart';
 import 'manager/app_bloc_observer.dart';
@@ -38,7 +41,14 @@ void main() async {
   Get.put(NavController());
   Get.find<MyDrawerController>().closeDrawer();
 
-  PushNotificationServices().initialize();
+  PushNotificationServices().initialize(
+    onNotificationReceived: (message) {
+      navKey.currentContext!
+          .read<NotificationBloc>()
+          .add(NotificationEventOnReceivedPushNotification(message: message));
+      log("Called in Main");
+    },
+  );
 
   runApp(const MyApp());
 }

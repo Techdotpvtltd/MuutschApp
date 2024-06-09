@@ -5,6 +5,8 @@
 // Date:        29-05-24 17:10:10 -- Wednesday
 // Description:
 
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import '../../models/notification_model.dart';
 
 abstract class NotificationEvent {}
@@ -27,3 +29,12 @@ class NotificationEventSave extends NotificationEvent {
 
 /// Fetch All
 class NotificationEventFetch extends NotificationEvent {}
+
+class NotificationEventMarkReadable extends NotificationEvent {}
+
+/// On Recieved Push Notification
+class NotificationEventOnReceivedPushNotification extends NotificationEvent {
+  final RemoteMessage message;
+
+  NotificationEventOnReceivedPushNotification({required this.message});
+}

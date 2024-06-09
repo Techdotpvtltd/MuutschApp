@@ -1,12 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:musch/blocs/notification/notification_state.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/home/all_events.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/notification_screen.dart';
+import 'package:musch/services/local_storage_services/local_storage_services.dart';
 import 'package:musch/utils/dialogs/dialogs.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/event_widget.dart';
@@ -21,6 +25,8 @@ import '../../blocs/event/events_event.dart';
 import '../../blocs/friend/friend_bloc.dart';
 import '../../blocs/friend/friend_event.dart';
 import '../../blocs/friend/friend_state.dart';
+import '../../blocs/notification/notification_bloc.dart';
+import '../../blocs/notification/notification_event.dart';
 import '../../blocs/push_notification/psuh_notification_event.dart';
 import '../../blocs/push_notification/push_notification_bloc.dart';
 import '../../manager/app_manager.dart';
@@ -44,6 +50,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<EventModel> events = [];
   List<FriendModel> friends = [];
+  bool isNewNotifications = false;
 
   void triggerFetchAllEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchAll());
@@ -71,11 +78,16 @@ class _HomePageState extends State<HomePage> {
         .add(PushNotificationEventUserSubscribed());
   }
 
+  void triggerFetchNotificationEvent(NotificationBloc bloc) {
+    bloc.add(NotificationEventFetch());
+  }
+
   @override
   void initState() {
     triggerCurrentLocationEvent(context.read<EventBloc>());
     triggerFetchFriends(context.read<FriendBloc>());
     triggerPushNotificationSubscriptionEvents();
+    triggerFetchNotificationEvent(context.read<NotificationBloc>());
     super.initState();
   }
 
@@ -116,6 +128,19 @@ class _HomePageState extends State<HomePage> {
                   friends = state.friends;
                 },
               );
+            }
+          },
+        ),
+        BlocListener<NotificationBloc, NotificationState>(
+          listener: (context, state) async {
+            if (state is NotificationStateOnReceivedPush) {
+              log("Called in home");
+              triggerFetchNotificationEvent(context.read<NotificationBloc>());
+            }
+            if (state is NotificationStateNewAvailable) {
+              setState(() {
+                isNewNotifications = state.isNew;
+              });
             }
           },
         ),
@@ -166,10 +191,22 @@ class _HomePageState extends State<HomePage> {
                                 },
 
                                 /// Notification Widget
-                                child: Image.asset(
-                                  "assets/nav/d3.png",
-                                  color: Colors.white,
-                                  height: 4.0.h,
+                                child: Stack(
+                                  children: [
+                                    Image.asset(
+                                      "assets/nav/d3.png",
+                                      color: Colors.white,
+                                      height: 4.0.h,
+                                    ),
+                                    if (isNewNotifications)
+                                      Positioned(
+                                        right: 5,
+                                        child: CircleAvatar(
+                                          radius: 5,
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                               SizedBox(

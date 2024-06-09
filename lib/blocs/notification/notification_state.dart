@@ -5,6 +5,8 @@
 // Date:        29-05-24 17:04:23 -- Wednesday
 // Description:
 
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import '../../exceptions/app_exceptions.dart';
 import '../../models/notification_model.dart';
 
@@ -46,4 +48,16 @@ class NotificationStateFetched extends NotificationState {
   final List<NotificationModel> notifications;
 
   NotificationStateFetched({required this.notifications});
+}
+
+class NotificationStateOnReceivedPush extends NotificationState {
+  final RemoteMessage message;
+
+  NotificationStateOnReceivedPush({required this.message});
+}
+
+class NotificationStateNewAvailable extends NotificationState {
+  final bool isNew;
+
+  NotificationStateNewAvailable({required this.isNew});
 }

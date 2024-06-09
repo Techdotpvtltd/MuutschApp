@@ -27,15 +27,21 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   bool isLoading = false;
-  List<NotificationModel> notifications = [];
+  late List<NotificationModel> notifications =
+      context.read<NotificationBloc>().notifications;
 
   void triggerFetchNotificationEvent(NotificationBloc bloc) {
     bloc.add(NotificationEventFetch());
   }
 
+  void triggerMarkNotificationReadableEvent(NotificationBloc bloc) {
+    bloc.add(NotificationEventMarkReadable());
+  }
+
   @override
   void initState() {
-    triggerFetchNotificationEvent(context.read<NotificationBloc>());
+    triggerMarkNotificationReadableEvent(context.read<NotificationBloc>());
+    // triggerFetchNotificationEvent(context.read<NotificationBloc>());
     super.initState();
   }
 
@@ -52,10 +58,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
           if (state is NotificationStateFetchFailure) {
             CustomDialogs().errorBox(message: state.exception.message);
-            debugPrint("Calling");
           }
 
           if (state is NotificationStateFetched) {
+            triggerMarkNotificationReadableEvent(
+                context.read<NotificationBloc>());
+
             setState(() {
               notifications = state.notifications;
             });

@@ -73,3 +73,7 @@ final double SCREEN_HEIGHT = MediaQuery.of(navKey.currentContext!).size.height;
 // =========================== Push Notification ================================
 final PUSH_NOTIFICATION_FRIEND_REQUEST = "friend-request-";
 const PUSH_NOTIFICATION_EVENT_UPDATES = "event-updates-";
+
+// ===========================Shared Preferences================================
+
+const SHARED_PREFERENCES_NOTIFICATION_IDS = "NotificationIds";

@@ -15,14 +15,16 @@ class PushNotificationServices {
   static final PushNotificationServices _instance =
       PushNotificationServices._internal();
   PushNotificationServices._internal();
+  Function(RemoteMessage message)? onNotificationReceived;
   factory PushNotificationServices() => _instance;
 
   late FirebaseMessaging _fcm;
   final messageStreamController = BehaviorSubject<RemoteMessage>();
 
-  Future<void> initialize() async {
+  Future<void> initialize(
+      {required Function(RemoteMessage message) onNotificationReceived}) async {
     _fcm = FirebaseMessaging.instance;
-
+    this.onNotificationReceived = onNotificationReceived;
     debugPrint("FCM => ${await _fcm.getToken()}");
     debugPrint("isAllow Notification: ${await _checkForPermission()}");
   }
@@ -49,6 +51,9 @@ class PushNotificationServices {
 
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
+    if (onNotificationReceived != null) {
+      onNotificationReceived!(message);
+    }
     if (kDebugMode) {
       print("Handling a background message: ${message.messageId}");
       print('Message data: ${message.data}');
@@ -65,6 +70,9 @@ class PushNotificationServices {
       sound: true,
     );
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (onNotificationReceived != null) {
+        onNotificationReceived!(message);
+      }
       final String type = message.data['type'];
       if (type == 'message') {}
 
@@ -74,6 +82,7 @@ class PushNotificationServices {
         print('Message notification: ${message.notification?.title}');
         print('Message notification: ${message.notification?.body}');
       }
+
       messageStreamController.sink.add(message);
       LocalNotificationServices.showNotification(message);
     });

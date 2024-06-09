@@ -1,4 +1,6 @@
 // ignore: dangling_library_doc_comments
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -82,7 +84,13 @@ class LocalNotificationServices {
         android: android, iOS: initiallizationSettingsIOS);
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
-    flutterLocalNotificationsPlugin.initialize(initialSetting);
+    flutterLocalNotificationsPlugin.initialize(
+      initialSetting,
+      onDidReceiveBackgroundNotificationResponse: (details) {
+        debugPrint(details.toString());
+        log("notification received");
+      },
+    );
 
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
