@@ -63,8 +63,8 @@ class ChatRepo {
               collection: FIREBASE_COLLECTION_CHAT, queries: queries);
       final List<ChatModel> newChats =
           mappedData.map((e) => ChatModel.fromMap(e)).toList();
+      _chats.clear();
       _chats.addAll(newChats);
-      _chats = _chats.toSet().toList(); // Remove Duplication Chats
     } catch (e) {
       log("[debug FetchChats] $e");
       throw throwAppException(e: e);

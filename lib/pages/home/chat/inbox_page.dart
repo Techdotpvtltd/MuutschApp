@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -35,6 +36,20 @@ class InboxPage extends StatefulWidget {
 class _InboxPageState extends State<InboxPage> {
   bool isLoading = false;
   List<ChatModel> filteredChats = [];
+  Timer? timer;
+  void updateChatView() {
+    timer = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) {
+        setState(() {
+          filteredChats.sort((a, b) => (b.lastMessageTime ??
+                  b.createdAt.millisecondsSinceEpoch)
+              .compareTo(
+                  (a.lastMessageTime ?? a.createdAt.millisecondsSinceEpoch)));
+        });
+      },
+    );
+  }
 
   void triggerFetchChatsEvent(ChatBloc bloc) {
     bloc.add(ChatEventFetchAll());
@@ -51,7 +66,15 @@ class _InboxPageState extends State<InboxPage> {
   @override
   void initState() {
     triggerFetchChatsEvent(context.read<ChatBloc>());
+    updateChatView();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    timer = null;
+    super.dispose();
   }
 
   @override
@@ -144,7 +167,17 @@ class _InboxPageState extends State<InboxPage> {
                             : ListView.builder(
                                 itemCount: filteredChats.length,
                                 itemBuilder: (context, index) {
-                                  return chatList(chat: filteredChats[index]);
+                                  return chatList(
+                                    chat: filteredChats[index],
+                                    onSortChat: (chat) {
+                                      final int index =
+                                          filteredChats.indexWhere((element) =>
+                                              element.uuid == chat.uuid);
+                                      if (index > -1) {
+                                        filteredChats[index] = chat;
+                                      }
+                                    },
+                                  );
                                 },
                               ),
                       ),
@@ -160,7 +193,8 @@ class _InboxPageState extends State<InboxPage> {
   }
 }
 
-Widget chatList({required ChatModel chat}) {
+Widget chatList(
+    {required ChatModel chat, required Function(ChatModel chat) onSortChat}) {
   OtherUserModel? senderUser;
   if (!chat.isGroup) {
     senderUser = chat.participants
@@ -184,6 +218,10 @@ Widget chatList({required ChatModel chat}) {
               log(stream.error.toString());
             }
             MessageModel? lastMessage = stream.data;
+            chat = chat.copyWith(
+                lastMessageTime:
+                    lastMessage?.messageTime.millisecondsSinceEpoch);
+            onSortChat(chat);
             return ListTile(
               // isThreeLine: true,
               leading: SizedBox(
@@ -206,11 +244,15 @@ Widget chatList({required ChatModel chat}) {
                 fontSize: 16.sp,
               ),
               subtitle: textWidget(
-                lastMessage?.senderId == UserRepo().currentUser.uid
-                    ? "You: ${lastMessage?.type == MessageType.text ? lastMessage?.content ?? "" : "Sent media"}"
-                    : lastMessage?.type == MessageType.text
-                        ? lastMessage?.content ?? ""
-                        : "Received media",
+                lastMessage == null
+                    ? ""
+                    : lastMessage.senderId == UserRepo().currentUser.uid
+                        ? "You: ${lastMessage.type == MessageType.text ? lastMessage.content : "Sent media"}"
+                        : lastMessage.type == MessageType.text
+                            ? lastMessage.senderName +
+                                ": " +
+                                lastMessage.content
+                            : "${lastMessage.senderName}: sent a media file",
                 fontSize: 14.4.sp,
                 color: Color(0xff9CA3AF),
               ),
