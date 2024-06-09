@@ -48,13 +48,25 @@ class _AllFriendsState extends State<AllFriends> {
   Widget build(BuildContext context) {
     return BlocListener<FriendBloc, FriendState>(
       listener: (context, state) {
+        if (state is FriendStateRemoved) {
+          filteredFriends
+              .removeWhere((element) => element.uuid == state.friendId);
+
+          setState(() {
+            filteredFriends = filteredFriends;
+          });
+        }
         if (state is FriendStateFetchedFriends) {
+          friends.clear();
+          filteredFriends.clear();
           setState(() {
             friends = state.friends;
             filteredFriends = state.friends;
           });
         }
         if (state is FriendStateFetchedPendingRequests) {
+          friends.clear();
+          filteredFriends.clear();
           setState(() {
             friends = state.friends;
             filteredFriends = state.friends;

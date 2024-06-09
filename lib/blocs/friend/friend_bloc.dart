@@ -8,6 +8,7 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/friend_model.dart';
@@ -21,7 +22,8 @@ import 'friend_event.dart';
 import 'friend_state.dart';
 
 class FriendBloc extends Bloc<FriendEvent, FriendState> {
-  final List<FriendModel> friends = [];
+  final List<FriendModel> _friends = [];
+  List<FriendModel> get friends => _friends;
   final String userId = UserRepo().currentUser.uid;
 
   FriendBloc() : super(FriendStateInitial()) {
@@ -78,11 +80,10 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
     /// OnAccepted Frined Event Fetch
     on<FriendEventFetchFriends>(
       (event, emit) {
-        final List<FriendModel> filteredFriends = friends
+        final List<FriendModel> filteredFriends = List.from(friends
             .where((element) => element.type == FriendType.friend)
-            .toList();
+            .toList());
         emit(FriendStateFetchedFriends(friends: filteredFriends));
-        emit(FriendStateFetchedAll());
       },
     );
 
@@ -91,8 +92,10 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       (event, emit) async {
         try {
           emit(FriendStateFetching());
-          friends.clear();
-          friends.addAll(await FriendRepo().fetchFriends());
+
+          final f = await FriendRepo().fetchFriends();
+          _friends.clear();
+          _friends.addAll(f);
           add(FriendEventFetchPendingRequests());
         } on AppException catch (e) {
           emit(FriendStateFetchFailure(exception: e));
@@ -144,9 +147,9 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
 
           await FriendRepo().acceptFriendRequest(friendId: event.friendId);
           final int index =
-              friends.indexWhere((element) => element.uuid == event.friendId);
+              _friends.indexWhere((element) => element.uuid == event.friendId);
           if (index > -1) {
-            friends[index] = friends[index].copyWith(type: FriendType.friend);
+            _friends[index] = _friends[index].copyWith(type: FriendType.friend);
             emit(FriendStateAccepted(frined: friends[index]));
             FireNotification().sendNotification(
                 title: "Friend Request Accepted",
@@ -174,6 +177,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
         try {
           emit(FriendStateRemoving());
           await FriendRepo().deleteFriend(friendId: event.friendId);
+          _friends.removeWhere((element) => element.uuid == event.friendId);
           emit(FriendStateRemoved(friendId: event.friendId));
         } on AppException catch (e) {
           emit(FriendStateRemoveFailure(exception: e));
