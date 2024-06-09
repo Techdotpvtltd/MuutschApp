@@ -92,7 +92,13 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
 
         await FriendRepo().fetchFriends(
           onAddedData: (friend) {
-            friends.insert(0, friend);
+            final int index =
+                friends.indexWhere((element) => element.uuid == friend.uuid);
+            if (index > -1) {
+              friends[index] = friend;
+            } else {
+              friends.insert(0, friend);
+            }
             emit(FriendStateDataAdded());
             add(FriendEventFetchPendingRequests());
           },

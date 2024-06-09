@@ -133,7 +133,6 @@ class _HomePageState extends State<HomePage> {
         BlocListener<NotificationBloc, NotificationState>(
           listener: (context, state) async {
             if (state is NotificationStateOnReceivedPush) {
-              log("Called in home");
               triggerFetchNotificationEvent(context.read<NotificationBloc>());
             }
             if (state is NotificationStateNewAvailable) {
