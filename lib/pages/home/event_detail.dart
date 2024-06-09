@@ -1,9 +1,18 @@
+// ignore_for_file: sdk_version_since
+
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:musch/blocs/chat/%20chat_bloc.dart';
+import 'package:musch/blocs/chat/chat_event.dart';
+import 'package:musch/blocs/chat/chat_state.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/models/chat_model.dart';
 import 'package:musch/models/other_user_model.dart';
 import 'package:musch/utils/extensions/date_extension.dart';
+import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/map_sample.dart';
 import 'package:musch/widgets/text_widget.dart';
@@ -20,6 +29,7 @@ import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/custom_network_image.dart';
 import 'add_event.dart';
+import 'chat/chat_page.dart';
 import 'event_member_list.dart';
 
 class EventView extends StatefulWidget {
@@ -40,8 +50,11 @@ class _EventViewState extends State<EventView> {
   late EventModel event = widget.event;
   bool isDeleting = false;
   bool isJoiningEvent = false;
+  bool isChatLoading = false;
+
   String? joiningEventId;
   List<OtherUserModel> joinMembers = [];
+  ChatModel? chat;
 
   void triggerDeleteEvent(EventBloc bloc) {
     bloc.add(EventsEventDelete(eventId: event.id));
@@ -51,69 +64,122 @@ class _EventViewState extends State<EventView> {
     bloc.add(EventsEventJoin(eventId: event.id));
   }
 
+  void triggerFetchChatEvent() {
+    context.read<ChatBloc>().add(ChatEventFetchGroupChat(eventId: event.id));
+  }
+
   @override
   void initState() {
     joinMembers = widget.joinMembers;
+    triggerFetchChatEvent();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EventBloc, EventState>(
-      listener: (context, state) {
-        /// Join Event States
-        if (state is EventStateJoinFailure ||
-            state is EventStateJoined ||
-            state is EventStateJoining) {
-          setState(() {
-            isJoiningEvent = state.isLoading;
-            if (state is EventStateJoining) {
-              joiningEventId = state.eventId;
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ChatBloc, ChatState>(
+          listener: (context, state) {
+            if (state is ChatStateCreated ||
+                state is ChatStateCreating ||
+                state is ChatStateCreateFailure ||
+                state is ChatStateFetching ||
+                state is ChatStateFetched ||
+                state is ChatStateFetchFailure ||
+                state is ChatStateJoinFailure ||
+                state is ChatStateJoined ||
+                state is ChatStateJoining) {
+              setState(() {
+                isChatLoading = state.isLoading;
+              });
+
+              if (state is ChatStateFetchFailure) {
+                log(state.exception.message);
+              }
+              if (state is ChatStateJoinFailure) {
+                log(state.exception.message);
+              }
+              if (state is ChatStateCreateFailure) {
+                log(state.exception.message.toString());
+              }
+              if (state is ChatStateFetched) {
+                setState(() {
+                  chat = state.chat;
+                });
+              }
+              if (state is ChatStateJoined) {
+                setState(() {
+                  chat?.participantUids.add(UserRepo().currentUser.uid);
+                });
+                NavigationService.go(UserChatPage(chat: chat!));
+              }
+              if (state is ChatStateCreated) {
+                setState(() {
+                  chat = state.chat;
+                });
+              }
             }
-          });
+          },
+        ),
+        BlocListener<EventBloc, EventState>(
+          listener: (context, state) {
+            /// Join Event States
+            if (state is EventStateJoinFailure ||
+                state is EventStateJoined ||
+                state is EventStateJoining) {
+              setState(() {
+                isJoiningEvent = state.isLoading;
+                if (state is EventStateJoining) {
+                  joiningEventId = state.eventId;
+                }
+              });
 
-          if (state is EventStateJoined) {
-            setState(() {
-              event = state.event;
-            });
-          }
+              if (state is EventStateJoined) {
+                setState(() {
+                  event = state.event;
+                });
+                triggerFetchChatEvent();
+              }
 
-          if (state is EventStateJoinFailure) {
-            CustomDialogs().errorBox(message: state.exception.message);
-          }
-        }
+              if (state is EventStateJoinFailure) {
+                CustomDialogs().errorBox(message: state.exception.message);
+              }
+            }
 
-        /// Update Event States
-        if (state is EventStateUpdated) {
-          setState(() {
-            event = state.updatedEvent;
-          });
-        }
+            /// Update Event States
+            if (state is EventStateUpdated) {
+              setState(() {
+                event = state.updatedEvent;
+              });
+            }
 
-        /// Delete Event States
-        if (state is EventStateDeleteFailure ||
-            state is EventStateDeleted ||
-            state is EventStateDeteing) {
-          setState(() {
-            isDeleting = state.isLoading;
-          });
+            /// Delete Event States
+            if (state is EventStateDeleteFailure ||
+                state is EventStateDeleted ||
+                state is EventStateDeteing) {
+              setState(() {
+                isDeleting = state.isLoading;
+              });
 
-          if (state is EventStateDeleteFailure) {
-            CustomDialogs().errorBox(message: state.exception.message);
-          }
+              if (state is EventStateDeleteFailure) {
+                CustomDialogs().errorBox(message: state.exception.message);
+              }
 
-          if (state is EventStateDeleted) {
-            CustomDialogs().successBox(
-              message: "Event deleted successfully.",
-              positiveTitle: "Go back",
-              onPositivePressed: () {
-                Get.back();
-              },
-              barrierDismissible: false,
-            );
-          }
-        }
-      },
+              if (state is EventStateDeleted) {
+                CustomDialogs().successBox(
+                  message: "Event deleted successfully.",
+                  positiveTitle: "Go back",
+                  onPositivePressed: () {
+                    Get.back();
+                  },
+                  barrierDismissible: false,
+                );
+              }
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Color(0xffF2F2F2),
         body: SafeArea(
@@ -182,22 +248,98 @@ class _EventViewState extends State<EventView> {
                     ),
                     SizedBox(height: 1.h),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Image.asset("assets/icons/d2.png", height: 1.8.h),
-                        SizedBox(width: 2.w),
-                        textWidget(
-                          (event.dateTime).dateToString('dd MMMM, yyyy'),
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w300,
+                        Row(
+                          children: [
+                            Image.asset("assets/icons/d2.png", height: 1.8.h),
+                            SizedBox(width: 2.w),
+                            textWidget(
+                              (event.dateTime).dateToString('dd MMMM, yyyy'),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w300,
+                            ),
+                            SizedBox(width: 6.w),
+                            Image.asset("assets/icons/cl.png", height: 1.8.h),
+                            SizedBox(width: 2.w),
+                            textWidget(
+                              (event.dateTime).dateToString('hh:mm a'),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 6.w),
-                        Image.asset("assets/icons/cl.png", height: 1.8.h),
-                        SizedBox(width: 2.w),
-                        textWidget(
-                          (event.dateTime).dateToString('hh:mm a'),
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w300,
-                        ),
+
+                        /// For Admin
+                        if (event.createdBy == UserRepo().currentUser.uid)
+                          isChatLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : InkWell(
+                                  onTap: () {
+                                    if (chat == null) {
+                                      context.read<ChatBloc>().add(
+                                            ChatEventCreate(
+                                                isGroup: true,
+                                                chatAvatar: event.imageUrls
+                                                        .firstOrNull ??
+                                                    "",
+                                                chatTitle: event.title,
+                                                eventId: event.id,
+                                                isChatEnabled: true),
+                                          );
+                                      return;
+                                    }
+
+                                    if (chat!.isChatEnabled) {}
+                                  },
+                                  child: Text(
+                                    chat != null
+                                        ? chat!.isChatEnabled
+                                            ? "Disable Group Chat"
+                                            : "Enable Group Chat"
+                                        : "Create Group Chat",
+                                    style: TextStyle(
+                                      color: MyColors.primary3,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+
+                        /// For Users
+                        if (event.createdBy != UserRepo().currentUser.uid &&
+                            chat != null &&
+                            chat!.isChatEnabled &&
+                            event.joinMemberIds
+                                .contains(UserRepo().currentUser.uid))
+                          isChatLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : InkWell(
+                                  onTap: () {
+                                    chat!.participantUids.contains(
+                                      UserRepo().currentUser.uid,
+                                    )
+                                        ? NavigationService.go(
+                                            UserChatPage(chat: chat!))
+                                        : context.read<ChatBloc>().add(
+                                              ChatEventJoinGroupChat(
+                                                eventId: event.id,
+                                              ),
+                                            );
+                                  },
+                                  child: Text(
+                                    chat!.participantUids.contains(
+                                      UserRepo().currentUser.uid,
+                                    )
+                                        ? "View Group Chat"
+                                        : "Join Group Chat",
+                                    style: TextStyle(
+                                      color: MyColors.primary3,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
                       ],
                     ),
                     if (event.description != "" || event.description == null)

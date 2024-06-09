@@ -58,10 +58,38 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               isChatEnabled: event.isChatEnabled,
               chatTitle: event.chatTitle,
               chatAvatar: event.chatAvatar,
+              eventId: event.eventId,
               friendProfile: event.friendProfile);
           emit(ChatStateCreated(chat: chat));
         } on AppException catch (e) {
           emit(ChatStateCreateFailure(exception: e));
+        }
+      },
+    );
+
+    /// Fetch Group Chat
+    on<ChatEventFetchGroupChat>(
+      (event, emit) async {
+        try {
+          emit(ChatStateFetching());
+          final ChatModel? chat =
+              await ChatRepo().fetchGroupChat(eventId: event.eventId);
+          emit(ChatStateFetched(chat: chat));
+        } on AppException catch (e) {
+          emit(ChatStateFetchFailure(exception: e));
+        }
+      },
+    );
+
+    /// Join Group Chat
+    on<ChatEventJoinGroupChat>(
+      (event, emit) async {
+        try {
+          emit(ChatStateJoining());
+          await ChatRepo().joinGroupChat(eventId: event.eventId);
+          emit(ChatStateJoined());
+        } on AppException catch (e) {
+          emit(ChatStateJoinFailure(exception: e));
         }
       },
     );

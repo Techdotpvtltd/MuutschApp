@@ -10,7 +10,6 @@ import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/home/all_events.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/notification_screen.dart';
-import 'package:musch/services/local_storage_services/local_storage_services.dart';
 import 'package:musch/utils/dialogs/dialogs.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/event_widget.dart';

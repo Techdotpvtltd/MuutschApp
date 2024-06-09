@@ -30,8 +30,7 @@ class UserChatPage extends StatefulWidget {
 TextEditingController messageController = TextEditingController();
 
 class _UserChatPageState extends State<UserChatPage> {
-  late final OtherUserModel friend = widget.chat.participants
-      .firstWhere((element) => element.uid != UserRepo().currentUser.uid);
+  OtherUserModel? friend;
 
   void triggerSenderMediaMessageEvent(
       {required String fileUrl, required String contentType}) {
@@ -39,7 +38,7 @@ class _UserChatPageState extends State<UserChatPage> {
         content: fileUrl,
         type: MessageType.photo,
         conversationId: widget.chat.uuid,
-        friendId: friend.uid));
+        friendId: friend?.uid ?? ""));
   }
 
   void onMediaPressed() {
@@ -58,7 +57,16 @@ class _UserChatPageState extends State<UserChatPage> {
         content: messageController.text,
         type: MessageType.text,
         conversationId: widget.chat.uuid,
-        friendId: friend.uid));
+        friendId: friend?.uid ?? ""));
+  }
+
+  @override
+  void initState() {
+    if (!widget.chat.isGroup) {
+      friend = widget.chat.participants
+          .firstWhere((element) => element.uid != UserRepo().currentUser.uid);
+    }
+    super.initState();
   }
 
   @override
@@ -112,18 +120,19 @@ class _UserChatPageState extends State<UserChatPage> {
                               height: 60,
                               width: 60,
                               placeholderChar:
-                                  (widget.chat.groupTitle ?? friend.name)
+                                  (widget.chat.groupTitle ?? friend?.name ?? "")
                                       .characters
                                       .first,
-                              avatarUrl:
-                                  widget.chat.groupAvatar ?? friend.avatarUrl,
+                              avatarUrl: widget.chat.groupAvatar ??
+                                  friend?.avatarUrl ??
+                                  "",
                             ),
                             SizedBox(width: 3.w),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 textWidget(
-                                  friend.name,
+                                  friend?.name ?? widget.chat.groupTitle ?? "",
                                   fontSize: 16.4.sp,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,

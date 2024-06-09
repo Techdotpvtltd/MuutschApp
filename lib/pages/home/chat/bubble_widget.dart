@@ -170,7 +170,7 @@ Widget _getBubble(BubbleMessageType messageType, MessageModel message) {
       return Align(
         alignment: Alignment.centerLeft,
         child: SizedBox(
-          width: SCREEN_WIDTH * 0.7,
+          width: SCREEN_WIDTH,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -191,13 +191,27 @@ Widget _getBubble(BubbleMessageType messageType, MessageModel message) {
                 ),
               ),
               gapH6,
-              Text(
-                message.messageTime.dateToString("hh:mm a"),
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF7C7C7C),
-                ),
+              Row(
+                children: [
+                  Text(
+                    // ignore: sdk_version_since
+                    message.senderName,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF7C7C7C),
+                    ),
+                  ),
+                  gapW20,
+                  Text(
+                    message.messageTime.dateToString("hh:mm a"),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF7C7C7C),
+                    ),
+                  ),
+                ],
               )
             ],
           ),

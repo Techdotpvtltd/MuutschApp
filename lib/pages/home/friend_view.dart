@@ -125,7 +125,9 @@ class _FriendViewState extends State<FriendView> {
                 }
 
                 if (state is ChatStateFetched) {
-                  Get.to(UserChatPage(chat: state.chat));
+                  if (state.chat != null) {
+                    Get.to(UserChatPage(chat: state.chat!));
+                  }
                 }
               }
             },

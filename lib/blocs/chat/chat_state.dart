@@ -56,7 +56,19 @@ class ChatStateFetchFailure extends ChatState {
 }
 
 class ChatStateFetched extends ChatState {
-  final ChatModel chat;
+  final ChatModel? chat;
 
-  ChatStateFetched({required this.chat});
+  ChatStateFetched({this.chat});
 }
+
+// ===========================Joined================================
+class ChatStateJoining extends ChatState {
+  ChatStateJoining({super.isLoading = true});
+}
+
+class ChatStateJoinFailure extends ChatState {
+  final AppException exception;
+  ChatStateJoinFailure({required this.exception});
+}
+
+class ChatStateJoined extends ChatState {}

@@ -7,6 +7,9 @@
 
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:musch/exceptions/data_exceptions.dart';
+
 import '../exceptions/exception_parsing.dart';
 import '../models/chat_model.dart';
 import '../models/other_user_model.dart';
@@ -68,6 +71,54 @@ class ChatRepo {
     }
   }
 
+  Future<ChatModel?> fetchGroupChat({required String eventId}) async {
+    try {
+      final int index = _chats.indexWhere((element) => element.uuid == eventId);
+      if (index > -1) {
+        return _chats[index];
+      }
+
+      final Map<String, dynamic>? data = await FirestoreService()
+          .fetchSingleRecord(path: FIREBASE_COLLECTION_CHAT, docId: eventId);
+      if (data != null) {
+        final ChatModel chat = ChatModel.fromMap(data);
+        if (chat.participantUids.contains(UserRepo().currentUser.uid)) {
+          _chats.add(chat);
+        }
+        return chat;
+      }
+      return null;
+    } catch (e) {
+      throw throwAppException(e: e);
+    }
+  }
+
+  Future<void> joinGroupChat({required String eventId}) async {
+    try {
+      final UserModel user = UserRepo().currentUser;
+      await FirestoreService().updateWithDocId(
+        path: FIREBASE_COLLECTION_CHAT,
+        docId: eventId,
+        data: {
+          "participantUids": FieldValue.arrayUnion([user.uid]),
+          "participants": FieldValue.arrayUnion(
+            [
+              OtherUserModel(
+                      uid: user.uid,
+                      name: user.name,
+                      avatarUrl: user.avatar,
+                      about: user.bio,
+                      createdAt: DateTime.now())
+                  .toMap(),
+            ],
+          ),
+        },
+      );
+    } catch (e) {
+      throw throwAppException(e: e);
+    }
+  }
+
   /// Single Chat Method
   Future<ChatModel?> fetchChat({required String friendUid}) async {
     try {
@@ -115,12 +166,17 @@ class ChatRepo {
     required bool isChatEnabled,
     String? chatTitle,
     String? chatAvatar,
+    String? eventId,
     OtherUserModel? friendProfile,
   }) async {
     try {
       final UserModel user = UserRepo().currentUser;
       final List<OtherUserModel> participants = [];
       final List<String> participantIds = [];
+      if (isGroup && eventId == null) {
+        throw DataExceptionUnknown(message: "Please Provide eventId");
+      }
+
       if (friendProfile != null) {
         participants.add(friendProfile);
         participantIds.add(friendProfile.uid);
@@ -128,17 +184,19 @@ class ChatRepo {
 
       // Current User Info
       participantIds.add(user.uid);
-      participants.add(OtherUserModel(
-        uid: user.uid,
-        name: user.name,
-        avatarUrl: user.avatar,
-        about: user.bio ?? "",
-        createdAt: DateTime.now(),
-      ));
+      participants.add(
+        OtherUserModel(
+          uid: user.uid,
+          name: user.name,
+          avatarUrl: user.avatar,
+          about: user.bio ?? "",
+          createdAt: DateTime.now(),
+        ),
+      );
 
       participantIds.sort();
       final ChatModel chatModel = ChatModel(
-        uuid: "",
+        uuid: eventId ?? "",
         createdAt: DateTime.now(),
         createdBy: user.uid,
         participants: participants,
@@ -150,12 +208,17 @@ class ChatRepo {
         compositeKey: participantIds.join("_"),
       );
 
-      final Map<String, dynamic> map =
-          await FirestoreService().saveWithSpecificIdFiled(
-        path: FIREBASE_COLLECTION_CHAT,
-        data: chatModel.toMap(),
-        docIdFiled: "uuid",
-      );
+      final Map<String, dynamic> map = isGroup
+          ? await FirestoreService().saveWithDocId(
+              data: chatModel.toMap(),
+              path: FIREBASE_COLLECTION_CHAT,
+              docId: eventId ?? "",
+            )
+          : await FirestoreService().saveWithSpecificIdFiled(
+              path: FIREBASE_COLLECTION_CHAT,
+              data: chatModel.toMap(),
+              docIdFiled: "uuid",
+            );
       return ChatModel.fromMap(map);
     } catch (e) {
       log("[debug CreateChat] $e");

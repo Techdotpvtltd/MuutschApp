@@ -26,11 +26,33 @@ class ChatEventCreate extends ChatEvent {
   String? chatTitle;
   String? chatAvatar;
   OtherUserModel? friendProfile;
+  String? eventId;
 
   ChatEventCreate(
       {this.isGroup = false,
       this.isChatEnabled = true,
       this.chatAvatar,
+      this.eventId,
       this.chatTitle,
       this.friendProfile});
+}
+
+class ChatEventFetchGroupChat extends ChatEvent {
+  final String eventId;
+
+  ChatEventFetchGroupChat({required this.eventId});
+}
+
+class ChatEventJoinGroupChat extends ChatEvent {
+  final String eventId;
+
+  ChatEventJoinGroupChat({required this.eventId});
+}
+
+class ChatEventUpdateChatVisibility extends ChatEvent {
+  final String eventId;
+  final bool isVisible;
+
+  ChatEventUpdateChatVisibility(
+      {required this.eventId, required this.isVisible});
 }
