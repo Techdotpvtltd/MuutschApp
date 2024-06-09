@@ -155,19 +155,6 @@ class _FriendViewState extends State<FriendView> {
 
           /// Friend Bloc
           BlocListener<FriendBloc, FriendState>(listener: (context, state) {
-            if (state is FriendStateDataUpdated &&
-                state.friend.uuid == friend?.uuid) {
-              setState(() {
-                friend = state.friend;
-              });
-            }
-
-            if (state is FriendStateDataRemoved &&
-                state.friend.uuid == friend?.uuid) {
-              setState(() {
-                friend = null;
-              });
-            }
             if (state is FriendStateRemoving ||
                 state is FriendStateRemoveFailure ||
                 state is FriendStateRemoved) {
@@ -177,6 +164,13 @@ class _FriendViewState extends State<FriendView> {
 
               if (state is FriendStateRemoveFailure) {
                 CustomDialogs().errorBox(message: state.exception.message);
+              }
+
+              if (state is FriendStateRemoved &&
+                  state.friendId == friend?.uuid) {
+                setState(() {
+                  friend = null;
+                });
               }
             }
             if (state is FriendStateAcceptFailure ||

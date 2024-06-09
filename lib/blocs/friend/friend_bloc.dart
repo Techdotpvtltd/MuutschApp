@@ -82,49 +82,57 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
             .where((element) => element.type == FriendType.friend)
             .toList();
         emit(FriendStateFetchedFriends(friends: filteredFriends));
+        emit(FriendStateFetchedAll());
       },
     );
 
     /// OnFetch All Friends Event
     on<FriendEventFetch>(
       (event, emit) async {
-        emit(FriendStateFetching());
+        try {
+          emit(FriendStateFetching());
+          friends.clear();
+          friends.addAll(await FriendRepo().fetchFriends());
+          add(FriendEventFetchPendingRequests());
+        } on AppException catch (e) {
+          emit(FriendStateFetchFailure(exception: e));
+        }
 
-        await FriendRepo().fetchFriends(
-          onAddedData: (friend) {
-            final int index =
-                friends.indexWhere((element) => element.uuid == friend.uuid);
-            if (index > -1) {
-              friends[index] = friend;
-            } else {
-              friends.insert(0, friend);
-            }
-            emit(FriendStateDataAdded());
-            add(FriendEventFetchPendingRequests());
-          },
-          onUpdated: (friend) {
-            final int index =
-                friends.indexWhere((element) => element.uuid == friend.uuid);
-            if (index > -1) {
-              friends[index] = friend;
-              emit(FriendStateDataUpdated(friend: friend));
-              add(FriendEventFetchPendingRequests());
-            }
-          },
-          onDeleted: (friend) {
-            final int index =
-                friends.indexWhere((element) => element.uuid == friend.uuid);
-            if (index > -1) {
-              friends.removeAt(index);
-              emit(FriendStateDataRemoved(friend: friend));
-              add(FriendEventFetchPendingRequests());
-            }
-          },
-          onError: (e) {
-            emit(FriendStateFetchedAll());
-          },
-          onAllGet: () {},
-        );
+        // await FriendRepo().fetchFriends(
+        //   onAddedData: (friend) {
+        //     final int index =
+        //         friends.indexWhere((element) => element.uuid == friend.uuid);
+        //     if (index > -1) {
+        //       friends[index] = friend;
+        //     } else {
+        //       friends.insert(0, friend);
+        //     }
+        //     emit(FriendStateDataAdded());
+        //     add(FriendEventFetchPendingRequests());
+        //   },
+        //   onUpdated: (friend) {
+        //     final int index =
+        //         friends.indexWhere((element) => element.uuid == friend.uuid);
+        //     if (index > -1) {
+        //       friends[index] = friend;
+        //       emit(FriendStateDataUpdated(friend: friend));
+        //       add(FriendEventFetchPendingRequests());
+        //     }
+        //   },
+        //   onDeleted: (friend) {
+        //     final int index =
+        //         friends.indexWhere((element) => element.uuid == friend.uuid);
+        //     if (index > -1) {
+        //       friends.removeAt(index);
+        //       emit(FriendStateDataRemoved(friend: friend));
+        //       add(FriendEventFetchPendingRequests());
+        //     }
+        //   },
+        //   onError: (e) {
+        //     emit(FriendStateFetchedAll());
+        //   },
+        //   onAllGet: () {},
+        // );
       },
     );
 
@@ -133,6 +141,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       (event, emit) async {
         try {
           emit(FriendStateAccepting());
+
           await FriendRepo().acceptFriendRequest(friendId: event.friendId);
           final int index =
               friends.indexWhere((element) => element.uuid == event.friendId);
@@ -165,7 +174,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
         try {
           emit(FriendStateRemoving());
           await FriendRepo().deleteFriend(friendId: event.friendId);
-          emit(FriendStateRemoved());
+          emit(FriendStateRemoved(friendId: event.friendId));
         } on AppException catch (e) {
           emit(FriendStateRemoveFailure(exception: e));
         }

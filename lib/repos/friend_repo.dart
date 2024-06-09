@@ -6,10 +6,6 @@
 // Description:
 
 import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
-
-import '../exceptions/app_exceptions.dart';
 import '../exceptions/exception_parsing.dart';
 import '../models/friend_model.dart';
 import '../utils/constants/firebase_collections.dart';
@@ -42,41 +38,26 @@ class FriendRepo {
   }
 
   /// Fetch All Friends Request
-  Future<void> fetchFriends({
-    required Function(FriendModel) onAddedData,
-    required Function(FriendModel) onUpdated,
-    required Function(FriendModel) onDeleted,
-    required Function(AppException) onError,
-    required VoidCallback onAllGet,
-  }) async {
-    final String userId = UserRepo().currentUser.uid;
-    await FirestoreService().fetchWithListener(
-      collection: FIREBASE_COLLECTION_FRIENDS,
-      onError: (e) {
-        log("[debug FetchFriends] $e");
-        onError(throwAppException(e: e));
-      },
-      onAdded: (data) {
-        final FriendModel friend = FriendModel.fromMap(data);
-        onAddedData(friend);
-      },
-      onUpdated: (data) {
-        final FriendModel friend = FriendModel.fromMap(data);
-        onUpdated(friend);
-      },
-      onRemoved: (data) {
-        final FriendModel friend = FriendModel.fromMap(data);
-        onDeleted(friend);
-      },
-      onAllDataGet: onAllGet,
-      onCompleted: (listener) {},
-      queries: [
-        QueryModel(
-            field: "participants",
-            value: [userId],
-            type: QueryType.arrayContainsAny),
-      ],
-    );
+  Future<List<FriendModel>> fetchFriends() async {
+    try {
+      final String userId = UserRepo().currentUser.uid;
+
+      final List<Map<String, dynamic>> data =
+          await FirestoreService().fetchWithMultipleConditions(
+        collection: FIREBASE_COLLECTION_FRIENDS,
+        queries: [
+          QueryModel(
+              field: "participants",
+              value: [userId],
+              type: QueryType.arrayContainsAny)
+        ],
+      );
+
+      return data.map((e) => FriendModel.fromMap(e)).toList();
+    } catch (e) {
+      log("[debug FriendRepo] $e");
+      throw throwAppException(e: e);
+    }
   }
 
   /// Accept Friend Request

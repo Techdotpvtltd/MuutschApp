@@ -45,20 +45,6 @@ class FriendStateFetchFailure extends FriendState {
   FriendStateFetchFailure({required this.exception});
 }
 
-class FriendStateDataAdded extends FriendState {}
-
-class FriendStateDataUpdated extends FriendState {
-  final FriendModel friend;
-
-  FriendStateDataUpdated({required this.friend});
-}
-
-class FriendStateDataRemoved extends FriendState {
-  final FriendModel friend;
-
-  FriendStateDataRemoved({required this.friend});
-}
-
 class FriendStateFetchedAll extends FriendState {}
 
 class FriendStateFetchedPendingRequests extends FriendState {
@@ -122,4 +108,8 @@ class FriendStateRemoveFailure extends FriendState {
   FriendStateRemoveFailure({required this.exception});
 }
 
-class FriendStateRemoved extends FriendState {}
+class FriendStateRemoved extends FriendState {
+  final String friendId;
+
+  FriendStateRemoved({required this.friendId});
+}

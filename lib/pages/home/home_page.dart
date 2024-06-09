@@ -94,6 +94,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        /// Event Listener
         BlocListener<EventBloc, EventState>(
           listener: (context, state) {
             if (state is EventStateFetchedCurrentLocation) {
@@ -128,12 +129,24 @@ class _HomePageState extends State<HomePage> {
                 },
               );
             }
+
+            if (state is FriendStateAccepted ||
+                state is FriendStateRemoved ||
+                state is FriendStateRejected) {
+              triggerFetchFriends(context.read<FriendBloc>());
+            }
           },
         ),
+
+        /// Notification Listener
         BlocListener<NotificationBloc, NotificationState>(
           listener: (context, state) async {
             if (state is NotificationStateOnReceivedPush) {
               triggerFetchNotificationEvent(context.read<NotificationBloc>());
+              final String type = state.message.data['type'];
+              if (type == "request") {
+                triggerFetchFriends(context.read<FriendBloc>());
+              }
             }
             if (state is NotificationStateNewAvailable) {
               setState(() {
@@ -185,7 +198,8 @@ class _HomePageState extends State<HomePage> {
                               Spacer(),
                               InkWell(
                                 onTap: () {
-                                  Get.to(NotificationScreen(isDrawer: false));
+                                  Get.to(() =>
+                                      NotificationScreen(isDrawer: false));
                                 },
 
                                 /// Notification Widget
@@ -286,9 +300,8 @@ class _HomePageState extends State<HomePage> {
                                   InkWell(
                                     onTap: () {
                                       Get.to(
-                                        AllFriends(
-                                          isRequestFriendScreen: true,
-                                        ),
+                                        () => AllFriends(
+                                            isRequestFriendScreen: true),
                                       );
                                     },
                                     child: textWidget(
@@ -329,8 +342,7 @@ class _HomePageState extends State<HomePage> {
                                                 )
                                               : Center(
                                                   child:
-                                                      CircularProgressIndicator(),
-                                                );
+                                                      CircularProgressIndicator());
                                         },
                                       ),
                                   ],
