@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/home/all_events.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/notification_screen.dart';
+import 'package:musch/utils/dialogs/dialogs.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/event_widget.dart';
 import 'package:musch/widgets/request_widget.dart';
@@ -51,6 +53,10 @@ class _HomePageState extends State<HomePage> {
     bloc.add(EventsEventFetchCurrentLocation());
   }
 
+  void triggerRequestLocationEvent(EventBloc bloc) {
+    bloc.add(EventsEventRequestLocation());
+  }
+
   void triggerJoinEvent(EventBloc bloc, String eventId) {
     bloc.add(EventsEventJoin(eventId: eventId));
   }
@@ -82,6 +88,23 @@ class _HomePageState extends State<HomePage> {
             if (state is EventStateFetchedCurrentLocation) {
               AppManager().currentLocationPosition = state.position;
               triggerFetchAllEvents(context.read<EventBloc>());
+            }
+
+            if (state is EventStateCurrentLocationFailure) {
+              CustomDialogs().alertBox(
+                message: state.status == LocationPermission.deniedForever
+                    ? "Please allow us location permission in the settings and after allow,  close and open the app again."
+                    : "It seem that we don't have location permission to show nearest events. Please allow us to show you the nearest events",
+                title: "Location Denied",
+                positiveTitle: state.status == LocationPermission.deniedForever
+                    ? "Open Settings"
+                    : "Allow Location",
+                onPositivePressed: () {
+                  state.status == LocationPermission.deniedForever
+                      ? Geolocator.openAppSettings()
+                      : triggerRequestLocationEvent(context.read<EventBloc>());
+                },
+              );
             }
           },
         ),
@@ -170,15 +193,18 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: 3.5.h),
                           Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 25, vertical: 8),
+                              horizontal: 25,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
                               color: MyColors.primary,
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: textWidget(
-                                "Hello, ${UserRepo().currentUser.name}",
-                                color: Colors.white,
-                                fontSize: 15.sp),
+                              "Hello, ${UserRepo().currentUser.name}",
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                            ),
                           ),
                           SizedBox(height: 1.h),
                           textWidget(
@@ -190,7 +216,6 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: 2.5.h),
                           textFieldWithPrefixSuffuxIconAndHintText(
                             "Search Events & Friends",
-                            // controller: _.password,
                             fillColor: Colors.white,
                             mainTxtColor: Colors.black,
                             radius: 12,
@@ -291,7 +316,8 @@ class _HomePageState extends State<HomePage> {
                                   }
                                   if (state is EventStateFetchFailure ||
                                       state is EventStateFetchedAll ||
-                                      state is EventStateFetching) {
+                                      state is EventStateFetching ||
+                                      state is EventStateJoined) {
                                     if (state is EventStateFetchedAll) {
                                       setState(
                                         () {
@@ -299,6 +325,16 @@ class _HomePageState extends State<HomePage> {
                                               state.events.take(5).toList();
                                         },
                                       );
+                                    }
+                                    if (state is EventStateJoined) {
+                                      final int index = events.indexWhere(
+                                          (element) =>
+                                              element.id == state.event.id);
+                                      if (index > -1) {
+                                        setState(() {
+                                          events[index] = state.event;
+                                        });
+                                      }
                                     }
                                   }
                                 },
@@ -343,7 +379,10 @@ class _HomePageState extends State<HomePage> {
                                               address:
                                                   "${event.location.city}, ${event.location.country}",
                                               eventId: event.id,
-                                              imageUrl: event.imageUrls.first,
+                                              imageUrl:
+                                                  // ignore: sdk_version_since
+                                                  event.imageUrls.firstOrNull ??
+                                                      '',
                                               creator: event.creatorDetail.name
                                                   .capitalizeFirstCharacter(),
                                               onClickEvent: () {

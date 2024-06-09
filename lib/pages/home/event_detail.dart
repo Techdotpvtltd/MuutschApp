@@ -72,7 +72,11 @@ class _EventViewState extends State<EventView> {
             }
           });
 
-          if (state is EventStateJoined) {}
+          if (state is EventStateJoined) {
+            setState(() {
+              event = state.event;
+            });
+          }
 
           if (state is EventStateJoinFailure) {
             CustomDialogs().errorBox(message: state.exception.message);

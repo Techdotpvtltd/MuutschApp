@@ -149,7 +149,7 @@ class EventRepo {
   }
 
   /// Join Event
-  Future<void> joinEvent({
+  Future<OtherUserModel> joinEvent({
     required String eventId,
   }) async {
     try {
@@ -169,6 +169,7 @@ class EventRepo {
             "joinMemberIds": FieldValue.arrayUnion([user.uid]),
           },
           docId: eventId);
+      return otherUser;
     } catch (e) {
       log("[debug JoinEventError] ${e.toString}");
       throw throwAppException(e: e);

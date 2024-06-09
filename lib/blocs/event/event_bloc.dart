@@ -36,9 +36,30 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
     /// Fetch Current Location
     on<EventsEventFetchCurrentLocation>(
       (event, emit) async {
-        position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
-        emit(EventStateFetchedCurrentLocation(position: position));
+        final permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.always ||
+            permission == LocationPermission.whileInUse) {
+          position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high);
+          emit(EventStateFetchedCurrentLocation(position: position));
+          return;
+        }
+        emit(EventStateCurrentLocationFailure(status: permission));
+      },
+    );
+
+    /// Fetch Current Location
+    on<EventsEventRequestLocation>(
+      (event, emit) async {
+        final permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.always ||
+            permission == LocationPermission.whileInUse) {
+          position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high);
+          emit(EventStateFetchedCurrentLocation(position: position));
+          return;
+        }
+        emit(EventStateCurrentLocationFailure(status: permission));
       },
     );
 
@@ -254,8 +275,12 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
       (event, emit) async {
         try {
           emit(EventStateJoining(eventId: event.eventId));
-          await EventRepo().joinEvent(eventId: event.eventId);
-          emit(EventStateJoined());
+          final OtherUserModel otherUser =
+              await EventRepo().joinEvent(eventId: event.eventId);
+          final e = events.firstWhere((element) => element.id == event.eventId);
+          e.joinMemberDetails.add(otherUser);
+          e.joinMemberIds.add(otherUser.uid);
+          emit(EventStateJoined(event: e));
           FireNotification().sendNotification(
               title: events
                   .firstWhere((element) => element.id == event.eventId)

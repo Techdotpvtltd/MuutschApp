@@ -10,6 +10,9 @@ class FirestoreService {
 
   FirestoreService() {
     _firestore = FirebaseFirestore.instance;
+
+    ///To Get Most recent update from the cloud, disabled it
+    _firestore.settings = Settings(persistenceEnabled: false);
   }
 
 //  Save & Update Services ====================================

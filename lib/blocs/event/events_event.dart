@@ -38,6 +38,8 @@ class EventsEventCreate extends EventsEvent {
 
 class EventsEventFetchCurrentLocation extends EventsEvent {}
 
+class EventsEventRequestLocation extends EventsEvent {}
+
 class EventsEventFetchOwn extends EventsEvent {}
 
 class EventsEventFetchAll extends EventsEvent {}

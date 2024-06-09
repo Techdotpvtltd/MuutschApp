@@ -39,6 +39,7 @@ void main() async {
   Get.find<MyDrawerController>().closeDrawer();
 
   PushNotificationServices().initialize();
+
   runApp(const MyApp());
 }
 

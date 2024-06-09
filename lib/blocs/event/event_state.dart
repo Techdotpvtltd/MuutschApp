@@ -155,6 +155,12 @@ class EventStateFetchedCurrentLocation extends EventState {
   EventStateFetchedCurrentLocation({this.position});
 }
 
+class EventStateCurrentLocationFailure extends EventState {
+  final LocationPermission status;
+
+  EventStateCurrentLocationFailure({required this.status});
+}
+
 // ===========================Join Event States================================
 class EventStateJoining extends EventState {
   final String eventId;
@@ -168,4 +174,8 @@ class EventStateJoinFailure extends EventState {
   EventStateJoinFailure({required this.exception});
 }
 
-class EventStateJoined extends EventState {}
+class EventStateJoined extends EventState {
+  final EventModel event;
+
+  EventStateJoined({required this.event});
+}
