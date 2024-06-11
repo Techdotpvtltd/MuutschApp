@@ -25,7 +25,8 @@ class ChatModel {
   final String? groupAvatar;
   final String compositeKey;
   final int? lastMessageTime;
-
+  final String? lastMessageId;
+  final bool? isNewMessage;
   ChatModel({
     required this.uuid,
     required this.createdAt,
@@ -38,6 +39,8 @@ class ChatModel {
     this.groupAvatar,
     required this.compositeKey,
     this.lastMessageTime,
+    this.lastMessageId,
+    this.isNewMessage,
   });
 
   ChatModel copyWith({
@@ -52,11 +55,14 @@ class ChatModel {
     String? groupAvatar,
     String? compositeKey,
     int? lastMessageTime,
+    String? lastMessageId,
+    bool? isNewMessage,
   }) {
     return ChatModel(
       uuid: uuid ?? this.uuid,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
+      isNewMessage: isNewMessage ?? this.isNewMessage,
       participants: participants ?? this.participants,
       participantUids: participantUids ?? this.participantUids,
       isChatEnabled: isChatEnabled ?? this.isChatEnabled,
@@ -65,6 +71,7 @@ class ChatModel {
       groupAvatar: groupAvatar ?? this.groupAvatar,
       compositeKey: compositeKey ?? this.compositeKey,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
+      lastMessageId: lastMessageId ?? this.lastMessageId,
     );
   }
 

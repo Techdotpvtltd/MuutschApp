@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:musch/services/local_storage_services/local_storage_services.dart';
 import 'package:musch/utils/extensions/date_extension.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -25,6 +26,17 @@ class BubbleWidget extends StatefulWidget {
 class _BubbleWidgetState extends State<BubbleWidget> {
   bool isLoading = false;
   List<GroupedMessageModel> messages = MessageRepo().messages;
+
+  void saveReadableMessageIds() {
+    final List<String> readableMessageIds = [];
+    final e = messages.expand((e) => e.messages
+        .where((element) => element.senderId != UserRepo().currentUser.uid));
+    for (final message in e) {
+      readableMessageIds.add(message.messageId);
+    }
+
+    LocalStorageServices().saveMessageIds(ids: readableMessageIds);
+  }
 
   Widget getMessageCell(MessageModel message) {
     final String userId = UserRepo().currentUser.uid;
@@ -96,6 +108,7 @@ class _BubbleWidgetState extends State<BubbleWidget> {
             setState(() {
               messages = MessageRepo().messages;
             });
+            saveReadableMessageIds();
           }
         }
       },

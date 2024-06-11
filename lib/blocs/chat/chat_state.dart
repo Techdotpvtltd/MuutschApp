@@ -72,3 +72,22 @@ class ChatStateJoinFailure extends ChatState {
 }
 
 class ChatStateJoined extends ChatState {}
+
+// ===========================Group Chat Status Visibility================================
+
+class ChatStateUpdatingGroupStatus extends ChatState {
+  ChatStateUpdatingGroupStatus({super.isLoading = false});
+}
+
+class ChatStateUpdateGroupStatusFailure extends ChatState {
+  final AppException exception;
+
+  ChatStateUpdateGroupStatusFailure({required this.exception});
+}
+
+class ChatStateUpdatedStatus extends ChatState {
+  final bool status;
+  final String eventId;
+
+  ChatStateUpdatedStatus({required this.eventId, required this.status});
+}

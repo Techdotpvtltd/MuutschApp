@@ -6,10 +6,14 @@
 // Description:
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musch/services/notification_services/fire_notification.dart';
+import 'package:musch/utils/constants/constants.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../models/chat_model.dart';
+import '../../models/notification_model.dart';
 import '../../repos/chat_repo.dart';
+import '../../repos/notification_repo.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
@@ -29,7 +33,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           }
 
           /// Otherwise called create event to create the chat
-          add(ChatEventCreate(friendProfile: event.friendProfile));
+          add(ChatEventCreate(friendProfile: event.friendProfile, ids: []));
         } on AppException catch (e) {
           emit(ChatStateFetchFailure(exception: e));
         }
@@ -61,8 +65,60 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               eventId: event.eventId,
               friendProfile: event.friendProfile);
           emit(ChatStateCreated(chat: chat));
+
+          if (event.isGroup) {
+            for (final String id in event.ids) {
+              FireNotification().sendNotification(
+                title: event.chatTitle ?? "",
+                description:
+                    "Group Chat is available for the event ${event.chatTitle ?? ""}. You can now connect with the member of this event.",
+                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
+                type: "event",
+              );
+
+              NotificationRepo().save(
+                  recieverId: id,
+                  title: "Event Update",
+                  message:
+                      "Group Chat is available for the event ${event.chatTitle}. You can now connect with the member of this event.",
+                  type: NotificationType.event);
+            }
+          }
         } on AppException catch (e) {
           emit(ChatStateCreateFailure(exception: e));
+        }
+      },
+    );
+
+    /// Set Chat Visibility
+    on<ChatEventUpdateVisibilityStatus>(
+      (event, emit) async {
+        try {
+          emit(ChatStateUpdatingGroupStatus());
+          await ChatRepo().setGroupChatVisibility(
+              status: event.status, eventId: event.chatId);
+          emit(ChatStateUpdatedStatus(
+              eventId: event.chatId, status: event.status));
+          if (event.status) {
+            for (final String id in event.ids) {
+              FireNotification().sendNotification(
+                title: event.groupTitle,
+                description:
+                    "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event.",
+                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
+                type: "event",
+              );
+
+              NotificationRepo().save(
+                  recieverId: id,
+                  title: "Event Update",
+                  message:
+                      "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event.",
+                  type: NotificationType.event);
+            }
+          }
+        } on AppException catch (e) {
+          emit(ChatStateUpdateGroupStatusFailure(exception: e));
         }
       },
     );
@@ -74,6 +130,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatStateFetching());
           final ChatModel? chat =
               await ChatRepo().fetchGroupChat(eventId: event.eventId);
+
           emit(ChatStateFetched(chat: chat));
         } on AppException catch (e) {
           emit(ChatStateFetchFailure(exception: e));

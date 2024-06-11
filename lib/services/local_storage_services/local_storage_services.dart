@@ -20,4 +20,16 @@ class LocalStorageServices {
     oldIds.addAll(ids);
     pref.setStringList(SHARED_PREFERENCES_NOTIFICATION_IDS, oldIds);
   }
+
+  Future<List<String>> getMessageIds() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getStringList(SHARED_PREFERENCES_MESSAGE_IDS) ?? [];
+  }
+
+  Future<void> saveMessageIds({required List<String> ids}) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    final List<String> oldIds = await getMessageIds();
+    oldIds.addAll(ids);
+    pref.setStringList(SHARED_PREFERENCES_MESSAGE_IDS, oldIds);
+  }
 }

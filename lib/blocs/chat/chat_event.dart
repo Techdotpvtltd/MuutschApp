@@ -27,32 +27,43 @@ class ChatEventCreate extends ChatEvent {
   String? chatAvatar;
   OtherUserModel? friendProfile;
   String? eventId;
-
+  final List<String> ids;
   ChatEventCreate(
       {this.isGroup = false,
       this.isChatEnabled = true,
       this.chatAvatar,
       this.eventId,
       this.chatTitle,
+      required this.ids,
       this.friendProfile});
+}
+
+class ChatEventUpdateVisibilityStatus extends ChatEvent {
+  final bool status;
+  final List<String> ids;
+  final String chatId;
+  final String groupTitle;
+  ChatEventUpdateVisibilityStatus(
+      {required this.status,
+      required this.ids,
+      required this.chatId,
+      required this.groupTitle});
 }
 
 class ChatEventFetchGroupChat extends ChatEvent {
   final String eventId;
+  final List<String> joinedMemberIds;
+  final String eventTitle;
 
-  ChatEventFetchGroupChat({required this.eventId});
+  ChatEventFetchGroupChat({
+    required this.eventId,
+    required this.joinedMemberIds,
+    required this.eventTitle,
+  });
 }
 
 class ChatEventJoinGroupChat extends ChatEvent {
   final String eventId;
 
   ChatEventJoinGroupChat({required this.eventId});
-}
-
-class ChatEventUpdateChatVisibility extends ChatEvent {
-  final String eventId;
-  final bool isVisible;
-
-  ChatEventUpdateChatVisibility(
-      {required this.eventId, required this.isVisible});
 }

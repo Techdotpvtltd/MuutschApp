@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/chat/chat_page.dart';
+import 'package:musch/services/local_storage_services/local_storage_services.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
 
@@ -15,6 +16,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../../blocs/chat/ chat_bloc.dart';
 import '../../../blocs/chat/chat_event.dart';
 import '../../../blocs/chat/chat_state.dart';
+import '../../../config/colors.dart';
 import '../../../models/chat_model.dart';
 import '../../../models/other_user_model.dart';
 import '../../../models/message_model.dart';
@@ -40,7 +42,14 @@ class _InboxPageState extends State<InboxPage> {
   void updateChatView() {
     timer = Timer.periodic(
       Duration(seconds: 1),
-      (timer) {
+      (timer) async {
+        // final List<String> lastMessageIds =
+        //     await LocalStorageServices().getMessageIds();
+        // for (int i = 0; i < filteredChats.length; i++) {
+        //   if (!lastMessageIds.contains(filteredChats[i].uuid)) {
+        //     filteredChats[i] = filteredChats[i].copyWith(isNewMessage: true);
+        //   }
+        // }
         setState(() {
           filteredChats.sort((a, b) => (b.lastMessageTime ??
                   b.createdAt.millisecondsSinceEpoch)
@@ -169,7 +178,7 @@ class _InboxPageState extends State<InboxPage> {
                                 itemBuilder: (context, index) {
                                   return chatList(
                                     chat: filteredChats[index],
-                                    onSortChat: (chat) {
+                                    willChatUpdate: (chat) {
                                       final int index =
                                           filteredChats.indexWhere((element) =>
                                               element.uuid == chat.uuid);
@@ -194,7 +203,8 @@ class _InboxPageState extends State<InboxPage> {
 }
 
 Widget chatList(
-    {required ChatModel chat, required Function(ChatModel chat) onSortChat}) {
+    {required ChatModel chat,
+    required Function(ChatModel chat) willChatUpdate}) {
   OtherUserModel? senderUser;
   if (!chat.isGroup) {
     senderUser = chat.participants
@@ -220,8 +230,14 @@ Widget chatList(
             MessageModel? lastMessage = stream.data;
             chat = chat.copyWith(
                 lastMessageTime:
-                    lastMessage?.messageTime.millisecondsSinceEpoch);
-            onSortChat(chat);
+                    lastMessage?.messageTime.millisecondsSinceEpoch,
+                lastMessageId: lastMessage?.messageId);
+            willChatUpdate(chat);
+            if (lastMessage != null &&
+                lastMessage.senderId != UserRepo().currentUser.uid) {
+              LocalStorageServices()
+                  .saveMessageIds(ids: [lastMessage.messageId]);
+            }
             return ListTile(
               // isThreeLine: true,
               leading: SizedBox(
@@ -269,15 +285,13 @@ Widget chatList(
                     ),
                   ),
                   SizedBox(height: 1.h),
-                  // CircleAvatar(
-                  //   radius: 1.h,
-                  //   backgroundColor: MyColors.primary,
-                  //   child: textWidget(
-                  //     "1",
-                  //     color: Colors.white,
-                  //     fontSize: 13.6.sp,
-                  //   ),
-                  // ),
+                  if (chat.isNewMessage ?? false)
+                    textWidget(
+                      "New",
+                      color: MyColors.primary,
+                      fontSize: 13.6.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   Spacer(),
                 ],
               ),

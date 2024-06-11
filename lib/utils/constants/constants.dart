@@ -77,3 +77,4 @@ const PUSH_NOTIFICATION_EVENT_UPDATES = "event-updates-";
 // ===========================Shared Preferences================================
 
 const SHARED_PREFERENCES_NOTIFICATION_IDS = "NotificationIds";
+const SHARED_PREFERENCES_MESSAGE_IDS = "MessageIds";

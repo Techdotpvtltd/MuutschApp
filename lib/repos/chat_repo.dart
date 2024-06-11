@@ -119,6 +119,22 @@ class ChatRepo {
     }
   }
 
+  /// Chat Visibilty Status
+  Future<void> setGroupChatVisibility(
+      {required bool status, required String eventId}) async {
+    try {
+      await FirestoreService().updateWithDocId(
+        path: FIREBASE_COLLECTION_CHAT,
+        docId: eventId,
+        data: {
+          "isChatEnabled": status,
+        },
+      );
+    } catch (e) {
+      throw throwAppException(e: e);
+    }
+  }
+
   /// Single Chat Method
   Future<ChatModel?> fetchChat({required String friendUid}) async {
     try {

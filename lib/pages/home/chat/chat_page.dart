@@ -53,11 +53,13 @@ class _UserChatPageState extends State<UserChatPage> {
   }
 
   void triggerSenderMessageEvent() {
-    context.read<MessageBloc>().add(MessageEventSend(
-        content: messageController.text,
-        type: MessageType.text,
-        conversationId: widget.chat.uuid,
-        friendId: friend?.uid ?? ""));
+    context.read<MessageBloc>().add(
+          MessageEventSend(
+              content: messageController.text,
+              type: MessageType.text,
+              conversationId: widget.chat.uuid,
+              friendId: friend?.uid ?? ""),
+        );
   }
 
   @override
@@ -66,6 +68,7 @@ class _UserChatPageState extends State<UserChatPage> {
       friend = widget.chat.participants
           .firstWhere((element) => element.uid != UserRepo().currentUser.uid);
     }
+
     super.initState();
   }
 

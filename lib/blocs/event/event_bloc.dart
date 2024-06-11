@@ -250,7 +250,6 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
           events.sort((a, b) => a.distance.compareTo(b.distance));
           emit(EventStateFetched(events: events));
           emit(EventStateFetchedAll(events: events));
-          log(fetchEvents.toString());
         } on AppException catch (e) {
           emit(EventStateFetchFailure(exception: e));
         }
@@ -295,7 +294,7 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
                   .createdBy,
               title: "Event Update",
               message:
-                  " joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
+                  "${UserRepo().currentUser.name} joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
               type: NotificationType.event);
         } on AppException catch (e) {
           log("[debug EventFetchAll] $e");

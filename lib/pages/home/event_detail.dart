@@ -65,7 +65,11 @@ class _EventViewState extends State<EventView> {
   }
 
   void triggerFetchChatEvent() {
-    context.read<ChatBloc>().add(ChatEventFetchGroupChat(eventId: event.id));
+    context.read<ChatBloc>().add(ChatEventFetchGroupChat(
+          eventId: event.id,
+          joinedMemberIds: event.joinMemberIds,
+          eventTitle: event.title,
+        ));
   }
 
   @override
@@ -89,11 +93,19 @@ class _EventViewState extends State<EventView> {
                 state is ChatStateFetchFailure ||
                 state is ChatStateJoinFailure ||
                 state is ChatStateJoined ||
-                state is ChatStateJoining) {
+                state is ChatStateJoining ||
+                state is ChatStateUpdatedStatus ||
+                state is ChatStateUpdateGroupStatusFailure ||
+                state is ChatStateUpdatingGroupStatus) {
               setState(() {
                 isChatLoading = state.isLoading;
               });
 
+              if (state is ChatStateUpdatedStatus) {
+                setState(() {
+                  chat = chat?.copyWith(isChatEnabled: state.status);
+                });
+              }
               if (state is ChatStateFetchFailure) {
                 log(state.exception.message);
               }
@@ -285,12 +297,30 @@ class _EventViewState extends State<EventView> {
                                                     "",
                                                 chatTitle: event.title,
                                                 eventId: event.id,
-                                                isChatEnabled: true),
+                                                isChatEnabled: true,
+                                                ids: event.joinMemberIds),
                                           );
                                       return;
                                     }
 
-                                    if (chat!.isChatEnabled) {}
+                                    if (chat!.isChatEnabled) {
+                                      context.read<ChatBloc>().add(
+                                          ChatEventUpdateVisibilityStatus(
+                                              status: false,
+                                              ids: event.joinMemberIds,
+                                              chatId: chat!.uuid,
+                                              groupTitle: event.title));
+                                      return;
+                                    }
+                                    if (!chat!.isChatEnabled) {
+                                      context.read<ChatBloc>().add(
+                                          ChatEventUpdateVisibilityStatus(
+                                              status: true,
+                                              ids: event.joinMemberIds,
+                                              chatId: chat!.uuid,
+                                              groupTitle: event.title));
+                                      return;
+                                    }
                                   },
                                   child: Text(
                                     chat != null

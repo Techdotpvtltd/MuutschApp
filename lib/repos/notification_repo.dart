@@ -56,7 +56,7 @@ class NotificationRepo {
       final NotificationModel model = NotificationModel(
           uuid: "",
           title: title,
-          message: "${user.name}$message",
+          message: message,
           senderId: user.uid,
           receiverId: recieverId,
           type: type,
