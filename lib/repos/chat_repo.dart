@@ -8,6 +8,8 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:musch/exceptions/app_exceptions.dart';
 import 'package:musch/exceptions/data_exceptions.dart';
 
 import '../exceptions/exception_parsing.dart';
@@ -34,41 +36,74 @@ class ChatRepo {
     _chats = [];
   }
 
-  Future<void> fetchChats({ChatModel? lastChat}) async {
-    try {
-      final String userId = UserRepo().currentUser.uid;
+  Future<void> fetchChats({
+    ChatModel? lastChat,
+    required VoidCallback onSuccess,
+    required Function(AppException) onError,
+  }) async {
+    final String userId = UserRepo().currentUser.uid;
+    _chats.clear();
+    final List<QueryModel> queries = [
+      QueryModel(
+        field: "participantUids",
+        value: userId,
+        type: QueryType.arrayContains,
+      ),
+      QueryModel(field: "createdAt", value: false, type: QueryType.orderBy),
+      QueryModel(field: "isChatEnabled", value: true, type: QueryType.isEqual),
+      QueryModel(field: "", value: 5, type: QueryType.limit),
+    ];
 
-      final List<QueryModel> queries = [
-        QueryModel(
-          field: "participantUids",
-          value: userId,
-          type: QueryType.arrayContains,
-        ),
-        QueryModel(field: "createdAt", value: false, type: QueryType.orderBy),
-        QueryModel(
-            field: "isChatEnabled", value: true, type: QueryType.isEqual),
-        QueryModel(field: "", value: 5, type: QueryType.limit),
-      ];
-
-      /// Check If there is last chat doc exists
-      if (lastChat != null) {
-        queries.add(QueryModel(
-            field: "",
-            value: lastChat.toMap(),
-            type: QueryType.startAfterDocument));
-      }
-
-      final List<Map<String, dynamic>> mappedData = await FirestoreService()
-          .fetchWithMultipleConditions(
-              collection: FIREBASE_COLLECTION_CHAT, queries: queries);
-      final List<ChatModel> newChats =
-          mappedData.map((e) => ChatModel.fromMap(e)).toList();
-      _chats.clear();
-      _chats.addAll(newChats);
-    } catch (e) {
-      log("[debug FetchChats] $e");
-      throw throwAppException(e: e);
+    /// Check If there is last chat doc exists
+    if (lastChat != null) {
+      queries.add(QueryModel(
+          field: "",
+          value: lastChat.toMap(),
+          type: QueryType.startAfterDocument));
     }
+
+    await FirestoreService().fetchWithListener(
+        collection: FIREBASE_COLLECTION_CHAT,
+        onError: (e) {
+          log("[debug FetchChats] $e");
+          onError(throwAppException(e: e));
+        },
+        onAdded: (data) {
+          final chat = ChatModel.fromMap(data);
+          if (_chats.where((element) => element.uuid != chat.uuid).isEmpty) {
+            _chats.add(chat);
+            onSuccess();
+          }
+        },
+        onRemoved: (data) {
+          final chat = ChatModel.fromMap(data);
+          final int index =
+              _chats.indexWhere((element) => element.uuid == chat.uuid);
+          if (index > -1) {
+            _chats.removeAt(index);
+            onSuccess();
+          }
+        },
+        onUpdated: (data) {
+          final chat = ChatModel.fromMap(data);
+          final int index =
+              _chats.indexWhere((element) => element.uuid == chat.uuid);
+
+          if (index > -1) {
+            if (!chat.isChatEnabled) {
+              _chats.removeAt(index);
+            }
+            _chats[index] = chat;
+          } else {
+            if (chat.isChatEnabled) {
+              _chats.add(chat);
+            }
+          }
+          onSuccess();
+        },
+        onAllDataGet: () {},
+        onCompleted: (l) {},
+        queries: queries);
   }
 
   Future<ChatModel?> fetchGroupChat({required String eventId}) async {
@@ -84,8 +119,8 @@ class ChatRepo {
         final ChatModel chat = ChatModel.fromMap(data);
         if (chat.participantUids.contains(UserRepo().currentUser.uid)) {
           _chats.add(chat);
+          return chat;
         }
-        return chat;
       }
       return null;
     } catch (e) {
@@ -121,11 +156,11 @@ class ChatRepo {
 
   /// Chat Visibilty Status
   Future<void> setGroupChatVisibility(
-      {required bool status, required String eventId}) async {
+      {required bool status, required String chatId}) async {
     try {
       await FirestoreService().updateWithDocId(
         path: FIREBASE_COLLECTION_CHAT,
-        docId: eventId,
+        docId: chatId,
         data: {
           "isChatEnabled": status,
         },

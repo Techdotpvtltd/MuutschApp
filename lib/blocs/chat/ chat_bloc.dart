@@ -42,13 +42,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     on<ChatEventFetchAll>(
       (event, emit) async {
-        try {
-          emit(ChatStateFetchingAll());
-          await ChatRepo().fetchChats();
-          emit(ChatStateFetchedAll());
-        } on AppException catch (e) {
-          emit(ChatStateFetchAllFailure(exception: e));
-        }
+        emit(ChatStateFetchingAll());
+        await ChatRepo().fetchChats(
+          onSuccess: () {
+            emit(ChatStateFetchedAll());
+          },
+          onError: (e) {
+            emit(ChatStateFetchAllFailure(exception: e));
+          },
+        );
       },
     );
 
@@ -96,7 +98,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         try {
           emit(ChatStateUpdatingGroupStatus());
           await ChatRepo().setGroupChatVisibility(
-              status: event.status, eventId: event.chatId);
+              status: event.status, chatId: event.chatId);
           emit(ChatStateUpdatedStatus(
               eventId: event.chatId, status: event.status));
           if (event.status) {
