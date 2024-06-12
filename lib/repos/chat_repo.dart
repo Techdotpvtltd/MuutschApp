@@ -51,7 +51,7 @@ class ChatRepo {
       ),
       QueryModel(field: "createdAt", value: false, type: QueryType.orderBy),
       QueryModel(field: "isChatEnabled", value: true, type: QueryType.isEqual),
-      QueryModel(field: "", value: 5, type: QueryType.limit),
+      QueryModel(field: "", value: 15, type: QueryType.limit),
     ];
 
     /// Check If there is last chat doc exists
@@ -70,7 +70,9 @@ class ChatRepo {
         },
         onAdded: (data) {
           final chat = ChatModel.fromMap(data);
-          if (_chats.where((element) => element.uuid != chat.uuid).isEmpty) {
+          final int index =
+              _chats.indexWhere((element) => element.uuid == chat.uuid);
+          if (index == -1) {
             _chats.add(chat);
             onSuccess();
           }
@@ -90,7 +92,8 @@ class ChatRepo {
               _chats.indexWhere((element) => element.uuid == chat.uuid);
 
           if (index > -1) {
-            if (!chat.isChatEnabled) {
+            if (!chat.isChatEnabled ||
+                !chat.participantUids.contains(UserRepo().currentUser.uid)) {
               _chats.removeAt(index);
             }
             _chats[index] = chat;
@@ -119,8 +122,8 @@ class ChatRepo {
         final ChatModel chat = ChatModel.fromMap(data);
         if (chat.participantUids.contains(UserRepo().currentUser.uid)) {
           _chats.add(chat);
-          return chat;
         }
+        return chat;
       }
       return null;
     } catch (e) {

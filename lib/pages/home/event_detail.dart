@@ -65,11 +65,13 @@ class _EventViewState extends State<EventView> {
   }
 
   void triggerFetchChatEvent() {
-    context.read<ChatBloc>().add(ChatEventFetchGroupChat(
-          eventId: event.id,
-          joinedMemberIds: event.joinMemberIds,
-          eventTitle: event.title,
-        ));
+    context.read<ChatBloc>().add(
+          ChatEventFetchGroupChat(
+            eventId: event.id,
+            joinedMemberIds: event.joinMemberIds,
+            eventTitle: event.title,
+          ),
+        );
   }
 
   @override

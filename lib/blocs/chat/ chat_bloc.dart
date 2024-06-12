@@ -6,6 +6,7 @@
 // Description:
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musch/repos/user_repo.dart';
 import 'package:musch/services/notification_services/fire_notification.dart';
 import 'package:musch/utils/constants/constants.dart';
 
@@ -103,20 +104,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               eventId: event.chatId, status: event.status));
           if (event.status) {
             for (final String id in event.ids) {
-              FireNotification().sendNotification(
-                title: event.groupTitle,
-                description:
-                    "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event.",
-                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
-                type: "event",
-              );
-
-              NotificationRepo().save(
-                  recieverId: id,
-                  title: "Event Update",
-                  message:
+              if (id != UserRepo().currentUser.uid) {
+                FireNotification().sendNotification(
+                  title: event.groupTitle,
+                  description:
                       "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event.",
-                  type: NotificationType.event);
+                  topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
+                  type: "event",
+                );
+
+                NotificationRepo().save(
+                    recieverId: id,
+                    title: "Event Update",
+                    message:
+                        "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event.",
+                    type: NotificationType.event);
+              }
             }
           }
         } on AppException catch (e) {

@@ -144,7 +144,6 @@ class _SignupPageState extends State<SignupPage> {
                         textFieldWithPrefixSuffuxIconAndHintText(
                           controller: nameController,
                           "Name",
-                          // controller: _.password,
                           fillColor: Colors.white,
                           mainTxtColor: Colors.black,
                           radius: 12,

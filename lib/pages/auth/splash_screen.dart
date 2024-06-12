@@ -25,7 +25,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Get.find<MyDrawerController>().closeDrawer();
     triggerSplashEvent(context.read<AuthBloc>());
   }
 
