@@ -61,9 +61,11 @@ class _AllowLocationState extends State<AllowLocation> {
   }
 
   void getLocation() async {
-    final LocationResult result = await Get.to(PlacePicker(
-      "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
-    ));
+    final LocationResult result = await Get.to(
+      PlacePicker(
+        "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
+      ),
+    );
 
     final LocationModel userLocation = LocationModel(
         address: result.formattedAddress,

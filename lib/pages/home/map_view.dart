@@ -114,7 +114,7 @@ class MapSampleState extends State<MapSample> {
         },
         markerId: MarkerId(user.uid),
         position: LatLng(user.location!.latitude, user.location!.longitude),
-        icon: await getMarkerIcon(user.avatar, Size(170.0, 170.0)),
+        icon: await getMarkerIcon(user.avatar, Size(80.0, 80.0)),
       );
       markers.add(marker);
       setState(() {});
@@ -326,7 +326,7 @@ Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size) async {
       await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
   final Uint8List uint8List = byteData!.buffer.asUint8List();
 
-  return BitmapDescriptor.fromBytes(uint8List);
+  return BitmapDescriptor.bytes(uint8List);
 }
 
 Future<ui.Image> getImageFromPath(String imagePath) async {

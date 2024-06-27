@@ -1,3 +1,10 @@
+// Project: 	   muutsch
+// File:    	   signup_page
+// Path:    	   lib/pages/auth/signup_page.dart
+// Author:       Ali Akbar
+// Date:        11-05-24 19:07:25 -- ----
+// Description:
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';

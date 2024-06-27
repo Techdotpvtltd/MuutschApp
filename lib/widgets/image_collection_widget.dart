@@ -82,8 +82,7 @@ class ImageCollectionWidget extends StatelessWidget {
                                     height: 25,
                                     child: IconButton(
                                       style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
+                                        backgroundColor: WidgetStatePropertyAll(
                                           Colors.redAccent,
                                         ),
                                       ),
