@@ -10,6 +10,7 @@ import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/notification_screen.dart';
 import 'package:musch/utils/dialogs/dialogs.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
+import 'package:musch/widgets/custom_button%20copy.dart';
 import 'package:musch/widgets/event_widget.dart';
 import 'package:musch/widgets/request_widget.dart';
 import 'package:musch/widgets/text_widget.dart';
@@ -280,37 +281,38 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 2.h),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 25,
-                                right: 25,
-                                bottom: 10,
-                              ),
-                              child: Row(
-                                children: [
-                                  textWidget(
-                                    "Friend Requests",
-                                    color: Colors.white,
-                                    fontSize: 17.5.sp,
-                                  ),
-                                  Spacer(),
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(
-                                        () => AllFriends(
-                                            isRequestFriendScreen: true),
-                                      );
-                                    },
-                                    child: textWidget(
-                                      "View All",
-                                      fontSize: 14.sp,
-                                      color: MyColors.white,
+                            if (friends.isNotEmpty) SizedBox(height: 2.h),
+                            if (friends.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 25,
+                                  right: 25,
+                                  bottom: 10,
+                                ),
+                                child: Row(
+                                  children: [
+                                    textWidget(
+                                      "Friend Requests",
+                                      color: Colors.white,
+                                      fontSize: 17.5.sp,
                                     ),
-                                  ),
-                                ],
+                                    Spacer(),
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(
+                                          () => AllFriends(
+                                              isRequestFriendScreen: true),
+                                        );
+                                      },
+                                      child: textWidget(
+                                        "View All",
+                                        fontSize: 14.sp,
+                                        color: MyColors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Padding(
@@ -340,7 +342,8 @@ class _HomePageState extends State<HomePage> {
                                                 )
                                               : Center(
                                                   child:
-                                                      CircularProgressIndicator());
+                                                      CircularProgressIndicator(),
+                                                );
                                         },
                                       ),
                                   ],
@@ -416,50 +419,85 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                       gapH20,
-                                      for (final EventModel event in events)
-                                        Column(
-                                          children: [
-                                            eventWidget(
-                                              title: event.title,
-                                              address:
-                                                  "${event.location.city}, ${event.location.country}",
-                                              eventId: event.id,
-                                              imageUrl:
-                                                  // ignore: sdk_version_since
-                                                  event.imageUrls.firstOrNull ??
-                                                      '',
-                                              creator: event.creatorDetail.name
-                                                  .capitalizeFirstCharacter(),
-                                              onClickEvent: () {
-                                                Get.to(
-                                                  EventView(
-                                                    event: event,
-                                                    joinMembers:
-                                                        event.joinMemberDetails,
+                                      if (events.isEmpty)
+                                        SizedBox(
+                                          width: SCREEN_WIDTH,
+                                          height: SCREEN_HEIGHT / 2,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "No Events",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  triggerFetchAllEvents(context
+                                                      .read<EventBloc>());
+                                                },
+                                                child: Text(
+                                                  "Refresh",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    decoration: TextDecoration
+                                                        .underline,
                                                   ),
-                                                );
-                                              },
-                                              onClickJoinButton: () {
-                                                triggerJoinEvent(
-                                                  context.read<EventBloc>(),
-                                                  event.id,
-                                                );
-                                              },
-                                              isVisibleJoinButton:
-                                                  event.joinMemberIds
-                                                          .where(
-                                                            (element) =>
-                                                                element ==
-                                                                UserRepo()
-                                                                    .currentUser
-                                                                    .uid,
-                                                          )
-                                                          .length <
-                                                      1,
-                                            ),
-                                            gapH16,
-                                          ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
+                                      if (events.isNotEmpty)
+                                        for (final EventModel event in events)
+                                          Column(
+                                            children: [
+                                              eventWidget(
+                                                title: event.title,
+                                                address:
+                                                    "${event.location.city}, ${event.location.country}",
+                                                eventId: event.id,
+                                                imageUrl:
+                                                    // ignore: sdk_version_since
+                                                    event.imageUrls
+                                                            .firstOrNull ??
+                                                        '',
+                                                creator: event
+                                                    .creatorDetail.name
+                                                    .capitalizeFirstCharacter(),
+                                                onClickEvent: () {
+                                                  Get.to(
+                                                    EventView(
+                                                      event: event,
+                                                      joinMembers: event
+                                                          .joinMemberDetails,
+                                                    ),
+                                                  );
+                                                },
+                                                onClickJoinButton: () {
+                                                  triggerJoinEvent(
+                                                    context.read<EventBloc>(),
+                                                    event.id,
+                                                  );
+                                                },
+                                                isVisibleJoinButton:
+                                                    event.joinMemberIds
+                                                            .where(
+                                                              (element) =>
+                                                                  element ==
+                                                                  UserRepo()
+                                                                      .currentUser
+                                                                      .uid,
+                                                            )
+                                                            .length <
+                                                        1,
+                                              ),
+                                              gapH16,
+                                            ],
+                                          ),
                                     ],
                                   ),
                                 ),

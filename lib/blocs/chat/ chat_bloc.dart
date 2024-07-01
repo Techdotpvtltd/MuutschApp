@@ -102,24 +102,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               status: event.status, chatId: event.chatId);
           emit(ChatStateUpdatedStatus(
               eventId: event.chatId, status: event.status));
-          if (event.status) {
-            for (final String id in event.ids) {
-              if (id != UserRepo().currentUser.uid) {
-                FireNotification().sendNotification(
-                  title: event.groupTitle,
-                  description:
-                      "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event.",
-                  topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
-                  type: "event",
-                );
 
-                NotificationRepo().save(
-                    recieverId: id,
-                    title: "Event Update",
-                    message:
-                        "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event.",
-                    type: NotificationType.event);
-              }
+          for (final String id in event.ids) {
+            if (id != UserRepo().currentUser.uid) {
+              FireNotification().sendNotification(
+                title: event.groupTitle,
+                description: event.status
+                    ? "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event."
+                    : "Group Chat is available for the event ${event.groupTitle}.",
+                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
+                type: "event",
+              );
+
+              NotificationRepo().save(
+                  recieverId: id,
+                  title: "Event Update",
+                  message: event.status
+                      ? "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event."
+                      : "Group Chat is available for the event ${event.groupTitle}.",
+                  type: NotificationType.event);
             }
           }
         } on AppException catch (e) {

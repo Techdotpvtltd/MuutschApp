@@ -253,9 +253,10 @@ class _EventViewState extends State<EventView> {
                             Get.to(EventMemberList(joinMembers: joinMembers));
                           },
                           child: textWidget(
-                            "Joined: ${joinMembers.length}/${event.maxPersons}",
-                            fontSize: 13.6.sp,
-                            fontWeight: FontWeight.w300,
+                            "View Members (${joinMembers.length}/${event.maxPersons})",
+                            fontSize: 11.6.sp,
+                            fontWeight: FontWeight.w700,
+                            color: MyColors.primary3,
                           ),
                         ),
                       ],
