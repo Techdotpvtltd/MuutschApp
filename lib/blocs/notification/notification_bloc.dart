@@ -79,5 +79,20 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         emit(NotificationStateOnReceivedPush(message: event.message));
       },
     );
+
+    /// On Delete Event Trigger
+    on<NotificationEventDelete>(
+      (event, emit) async {
+        NotificationRepo().delete(notificationId: event.notificationId);
+
+        final int index =
+            notifications.indexWhere((e) => e.uuid == event.notificationId);
+        if (index > -1) {
+          notifications.removeAt(index);
+        }
+
+        emit(NotificationStateDeleted(uuid: event.notificationId));
+      },
+    );
   }
 }

@@ -61,3 +61,11 @@ class NotificationStateNewAvailable extends NotificationState {
 
   NotificationStateNewAvailable({required this.isNew});
 }
+
+// ===========================Notification Delete States================================
+
+class NotificationStateDeleted extends NotificationState {
+  final String uuid;
+
+  NotificationStateDeleted({required this.uuid});
+}

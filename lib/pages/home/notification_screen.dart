@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/blocs/notification/notification_bloc.dart';
+import 'package:musch/widgets/custom_dropdown.dart';
 
-import 'package:musch/controller/drawer_controller.dart';
-import 'package:musch/pages/home/home_drawer.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
@@ -51,7 +50,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
       listener: (context, state) {
         if (state is NotificationStateFetchFailure ||
             state is NotificationStateFetched ||
-            state is NotificationStateFetching) {
+            state is NotificationStateFetching ||
+            state is NotificationStateDeleted) {
           setState(() {
             isLoading = state.isLoading;
           });
@@ -67,6 +67,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
             setState(() {
               notifications = state.notifications;
             });
+          }
+
+          if (state is NotificationStateDeleted) {
+            final int index =
+                notifications.indexWhere((e) => e.uuid == state.uuid);
+            if (index > -1) {
+              setState(() {
+                notifications.removeAt(index);
+              });
+            }
           }
         }
       },
@@ -109,8 +119,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         children: [
                           InkWell(
                             onTap: () {
-                              Get.find<MyDrawerController>().closeDrawer();
-                              Get.to(HomeDrawer());
+                              Get.back();
                             },
                             child: Icon(
                               Remix.arrow_left_s_line,
@@ -144,6 +153,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                           NotificationType.user) {
                                         Get.to(FriendView(
                                             userId: notification.senderId));
+
                                         return;
                                       }
                                     },
@@ -176,10 +186,37 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             ),
                                           ),
                                         ),
-                                        title: textWidget(
-                                          notification.title,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w400,
+                                        title: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            textWidget(
+                                              notification.title,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            CustomMenuDropdown(
+                                              buttonColor: Colors.black,
+                                              items: [
+                                                DropdownMenuModel(
+                                                  icon: Icons.delete,
+                                                  title: "Remove",
+                                                )
+                                              ],
+                                              onSelectedItem: (val, a) {
+                                                if (a == 0) {
+                                                  context
+                                                      .read<NotificationBloc>()
+                                                      .add(
+                                                          NotificationEventDelete(
+                                                              notificationId:
+                                                                  notifications[
+                                                                          index]
+                                                                      .uuid));
+                                                }
+                                              },
+                                            )
+                                          ],
                                         ),
                                         subtitle: textWidget(
                                           notification.message,

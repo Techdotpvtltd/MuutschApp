@@ -72,4 +72,10 @@ class NotificationRepo {
       throw throwAppException(e: e);
     }
   }
+
+  /// Delete Notification
+  void delete({required String notificationId}) async {
+    FirestoreService().delete(
+        collection: FIREBASE_COLLECTION_NOTIFICATION, docId: notificationId);
+  }
 }

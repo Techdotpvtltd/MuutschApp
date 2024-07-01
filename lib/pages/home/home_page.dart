@@ -10,7 +10,6 @@ import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/notification_screen.dart';
 import 'package:musch/utils/dialogs/dialogs.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
-import 'package:musch/widgets/custom_button%20copy.dart';
 import 'package:musch/widgets/event_widget.dart';
 import 'package:musch/widgets/request_widget.dart';
 import 'package:musch/widgets/text_widget.dart';
@@ -460,11 +459,9 @@ class _HomePageState extends State<HomePage> {
                                                 address:
                                                     "${event.location.city}, ${event.location.country}",
                                                 eventId: event.id,
-                                                imageUrl:
-                                                    // ignore: sdk_version_since
-                                                    event.imageUrls
-                                                            .firstOrNull ??
-                                                        '',
+                                                imageUrl: event.imageUrls
+                                                        .firstOrNull ??
+                                                    '',
                                                 creator: event
                                                     .creatorDetail.name
                                                     .capitalizeFirstCharacter(),

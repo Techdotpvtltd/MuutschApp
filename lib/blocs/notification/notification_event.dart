@@ -38,3 +38,9 @@ class NotificationEventOnReceivedPushNotification extends NotificationEvent {
 
   NotificationEventOnReceivedPushNotification({required this.message});
 }
+
+class NotificationEventDelete extends NotificationEvent {
+  final String notificationId;
+
+  NotificationEventDelete({required this.notificationId});
+}
