@@ -157,6 +157,24 @@ class ChatRepo {
     }
   }
 
+  Future<void> removeMember(
+      {required String chatId, required OtherUserModel member}) async {
+    try {
+      await FirestoreService().updateWithDocId(
+        path: FIREBASE_COLLECTION_CHAT,
+        docId: chatId,
+        data: {
+          "participantUids": FieldValue.arrayRemove([member.uid]),
+          "participants": FieldValue.arrayRemove(
+            [member.toMap()],
+          ),
+        },
+      );
+    } catch (e) {
+      throw throwAppException(e: e);
+    }
+  }
+
   /// Chat Visibilty Status
   Future<void> setGroupChatVisibility(
       {required bool status, required String chatId}) async {

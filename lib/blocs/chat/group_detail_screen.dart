@@ -31,7 +31,7 @@ class ChatDetailScreen extends StatefulWidget {
 }
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
-  late final ChatModel chat = widget.chat;
+  late ChatModel chat = widget.chat;
   late final bool isOwner = UserRepo().currentUser.uid == chat.createdBy;
   final String uid = UserRepo().currentUser.uid;
 
@@ -45,6 +45,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         );
   }
 
+  void triggerRemoveMember(OtherUserModel member) {
+    context
+        .read<ChatBloc>()
+        .add(ChatEventRemoveMember(member: member, chatId: chat.uuid));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ChatBloc, ChatState>(
@@ -52,6 +58,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         if (state is ChatStateUpdatedStatus) {
           Get.back();
           Get.back();
+        }
+
+        if (state is ChatStateMemberRemoved) {
+          if (state.memeberId == uid) {
+            Get.back();
+            Get.back();
+          } else {
+            final List<String> ids = chat.participantUids;
+            final List<OtherUserModel> memebrs = chat.participants;
+
+            ids.removeWhere((e) => state.memeberId == e);
+            memebrs.removeWhere((e) => e.uid == state.memeberId);
+            setState(() {
+              chat = chat.copyWith(participantUids: ids, participants: memebrs);
+            });
+          }
         }
       },
       child: Scaffold(
@@ -74,6 +96,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     message: "Are you sure to disabled this group?",
                     onPositivePressed: () {
                       triggerDisabledChat();
+                    },
+                  );
+                }
+
+                if (item == "Leave Group") {
+                  CustomDialogs().alertBox(
+                    title: "Leave",
+                    message: "Are you sure to leave from this group?",
+                    onPositivePressed: () {
+                      triggerRemoveMember(
+                          chat.participants.firstWhere((e) => e.uid == uid));
                     },
                   );
                 }
@@ -186,7 +219,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   ),
                                 ],
                                 buttonColor: Colors.black,
-                                onSelectedItem: (item, index) {},
+                                onSelectedItem: (item, index) {
+                                  CustomDialogs().alertBox(
+                                    title: "Remove",
+                                    message:
+                                        "Are you sure to remove ${member.name} from this group?",
+                                    onPositivePressed: () {
+                                      triggerRemoveMember(member);
+                                    },
+                                  );
+                                },
                               )
                           ],
                         ),

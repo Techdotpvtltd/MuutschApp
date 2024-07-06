@@ -156,5 +156,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         }
       },
     );
+
+    /// Remove Member Chat
+    on<ChatEventRemoveMember>(
+      (event, emit) async {
+        ChatRepo().removeMember(chatId: event.chatId, member: event.member);
+        emit(ChatStateMemberRemoved(memeberId: event.member.uid));
+      },
+    );
   }
 }

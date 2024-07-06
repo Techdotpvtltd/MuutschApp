@@ -67,3 +67,10 @@ class ChatEventJoinGroupChat extends ChatEvent {
 
   ChatEventJoinGroupChat({required this.eventId});
 }
+
+/// Remove Member
+class ChatEventRemoveMember extends ChatEvent {
+  final OtherUserModel member;
+  final String chatId;
+  ChatEventRemoveMember({required this.member, required this.chatId});
+}

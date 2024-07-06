@@ -91,3 +91,11 @@ class ChatStateUpdatedStatus extends ChatState {
 
   ChatStateUpdatedStatus({required this.eventId, required this.status});
 }
+
+// ===========================Remove Member Chat================================
+
+class ChatStateMemberRemoved extends ChatState {
+  final String memeberId;
+
+  ChatStateMemberRemoved({required this.memeberId});
+}
