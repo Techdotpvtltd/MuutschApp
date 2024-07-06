@@ -40,12 +40,12 @@ class ChatEventCreate extends ChatEvent {
 
 class ChatEventUpdateVisibilityStatus extends ChatEvent {
   final bool status;
-  final List<String> ids;
+  final List<String> memberIds;
   final String chatId;
   final String groupTitle;
   ChatEventUpdateVisibilityStatus(
       {required this.status,
-      required this.ids,
+      required this.memberIds,
       required this.chatId,
       required this.groupTitle});
 }

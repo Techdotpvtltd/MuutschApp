@@ -35,7 +35,7 @@ class _AvatarWidgetState extends State<AvatarWidget> {
               height: widget.height ?? 115,
               width: widget.width ?? 115,
               backgroundColor: widget.placeholderChar != null
-                  ? AppTheme.primaryColor1
+                  ? widget.backgroundColor ?? AppTheme.primaryColor1
                   : widget.backgroundColor,
               url: widget.avatarUrl ?? "",
               placeholderWidget: LayoutBuilder(

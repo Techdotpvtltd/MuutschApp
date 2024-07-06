@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:musch/blocs/chat/group_detail_screen.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
@@ -18,6 +19,7 @@ import '../../../repos/user_repo.dart';
 import '../../../utils/constants/constants.dart';
 import '../../../widgets/avatar_widget.dart';
 import '../../../widgets/my_image_picker.dart';
+import '../friend_view.dart';
 import 'bubble_widget.dart';
 
 class UserChatPage extends StatefulWidget {
@@ -119,34 +121,55 @@ class _UserChatPageState extends State<UserChatPage> {
                               ),
                             ),
                             SizedBox(width: 3.w),
-                            AvatarWidget(
-                              height: 60,
-                              width: 60,
-                              placeholderChar:
-                                  (widget.chat.groupTitle ?? friend?.name ?? "")
-                                      .characters
-                                      .first,
-                              avatarUrl: widget.chat.groupAvatar ??
-                                  friend?.avatarUrl ??
-                                  "",
-                            ),
-                            SizedBox(width: 3.w),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                textWidget(
-                                  friend?.name ?? widget.chat.groupTitle ?? "",
-                                  fontSize: 16.4.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                                // textWidget(
-                                //   "",
-                                //   fontSize: 14.sp,
-                                //   fontWeight: FontWeight.w400,
-                                //   color: Colors.white,
-                                // ),
-                              ],
+                            InkWell(
+                              onTap: () {
+                                if (widget.chat.isGroup) {
+                                  Get.to(ChatDetailScreen(chat: widget.chat));
+                                } else {
+                                  final String friendId = widget
+                                      .chat.participantUids
+                                      .firstWhere((e) =>
+                                          e != UserRepo().currentUser.uid);
+                                  Get.to(FriendView(userId: friendId));
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  AvatarWidget(
+                                    height: 60,
+                                    width: 60,
+                                    placeholderChar: (widget.chat.groupTitle ??
+                                            friend?.name ??
+                                            "")
+                                        .characters
+                                        .first,
+                                    avatarUrl: widget.chat.groupAvatar ??
+                                        friend?.avatarUrl ??
+                                        "",
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      textWidget(
+                                        friend?.name ??
+                                            widget.chat.groupTitle ??
+                                            "",
+                                        fontSize: 16.4.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                      textWidget(
+                                        widget.chat.isGroup ? "Group" : "Chat",
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

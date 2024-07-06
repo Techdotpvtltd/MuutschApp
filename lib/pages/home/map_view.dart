@@ -27,7 +27,6 @@ import '../../blocs/user/user_state.dart';
 import '../../models/user_model.dart';
 import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
-import 'package:google_place/google_place.dart';
 
 import 'friend_view.dart';
 
@@ -49,7 +48,6 @@ class MapSampleState extends State<MapSample> {
       CustomInfoWindowController();
   LatLngBounds? previousBounds;
   final TextEditingController searchController = TextEditingController();
-  late GooglePlace googlePlace;
 
   void triggerCurrentLocationEvent(EventBloc bloc) {
     bloc.add(EventsEventFetchCurrentLocation());
@@ -84,7 +82,6 @@ class MapSampleState extends State<MapSample> {
   @override
   void initState() {
     triggerCurrentLocationEvent(context.read<EventBloc>());
-    googlePlace = GooglePlace('AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0');
     super.initState();
   }
 

@@ -103,7 +103,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatStateUpdatedStatus(
               eventId: event.chatId, status: event.status));
 
-          for (final String id in event.ids) {
+          for (final String id in event.memberIds) {
             if (id != UserRepo().currentUser.uid) {
               FireNotification().sendNotification(
                 title: event.groupTitle,

@@ -14,9 +14,8 @@ import 'package:musch/models/other_user_model.dart';
 import 'package:musch/utils/extensions/date_extension.dart';
 import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
-import 'package:musch/widgets/map_sample.dart';
+// import 'package:musch/widgets/map_sample.dart';
 import 'package:musch/widgets/text_widget.dart';
-import 'package:place_picker/place_picker.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -254,7 +253,7 @@ class _EventViewState extends State<EventView> {
                           },
                           child: textWidget(
                             "View Members (${joinMembers.length}/${event.maxPersons})",
-                            fontSize: 11.6.sp,
+                            fontSize: 13.6.sp,
                             fontWeight: FontWeight.w700,
                             color: MyColors.primary3,
                           ),
@@ -294,14 +293,15 @@ class _EventViewState extends State<EventView> {
                                     if (chat == null) {
                                       context.read<ChatBloc>().add(
                                             ChatEventCreate(
-                                                isGroup: true,
-                                                chatAvatar: event.imageUrls
-                                                        .firstOrNull ??
-                                                    "",
-                                                chatTitle: event.title,
-                                                eventId: event.id,
-                                                isChatEnabled: true,
-                                                ids: event.joinMemberIds),
+                                              isGroup: true,
+                                              chatAvatar:
+                                                  event.imageUrls.firstOrNull ??
+                                                      "",
+                                              chatTitle: event.title,
+                                              eventId: event.id,
+                                              isChatEnabled: true,
+                                              ids: event.joinMemberIds,
+                                            ),
                                           );
                                       return;
                                     }
@@ -310,7 +310,7 @@ class _EventViewState extends State<EventView> {
                                       context.read<ChatBloc>().add(
                                           ChatEventUpdateVisibilityStatus(
                                               status: false,
-                                              ids: event.joinMemberIds,
+                                              memberIds: event.joinMemberIds,
                                               chatId: chat!.uuid,
                                               groupTitle: event.title));
                                       return;
@@ -319,7 +319,7 @@ class _EventViewState extends State<EventView> {
                                       context.read<ChatBloc>().add(
                                           ChatEventUpdateVisibilityStatus(
                                               status: true,
-                                              ids: event.joinMemberIds,
+                                              memberIds: event.joinMemberIds,
                                               chatId: chat!.uuid,
                                               groupTitle: event.title));
                                       return;
@@ -421,18 +421,16 @@ class _EventViewState extends State<EventView> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 3.h),
-                    Card(
-                      elevation: 3,
-                      child: SizedBox(
-                        height: 25.h,
-                        child: MapCard(
-                          isPin: true,
-                          defaultLocation: LatLng(event.location.latitude,
-                              event.location.longitude),
-                        ),
-                      ),
-                    ),
+
+                    // FIXME: Fix this code later
+                    // SizedBox(height: 3.h),
+                    // Card(
+                    //   elevation: 3,
+                    //   child: SizedBox(
+                    //     height: 25.h,
+                    //     child: MapCard(isPin: true),
+                    //   ),
+                    // ),
                     SizedBox(height: 4.h),
                     widget.isFromMyEvents
                         ? Row(
