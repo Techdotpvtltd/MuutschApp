@@ -240,4 +240,18 @@ class EventRepo {
       throw throwAppException(e: e);
     }
   }
+
+  Future<EventModel?> fetchWith({required String eventid}) async {
+    try {
+      final Map<String, dynamic>? data = await FirestoreService()
+          .fetchSingleRecord(path: FIREBASE_COLLECTION_EVENTS, docId: eventid);
+      if (data != null) {
+        return EventModel.fromMap(data);
+      }
+      return null;
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
 }

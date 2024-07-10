@@ -289,13 +289,15 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
                   "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).createdBy}",
               type: 'events');
           NotificationRepo().save(
-              recieverId: events
-                  .firstWhere((element) => element.id == event.eventId)
-                  .createdBy,
-              title: "Event Update",
-              message:
-                  "${UserRepo().currentUser.name} joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
-              type: NotificationType.event);
+            recieverId: events
+                .firstWhere((element) => element.id == event.eventId)
+                .createdBy,
+            title: "Event Update",
+            contentId: event.eventId,
+            message:
+                "${UserRepo().currentUser.name} joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
+            type: NotificationType.event,
+          );
         } on AppException catch (e) {
           log("[debug EventFetchAll] $e");
           emit(EventStateJoinFailure(exception: e));

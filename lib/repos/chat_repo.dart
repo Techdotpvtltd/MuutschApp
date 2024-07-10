@@ -142,12 +142,12 @@ class ChatRepo {
           "participants": FieldValue.arrayUnion(
             [
               OtherUserModel(
-                      uid: user.uid,
-                      name: user.name,
-                      avatarUrl: user.avatar,
-                      about: user.bio,
-                      createdAt: DateTime.now())
-                  .toMap(),
+                uid: user.uid,
+                name: user.name,
+                avatarUrl: user.avatar,
+                about: user.bio,
+                createdAt: DateTime.now(),
+              ).toMap(),
             ],
           ),
         },

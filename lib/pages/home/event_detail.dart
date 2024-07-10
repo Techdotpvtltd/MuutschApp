@@ -421,16 +421,6 @@ class _EventViewState extends State<EventView> {
                         ),
                       ],
                     ),
-
-                    // FIXME: Fix this code later
-                    // SizedBox(height: 3.h),
-                    // Card(
-                    //   elevation: 3,
-                    //   child: SizedBox(
-                    //     height: 25.h,
-                    //     child: MapCard(isPin: true),
-                    //   ),
-                    // ),
                     SizedBox(height: 4.h),
                     widget.isFromMyEvents
                         ? Row(

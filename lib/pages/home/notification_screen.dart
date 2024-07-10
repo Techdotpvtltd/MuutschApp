@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/blocs/notification/notification_bloc.dart';
+import 'package:musch/models/event_model.dart';
+import 'package:musch/repos/event_repo.dart';
 import 'package:musch/widgets/custom_dropdown.dart';
 
 import 'package:musch/widgets/text_widget.dart';
@@ -14,6 +16,7 @@ import '../../blocs/notification/notification_state.dart';
 import '../../models/notification_model.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/avatar_widget.dart';
+import 'event_detail.dart';
 import 'friend_view.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -148,13 +151,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   final NotificationModel notification =
                                       notifications[index];
                                   return InkWell(
-                                    onTap: () {
+                                    onTap: () async {
                                       if (notification.type ==
                                           NotificationType.user) {
                                         Get.to(FriendView(
                                             userId: notification.senderId));
+                                      }
 
-                                        return;
+                                      if (notification.type ==
+                                          NotificationType.event) {
+                                        final EventModel? event =
+                                            await EventRepo().fetchWith(
+                                                eventid:
+                                                    notification.contentId);
+                                        if (event != null) {
+                                          Get.to(
+                                            EventView(
+                                              event: event,
+                                              joinMembers:
+                                                  event.joinMemberDetails,
+                                            ),
+                                          );
+                                        } else {
+                                          CustomDialogs().errorBox(
+                                              message: "Event not found.");
+                                        }
                                       }
                                     },
                                     child: Container(
