@@ -79,11 +79,14 @@ class PushNotificationServices {
         onNotificationReceived!(message);
       }
       final String type = message.data['type'];
-      if (type == 'message') {}
-
+      // final additionalData = message.data['additionalData'];
+      // final data = json.decode(additionalData) as Map<String, dynamic>;
+      // final FriendModel friend =
+      //     FriendModel.fromMap(data['friend'], isFromJson: true);
+      // debugPrint(friend.toString());
       if (kDebugMode) {
         print('Handling a foreground message: ${message.messageId}');
-        print('Message data: ${message.data}');
+
         print('Message notification: ${message.notification?.title}');
         print('Message notification: ${message.notification?.body}');
       }

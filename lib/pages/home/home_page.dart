@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -5,11 +8,16 @@ import 'package:get/get.dart';
 import 'package:musch/blocs/notification/notification_state.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
+import 'package:musch/models/chat_model.dart';
 import 'package:musch/pages/home/all_events.dart';
 import 'package:musch/pages/home/all_friends.dart';
+import 'package:musch/pages/home/chat/chat_page.dart';
+import 'package:musch/pages/home/friend_view.dart';
 import 'package:musch/pages/home/notification_screen.dart';
+import 'package:musch/repos/chat_repo.dart';
 import 'package:musch/services/notification_services/push_notification_services.dart';
 import 'package:musch/utils/dialogs/dialogs.dart';
+import 'package:musch/utils/dialogs/loaders.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/event_widget.dart';
 import 'package:musch/widgets/request_widget.dart';
@@ -84,10 +92,52 @@ class _HomePageState extends State<HomePage> {
     try {
       final remote = await PushNotificationServices().getInitialMessage();
       if (remote != null) {
-        CustomDialogs().successBox(message: remote.data[''] ?? "");
+        _handlePushNotification(remote);
       }
     } catch (e) {
       debugPrint("Notification Get Initial Error: $e");
+    }
+  }
+
+  Future<void> _handlePushNotification(RemoteMessage remote) async {
+    try {
+      final String type = remote.data['type'];
+      final additionalData = remote.data['additionalData'];
+      final data = json.decode(additionalData) as Map<String, dynamic>;
+
+      /// For Chat
+      if (type == "chat" || type == "message") {
+        final ChatModel chatJson =
+            ChatModel.fromMap(data['chat'], isFromJson: true);
+        if (!chatJson.isGroup) {
+          Get.to(UserChatPage(chat: chatJson));
+        } else {
+          final ChatModel? chat =
+              await ChatRepo().fetchChat(id: chatJson.uuid, isGroupChat: true);
+          if (chat != null && chat.isChatEnabled) {
+            Get.to(UserChatPage(chat: chat));
+          } else {
+            CustomDialogs().successBox(
+              message:
+                  "Group is not available. Once it available, we'll inform you.",
+              title: chat?.groupTitle ?? "Group Chat",
+            );
+          }
+        }
+      }
+
+      if (type == "request") {
+        final FriendModel user =
+            FriendModel.fromMap(data['friend'], isFromJson: true);
+        Get.to(FriendView(userId: user.senderId));
+      }
+
+      if (type == "event") {
+        final EventModel event = EventModel.fromJson(data['event']);
+        Get.to(EventView(event: event, joinMembers: event.joinMemberDetails));
+      }
+    } catch (e) {
+      CustomDialogs().errorBox(message: e.toString());
     }
   }
 

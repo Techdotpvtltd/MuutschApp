@@ -87,7 +87,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                       "Group Chat is available for the event ${event.chatTitle ?? ""}. You can now connect with the member of this event.",
                   topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
                   type: "chat",
-                  additionalData: {"chat": chat.toJson()});
+                  additionalData: {"chat": chat.toMap(isToJson: true)});
             }
           }
         } on AppException catch (e) {
@@ -114,7 +114,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                 title: "Group: ${event.chat.groupTitle ?? "-"}",
                 message: event.status
                     ? "Group Chat is available for the event ${event.chat.groupTitle ?? "-"}. You can now connect with the member of this event."
-                    : "Group Chat is available for the event${event.chat.groupTitle ?? "-"}.",
+                    : "Group Chat is disabled for the event${event.chat.groupTitle ?? "-"}.",
                 type: NotificationType.chat,
                 data: event.chat.toMap(),
                 contentId: event.chat.uuid,
@@ -124,10 +124,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                 title: "Group: ${event.chat.groupTitle ?? "-"}",
                 description: event.status
                     ? "Group Chat is available for the event ${event.chat.groupTitle ?? "-"}. You can now connect with the member of this event."
-                    : "Group Chat is available for the event ${event.chat.groupTitle ?? "-"}.",
+                    : "Group Chat is disabled for the event ${event.chat.groupTitle ?? "-"}.",
                 topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
                 type: "chat",
-                additionalData: {"chat": event.chat.toJson()},
+                additionalData: {"chat": event.chat.toMap(isToJson: true)},
               );
             }
           }

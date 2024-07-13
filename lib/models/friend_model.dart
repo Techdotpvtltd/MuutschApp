@@ -49,21 +49,28 @@ class FriendModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool isToJson = false}) {
     return <String, dynamic>{
       'uuid': uuid,
       'senderId': senderId,
       'participants': participants,
       'recieverId': recieverId,
       'type': type.name.toLowerCase(),
-      'requestSendTime': Timestamp.fromDate(requestSendTime),
-      'requestAcceptTime': requestAcceptTime != null
-          ? Timestamp.fromDate(requestAcceptTime!)
-          : null,
+      'requestSendTime': isToJson
+          ? requestSendTime.millisecondsSinceEpoch
+          : Timestamp.fromDate(requestSendTime),
+      'requestAcceptTime': isToJson
+          ? (requestAcceptTime != null
+              ? requestAcceptTime?.millisecondsSinceEpoch
+              : null)
+          : (requestAcceptTime != null
+              ? Timestamp.fromDate(requestAcceptTime!)
+              : null),
     };
   }
 
-  factory FriendModel.fromMap(Map<String, dynamic> map) {
+  factory FriendModel.fromMap(Map<String, dynamic> map,
+      {bool isFromJson = false}) {
     return FriendModel(
       uuid: map['uuid'] as String,
       senderId: map['senderId'] as String,
@@ -74,8 +81,13 @@ class FriendModel {
       type: FriendType.values.firstWhere((element) =>
           element.name.toLowerCase() ==
           (map['type'] as String? ?? "request").toLowerCase()),
-      requestSendTime: (map['requestSendTime'] as Timestamp).toDate(),
-      requestAcceptTime: (map['requestAcceptTime'] as Timestamp?)?.toDate(),
+      requestSendTime: isFromJson
+          ? DateTime.fromMillisecondsSinceEpoch(map['requestSendTime'])
+          : (map['requestSendTime'] as Timestamp).toDate(),
+      requestAcceptTime: isFromJson
+          ? DateTime.fromMillisecondsSinceEpoch(
+              map['requestAcceptTime'] as int? ?? 0)
+          : (map['requestAcceptTime'] as Timestamp?)?.toDate(),
     );
   }
 

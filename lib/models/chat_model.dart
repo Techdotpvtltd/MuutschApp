@@ -116,7 +116,8 @@ class ChatModel {
   String toJson() => json.encode(toMap(isToJson: true));
 
   factory ChatModel.fromJson(String source) =>
-      ChatModel.fromMap(json.decode(source) as Map<String, dynamic>);
+      ChatModel.fromMap(json.decode(source) as Map<String, dynamic>,
+          isFromJson: true);
 
   @override
   String toString() {

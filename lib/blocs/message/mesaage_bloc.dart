@@ -64,7 +64,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
                   : "Sent a media.",
               topic: "$PUSH_NOTIFICATION_USER${uuid}",
               additionalData: {
-                'chat': event.chat,
+                'type': 'chat',
+                'chat': event.chat.toMap(isToJson: true),
               },
             );
           }

@@ -39,9 +39,9 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
             type: 'request',
             description:
                 "${UserRepo().currentUser.name} sends you a friend request.",
-            topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST${friend.recieverId}",
+            topic: "$PUSH_NOTIFICATION_USER${friend.recieverId}",
             additionalData: {
-              'friend': friend.toJson(),
+              'friend': friend.toMap(isToJson: true),
             },
           );
           NotificationRepo().save(
@@ -162,10 +162,9 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
                 type: 'request',
                 description:
                     "${UserRepo().currentUser.name} accepted your friend request.",
-                topic:
-                    "$PUSH_NOTIFICATION_FRIEND_REQUEST${friends[index].senderId}",
+                topic: "$PUSH_NOTIFICATION_USER${friends[index].senderId}",
                 additionalData: {
-                  'friend': friends[index].toJson(),
+                  'friend': friends[index].toMap(isToJson: true),
                 });
             NotificationRepo().save(
               recieverId: friends[index].senderId,
