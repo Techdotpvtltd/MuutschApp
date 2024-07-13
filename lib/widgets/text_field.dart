@@ -20,6 +20,7 @@ Widget textFieldWithPrefixSuffuxIconAndHintText(
   iconColor,
   bool obsecure = false,
   void Function(String)? onSubmitted,
+  void Function(String)? onChanged,
 }) {
   return StatefulBuilder(
     builder: (BuildContext context, setState) {
@@ -28,6 +29,11 @@ Widget textFieldWithPrefixSuffuxIconAndHintText(
         enabled: enable,
         obscureText: obsecure,
         controller: controller,
+        onChanged: (value) {
+          if (onChanged != null) {
+            onChanged(value);
+          }
+        },
         onSubmitted: onSubmitted,
         style: GoogleFonts.poppins(
             color: mainTxtColor ?? Colors.black, fontSize: 15.sp),

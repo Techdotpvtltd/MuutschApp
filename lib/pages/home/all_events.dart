@@ -121,127 +121,130 @@ class _AllEventsState extends State<AllEvents> {
           }
         }
       },
-      child: GestureDetector(
-        onTap: () {
-          FocusManager.instance.primaryFocus!.unfocus();
-        },
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Container(
-                  height: 20.h,
-                  color: Color(0xffBD9691),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Container(
+                height: 20.h,
+                color: Color(0xffBD9691),
+              ),
+              Expanded(
+                child: Container(
+                  color: Color(0xfff2f2f2),
                 ),
-                Expanded(
-                  child: Container(
-                    color: Color(0xfff2f2f2),
+              )
+            ],
+          ),
+          Positioned.fill(
+            child: SafeArea(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 8,
                   ),
-                )
-              ],
-            ),
-            Positioned.fill(
-              child: SafeArea(
-                child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  body: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 8,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Get.back();
-                              },
-                              child: Icon(
-                                Remix.arrow_left_s_line,
-                                color: Colors.white,
-                                size: 4.h,
-                              ),
-                            ),
-                            SizedBox(width: 2.w),
-                            textWidget(
-                              "All Events",
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Icon(
+                              Remix.arrow_left_s_line,
                               color: Colors.white,
-                              fontSize: 18.sp,
+                              size: 4.h,
                             ),
-                            Spacer(),
-                            isGrid
-                                ? InkWell(
-                                    onTap: () {
-                                      setState(
-                                        () {
-                                          isGrid = false;
-                                        },
-                                      );
-                                    },
-                                    child: Image.asset(
-                                      "assets/icons/list.png",
-                                      height: 2.5.h,
-                                    ),
-                                  )
-                                : InkWell(
-                                    onTap: () {
-                                      setState(
-                                        () {
-                                          isGrid = true;
-                                        },
-                                      );
-                                    },
-                                    child: Image.asset(
-                                      "assets/icons/grid.png",
-                                      height: 2.5.h,
-                                    ),
+                          ),
+                          SizedBox(width: 2.w),
+                          textWidget(
+                            "All Events",
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                          ),
+                          Spacer(),
+                          isGrid
+                              ? InkWell(
+                                  onTap: () {
+                                    setState(
+                                      () {
+                                        isGrid = false;
+                                      },
+                                    );
+                                  },
+                                  child: Image.asset(
+                                    "assets/icons/list.png",
+                                    height: 2.5.h,
                                   ),
-                            SizedBox(width: 4.w),
-                            InkWell(
-                              onTap: () {
-                                Get.to(
-                                  FilterScreen(
-                                    searchText: searchText,
-                                    location: location,
-                                    rangeValues: rangeValues,
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    setState(
+                                      () {
+                                        isGrid = true;
+                                      },
+                                    );
+                                  },
+                                  child: Image.asset(
+                                    "assets/icons/grid.png",
+                                    height: 2.5.h,
                                   ),
-                                );
-                              },
-                              child: Image.asset(
-                                "assets/icons/filter.png",
-                                height: 2.5.h,
-                              ),
+                                ),
+                          SizedBox(width: 4.w),
+                          InkWell(
+                            onTap: () {
+                              Get.to(
+                                FilterScreen(
+                                  searchText: searchText,
+                                  location: location,
+                                  rangeValues: rangeValues,
+                                ),
+                              );
+                            },
+                            child: Image.asset(
+                              "assets/icons/filter.png",
+                              height: 2.5.h,
                             ),
-                            SizedBox(width: 4.w),
-                          ],
-                        ),
-                        SizedBox(height: 5.h),
-                        textFieldWithPrefixSuffuxIconAndHintText(
-                          "Search Event",
-                          controller: searchController,
-                          fillColor: Colors.white,
-                          isPrefix: true,
-                          prefixIcon: "assets/nav/s1.png",
-                          mainTxtColor: Colors.black,
-                          radius: 12,
-                          bColor: Colors.transparent,
-                          onSubmitted: (value) {
-                            searchText = value;
-                            triggerFilteredEvent(context.read<EventBloc>());
-                          },
-                        ),
-                        SizedBox(height: 4.h),
-                        isLoading
-                            ? Center(child: CircularProgressIndicator())
-                            : events.isEmpty
-                                ? Expanded(
-                                    child: Center(
-                                      child: Text("No events"),
-                                    ),
-                                  )
-                                : Expanded(
+                          ),
+                          SizedBox(width: 4.w),
+                        ],
+                      ),
+                      SizedBox(height: 5.h),
+                      textFieldWithPrefixSuffuxIconAndHintText(
+                        "Search Event",
+                        controller: searchController,
+                        fillColor: Colors.white,
+                        isPrefix: true,
+                        prefixIcon: "assets/nav/s1.png",
+                        mainTxtColor: Colors.black,
+                        radius: 12,
+                        bColor: Colors.transparent,
+                        onSubmitted: (value) {
+                          searchText = value;
+                          triggerFilteredEvent(context.read<EventBloc>());
+                        },
+                      ),
+                      SizedBox(height: 4.h),
+                      isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : events.isEmpty
+                              ? Expanded(
+                                  child: Center(
+                                    child: Text("No events"),
+                                  ),
+                                )
+                              : Expanded(
+                                  child: RefreshIndicator(
+                                    onRefresh: () async {
+                                      await Future.delayed(
+                                          Duration(milliseconds: 500));
+                                      triggerFetchAllEvents(
+                                          context.read<EventBloc>());
+                                    },
                                     child: GridView.count(
                                       crossAxisCount: isGrid ? 2 : 1,
                                       crossAxisSpacing: 10.0,
@@ -364,7 +367,7 @@ class _AllEventsState extends State<AllEvents> {
                                               : eventWidget(
                                                   isEvent: true,
                                                   creator:
-                                                      event.creatorDetail.uid,
+                                                      event.creatorDetail.name,
                                                   isVisibleJoinButton: event
                                                           .joinMemberIds
                                                           .where((element) =>
@@ -399,14 +402,14 @@ class _AllEventsState extends State<AllEvents> {
                                       ),
                                     ),
                                   ),
-                      ],
-                    ),
+                                ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

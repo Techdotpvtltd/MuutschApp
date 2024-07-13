@@ -78,7 +78,7 @@ class PushNotificationServices {
       if (onNotificationReceived != null) {
         onNotificationReceived!(message);
       }
-      final String type = message.data['type'];
+      // final String type = message.data['type'];
       // final additionalData = message.data['additionalData'];
       // final data = json.decode(additionalData) as Map<String, dynamic>;
       // final FriendModel friend =

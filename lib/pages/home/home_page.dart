@@ -17,7 +17,6 @@ import 'package:musch/pages/home/notification_screen.dart';
 import 'package:musch/repos/chat_repo.dart';
 import 'package:musch/services/notification_services/push_notification_services.dart';
 import 'package:musch/utils/dialogs/dialogs.dart';
-import 'package:musch/utils/dialogs/loaders.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/event_widget.dart';
 import 'package:musch/widgets/request_widget.dart';
@@ -54,6 +53,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<EventModel> filteredEvents = [];
   List<EventModel> events = [];
   List<FriendModel> friends = [];
   bool isNewNotifications = false;
@@ -86,6 +86,20 @@ class _HomePageState extends State<HomePage> {
 
   void triggerFetchNotificationEvent(NotificationBloc bloc) {
     bloc.add(NotificationEventFetch());
+  }
+
+  void filteredEventsBy(String search) {
+    if (search == "") {
+      setState(() {
+        filteredEvents = events.take(5).toList();
+      });
+    }
+    setState(() {
+      filteredEvents = events
+          .where((e) => e.title.toLowerCase().contains(search.toLowerCase()))
+          .take(5)
+          .toList();
+    });
   }
 
   void getNotificationOnClick() async {
@@ -241,7 +255,9 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 25.0, vertical: 0),
+                        horizontal: 25.0,
+                        vertical: 0,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -325,10 +341,13 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: 2.5.h),
                           textFieldWithPrefixSuffuxIconAndHintText(
-                            "Search Events & Friends",
+                            "Search Events",
                             fillColor: Colors.white,
                             mainTxtColor: Colors.black,
                             radius: 12,
+                            onChanged: (p0) {
+                              filteredEventsBy(p0);
+                            },
                             bColor: Colors.transparent,
                             prefixIcon: "assets/nav/s1.png",
                             isPrefix: true,
@@ -338,232 +357,246 @@ class _HomePageState extends State<HomePage> {
                     ),
                     gapH10,
                     Expanded(
-                      child: SingleChildScrollView(
-                        physics: ScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (friends.isNotEmpty) SizedBox(height: 2.h),
-                            if (friends.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 25,
-                                  right: 25,
-                                  bottom: 10,
-                                ),
-                                child: Row(
-                                  children: [
-                                    textWidget(
-                                      "Friend Requests",
-                                      color: Colors.white,
-                                      fontSize: 17.5.sp,
-                                    ),
-                                    Spacer(),
-                                    InkWell(
-                                      onTap: () {
-                                        Get.to(
-                                          () => AllFriends(
-                                              isRequestFriendScreen: true),
-                                        );
-                                      },
-                                      child: textWidget(
-                                        "View All",
-                                        fontSize: 14.sp,
-                                        color: MyColors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 25.0,
-                                  right: 25,
-                                ),
-                                child: Row(
-                                  children: [
-                                    for (int i = 0;
-                                        i < friends.take(5).length;
-                                        i++)
-                                      FutureBuilder<UserModel?>(
-                                        future: UserRepo().fetchUser(
-                                            profileId: friends[i].senderId),
-                                        builder: (context, snapshot) {
-                                          return snapshot.hasData &&
-                                                  snapshot.data != null
-                                              ? Row(
-                                                  children: [
-                                                    requestWidget(
-                                                      user: snapshot.data!,
-                                                      friend: friends[i],
-                                                    ),
-                                                    SizedBox(width: 2.w),
-                                                  ],
-                                                )
-                                              : Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                );
-                                        },
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 3.h),
-                            Container(
-                              color: Colors.white,
-                              child: BlocListener<EventBloc, EventState>(
-                                listener: (context, state) {
-                                  if (state is EventStateFetched) {
-                                    setState(
-                                      () {
-                                        events = state.events.take(5).toList();
-                                      },
-                                    );
-                                  }
-                                  if (state is EventStateFetchFailure ||
-                                      state is EventStateFetchedAll ||
-                                      state is EventStateFetching ||
-                                      state is EventStateJoined) {
-                                    if (state is EventStateFetchedAll) {
-                                      setState(
-                                        () {
-                                          events =
-                                              state.events.take(5).toList();
-                                        },
-                                      );
-                                    }
-                                    if (state is EventStateJoined) {
-                                      final int index = events.indexWhere(
-                                          (element) =>
-                                              element.id == state.event.id);
-                                      if (index > -1) {
-                                        setState(() {
-                                          events[index] = state.event;
-                                        });
-                                      }
-                                    }
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 25.0,
-                                    vertical: 0,
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          await Future.delayed(Duration(milliseconds: 500));
+                          triggerFetchAllEvents(context.read<EventBloc>());
+                          triggerFetchFriends(context.read<FriendBloc>());
+                        },
+                        child: SingleChildScrollView(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (friends.isNotEmpty) SizedBox(height: 2.h),
+                              if (friends.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 25,
+                                    right: 25,
+                                    bottom: 10,
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  child: Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          textWidget(
-                                            "Nearby Events",
-                                            color: Colors.black,
-                                            fontSize: 17.5.sp,
-                                          ),
-                                          Spacer(),
-                                          InkWell(
-                                            onTap: () {
-                                              Get.to(AllEvents());
-                                            },
-                                            child: textWidget(
-                                              "View All",
-                                              fontSize: 14.sp,
-                                              color: MyColors.primary,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor: MyColors.primary,
-                                            ),
-                                          ),
-                                        ],
+                                      textWidget(
+                                        "Friend Requests",
+                                        color: Colors.white,
+                                        fontSize: 17.5.sp,
                                       ),
-                                      gapH20,
-                                      if (events.isEmpty)
-                                        SizedBox(
-                                          width: SCREEN_WIDTH,
-                                          height: SCREEN_HEIGHT / 2,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "No Events",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  triggerFetchAllEvents(context
-                                                      .read<EventBloc>());
-                                                },
-                                                child: Text(
-                                                  "Refresh",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
+                                      Spacer(),
+                                      InkWell(
+                                        onTap: () {
+                                          Get.to(
+                                            () => AllFriends(
+                                                isRequestFriendScreen: true),
+                                          );
+                                        },
+                                        child: textWidget(
+                                          "View All",
+                                          fontSize: 14.sp,
+                                          color: MyColors.white,
                                         ),
-                                      if (events.isNotEmpty)
-                                        for (final EventModel event in events)
-                                          Column(
-                                            children: [
-                                              eventWidget(
-                                                title: event.title,
-                                                address:
-                                                    "${event.location.city}, ${event.location.country}",
-                                                eventId: event.id,
-                                                imageUrl: event.imageUrls
-                                                        .firstOrNull ??
-                                                    '',
-                                                creator: event
-                                                    .creatorDetail.name
-                                                    .capitalizeFirstCharacter(),
-                                                onClickEvent: () {
-                                                  Get.to(
-                                                    EventView(
-                                                      event: event,
-                                                      joinMembers: event
-                                                          .joinMemberDetails,
-                                                    ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 25.0,
+                                    right: 25,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      for (int i = 0;
+                                          i < friends.take(5).length;
+                                          i++)
+                                        FutureBuilder<UserModel?>(
+                                          future: UserRepo().fetchUser(
+                                              profileId: friends[i].senderId),
+                                          builder: (context, snapshot) {
+                                            return snapshot.hasData &&
+                                                    snapshot.data != null
+                                                ? Row(
+                                                    children: [
+                                                      requestWidget(
+                                                        user: snapshot.data!,
+                                                        friend: friends[i],
+                                                      ),
+                                                      SizedBox(width: 2.w),
+                                                    ],
+                                                  )
+                                                : Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
                                                   );
-                                                },
-                                                onClickJoinButton: () {
-                                                  triggerJoinEvent(
-                                                    context.read<EventBloc>(),
-                                                    event.id,
-                                                  );
-                                                },
-                                                isVisibleJoinButton:
-                                                    event.joinMemberIds
-                                                            .where(
-                                                              (element) =>
-                                                                  element ==
-                                                                  UserRepo()
-                                                                      .currentUser
-                                                                      .uid,
-                                                            )
-                                                            .length <
-                                                        1,
-                                              ),
-                                              gapH16,
-                                            ],
-                                          ),
+                                          },
+                                        ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 3.h),
+                              Container(
+                                color: Colors.white,
+                                child: BlocListener<EventBloc, EventState>(
+                                  listener: (context, state) {
+                                    if (state is EventStateFetched) {
+                                      setState(
+                                        () {
+                                          events = state.events;
+                                          filteredEvents =
+                                              state.events.take(5).toList();
+                                        },
+                                      );
+                                    }
+                                    if (state is EventStateFetchFailure ||
+                                        state is EventStateFetchedAll ||
+                                        state is EventStateFetching ||
+                                        state is EventStateJoined) {
+                                      if (state is EventStateFetchedAll) {
+                                        setState(
+                                          () {
+                                            events = state.events;
+                                            filteredEvents =
+                                                state.events.take(5).toList();
+                                          },
+                                        );
+                                      }
+                                      if (state is EventStateJoined) {
+                                        final int index = filteredEvents
+                                            .indexWhere((element) =>
+                                                element.id == state.event.id);
+                                        if (index > -1) {
+                                          setState(() {
+                                            filteredEvents[index] = state.event;
+                                          });
+                                        }
+                                      }
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 25.0,
+                                      vertical: 0,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            textWidget(
+                                              "Nearby Events",
+                                              color: Colors.black,
+                                              fontSize: 17.5.sp,
+                                            ),
+                                            Spacer(),
+                                            InkWell(
+                                              onTap: () {
+                                                Get.to(AllEvents());
+                                              },
+                                              child: textWidget(
+                                                "View All",
+                                                fontSize: 14.sp,
+                                                color: MyColors.primary,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                decorationColor:
+                                                    MyColors.primary,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        gapH20,
+                                        if (filteredEvents.isEmpty)
+                                          SizedBox(
+                                            width: SCREEN_WIDTH,
+                                            height: SCREEN_HEIGHT / 2,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "No Events",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    triggerFetchAllEvents(
+                                                        context
+                                                            .read<EventBloc>());
+                                                  },
+                                                  child: Text(
+                                                    "Refresh",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        if (filteredEvents.isNotEmpty)
+                                          for (final EventModel event
+                                              in filteredEvents)
+                                            Column(
+                                              children: [
+                                                eventWidget(
+                                                  title: event.title,
+                                                  address:
+                                                      "${event.location.city}, ${event.location.country}",
+                                                  eventId: event.id,
+                                                  imageUrl: event.imageUrls
+                                                          .firstOrNull ??
+                                                      '',
+                                                  creator: event
+                                                      .creatorDetail.name
+                                                      .capitalizeFirstCharacter(),
+                                                  onClickEvent: () {
+                                                    Get.to(
+                                                      EventView(
+                                                        event: event,
+                                                        joinMembers: event
+                                                            .joinMemberDetails,
+                                                      ),
+                                                    );
+                                                  },
+                                                  onClickJoinButton: () {
+                                                    triggerJoinEvent(
+                                                      context.read<EventBloc>(),
+                                                      event.id,
+                                                    );
+                                                  },
+                                                  isVisibleJoinButton:
+                                                      event.joinMemberIds
+                                                              .where(
+                                                                (element) =>
+                                                                    element ==
+                                                                    UserRepo()
+                                                                        .currentUser
+                                                                        .uid,
+                                                              )
+                                                              .length <
+                                                          1,
+                                                ),
+                                                gapH16,
+                                              ],
+                                            ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
