@@ -1,5 +1,7 @@
 // ignore: dangling_library_doc_comments
 
+import 'package:musch/models/chat_model.dart';
+
 import '../../models/message_model.dart';
 
 /// Project: 	   wasteapp
@@ -22,14 +24,14 @@ class MessageEventFetch extends MessageEvent {
 class MessageEventSend extends MessageEvent {
   final String content;
   final MessageType type;
-  final String conversationId;
+  final ChatModel chat;
   final String friendId;
 
   MessageEventSend(
       {required this.content,
       required this.type,
-      required this.conversationId,
-      required this.friendId});
+      required this.friendId,
+      required this.chat});
 }
 
 class MessageEventNew extends MessageEvent {

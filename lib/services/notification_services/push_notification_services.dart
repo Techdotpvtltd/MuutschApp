@@ -49,6 +49,11 @@ class PushNotificationServices {
     messageStreamController.close();
   }
 
+  /// A notification will pass. When Click on notification in the background.
+  Future<RemoteMessage?> getInitialMessage() async {
+    return await _fcm.getInitialMessage();
+  }
+
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     if (onNotificationReceived != null) {
@@ -83,7 +88,20 @@ class PushNotificationServices {
         print('Message notification: ${message.notification?.body}');
       }
 
-      messageStreamController.sink.add(message);
+      FirebaseMessaging.onMessageOpenedApp.listen(
+        (RemoteMessage message) {
+          final String type = message.data['type'];
+          if (type == 'message') {}
+
+          if (kDebugMode) {
+            print('Handling a foreground message: ${message.messageId}');
+            print('Message data: ${message.data}');
+            print('Message notification: ${message.notification?.title}');
+            print('Message notification: ${message.notification?.body}');
+          }
+        },
+      );
+
       LocalNotificationServices.showNotification(message);
     });
   }

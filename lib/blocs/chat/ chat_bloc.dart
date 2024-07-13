@@ -26,7 +26,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         try {
           emit(ChatStateFetching());
           final ChatModel? chat =
-              await ChatRepo().fetchChat(friendUid: event.friendProfile.uid);
+              await ChatRepo().fetchChat(id: event.friendProfile.uid);
 
           if (chat != null) {
             emit(ChatStateFetched(chat: chat));
@@ -71,20 +71,23 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
           if (event.isGroup) {
             for (final String id in event.ids) {
-              FireNotification().sendNotification(
-                title: event.chatTitle ?? "",
-                description:
-                    "Group Chat is available for the event ${event.chatTitle ?? ""}. You can now connect with the member of this event.",
-                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
-                type: "event",
+              NotificationRepo().save(
+                recieverId: id,
+                avatar: chat.groupAvatar ?? "",
+                title: "Event Chat Created",
+                message:
+                    "Group Chat is available for the event ${event.chatTitle}. You can now connect with the member of this event.",
+                type: NotificationType.chat,
+                data: chat.toMap(),
               );
 
-              NotificationRepo().save(
-                  recieverId: id,
-                  title: "Event Update",
-                  message:
-                      "Group Chat is available for the event ${event.chatTitle}. You can now connect with the member of this event.",
-                  type: NotificationType.event);
+              FireNotification().sendNotification(
+                  title: event.chatTitle ?? "",
+                  description:
+                      "Group Chat is available for the event ${event.chatTitle ?? ""}. You can now connect with the member of this event.",
+                  topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
+                  type: "chat",
+                  additionalData: {"chat": chat.toJson()});
             }
           }
         } on AppException catch (e) {
@@ -99,28 +102,33 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         try {
           emit(ChatStateUpdatingGroupStatus());
           await ChatRepo().setGroupChatVisibility(
-              status: event.status, chatId: event.chatId);
+              status: event.status, chatId: event.chat.uuid);
           emit(ChatStateUpdatedStatus(
-              eventId: event.chatId, status: event.status));
+              eventId: event.chat.uuid, status: event.status));
 
-          for (final String id in event.memberIds) {
+          for (final String id in event.chat.participantUids) {
             if (id != UserRepo().currentUser.uid) {
-              FireNotification().sendNotification(
-                title: event.groupTitle,
-                description: event.status
-                    ? "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event."
-                    : "Group Chat is available for the event ${event.groupTitle}.",
-                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
-                type: "event",
+              NotificationRepo().save(
+                recieverId: id,
+                avatar: event.chat.groupAvatar ?? "",
+                title: "Group: ${event.chat.groupTitle ?? "-"}",
+                message: event.status
+                    ? "Group Chat is available for the event ${event.chat.groupTitle ?? "-"}. You can now connect with the member of this event."
+                    : "Group Chat is available for the event${event.chat.groupTitle ?? "-"}.",
+                type: NotificationType.chat,
+                data: event.chat.toMap(),
+                contentId: event.chat.uuid,
               );
 
-              NotificationRepo().save(
-                  recieverId: id,
-                  title: "Event Update",
-                  message: event.status
-                      ? "Group Chat is available for the event ${event.groupTitle}. You can now connect with the member of this event."
-                      : "Group Chat is available for the event ${event.groupTitle}.",
-                  type: NotificationType.event);
+              FireNotification().sendNotification(
+                title: "Group: ${event.chat.groupTitle ?? "-"}",
+                description: event.status
+                    ? "Group Chat is available for the event ${event.chat.groupTitle ?? "-"}. You can now connect with the member of this event."
+                    : "Group Chat is available for the event ${event.chat.groupTitle ?? "-"}.",
+                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
+                type: "chat",
+                additionalData: {"chat": event.chat.toJson()},
+              );
             }
           }
         } on AppException catch (e) {

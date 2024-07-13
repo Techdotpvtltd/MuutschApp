@@ -5,6 +5,8 @@
 // Date:        31-05-24 13:34:57 -- Friday
 // Description:
 
+import 'package:musch/models/chat_model.dart';
+
 import '../../models/other_user_model.dart';
 
 abstract class ChatEvent {}
@@ -40,14 +42,8 @@ class ChatEventCreate extends ChatEvent {
 
 class ChatEventUpdateVisibilityStatus extends ChatEvent {
   final bool status;
-  final List<String> memberIds;
-  final String chatId;
-  final String groupTitle;
-  ChatEventUpdateVisibilityStatus(
-      {required this.status,
-      required this.memberIds,
-      required this.chatId,
-      required this.groupTitle});
+  final ChatModel chat;
+  ChatEventUpdateVisibilityStatus({required this.status, required this.chat});
 }
 
 class ChatEventFetchGroupChat extends ChatEvent {

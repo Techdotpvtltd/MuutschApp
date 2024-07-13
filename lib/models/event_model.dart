@@ -6,6 +6,8 @@
 // Date:        14-05-24 15:53:42 -- Tuesday
 // Description:
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:musch/models/other_user_model.dart';
@@ -43,6 +45,12 @@ class EventModel {
     required this.joinMemberIds,
   });
 
+  String toJson() => json.encode(toMap(isFromJson: true));
+
+  factory EventModel.fromJson(String source) =>
+      EventModel.fromMap(json.decode(source) as Map<String, dynamic>,
+          isFromJson: true);
+
   EventModel copyWith({
     String? id,
     OtherUserModel? creatorDetail,
@@ -73,11 +81,13 @@ class EventModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool isFromJson = false}) {
     return <String, dynamic>{
       'id': id,
       'creatorDetail': creatorDetail.toMap(),
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': isFromJson
+          ? createdAt.millisecondsSinceEpoch
+          : Timestamp.fromDate(createdAt),
       'imageUrls': imageUrls,
       'title': title,
       'createdBy': createdBy,
@@ -90,13 +100,16 @@ class EventModel {
     };
   }
 
-  factory EventModel.fromMap(Map<String, dynamic> map) {
+  factory EventModel.fromMap(Map<String, dynamic> map,
+      {bool isFromJson = false}) {
     return EventModel(
         id: map['id'] as String,
         createdBy: map['createdBy'] as String,
         creatorDetail: OtherUserModel.fromMap(
             map['creatorDetail'] as Map<String, dynamic>),
-        createdAt: (map['createdAt'] as Timestamp).toDate(),
+        createdAt: isFromJson
+            ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int)
+            : (map['createdAt'] as Timestamp).toDate(),
         imageUrls: List<String>.from((map['imageUrls'] as List<dynamic>).map(
           (e) => e.toString(),
         )),

@@ -27,11 +27,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         try {
           emit(NotificationStateSaving());
           NotificationRepo().save(
-              recieverId: event.receiverId,
-              title: event.title,
-              contentId: event.contentId,
-              message: event.message,
-              type: event.type);
+            recieverId: event.receiverId,
+            title: event.title,
+            contentId: event.contentId,
+            message: event.message,
+            type: event.type,
+            data: null,
+            avatar: '',
+          );
           emit(NotificationStateSaved());
         } on AppException catch (e) {
           emit(NotificationStateSaveFailure(exception: e));

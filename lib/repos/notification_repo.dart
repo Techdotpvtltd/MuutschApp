@@ -50,19 +50,23 @@ class NotificationRepo {
       required String title,
       String? contentId,
       required String message,
+      Map<String, dynamic>? data,
+      required String avatar,
       required NotificationType type}) async {
     try {
       final UserModel user = UserRepo().currentUser;
       final NotificationModel model = NotificationModel(
-          uuid: "",
-          title: title,
-          message: message,
-          senderId: user.uid,
-          receiverId: recieverId,
-          type: type,
-          createdAt: DateTime.now(),
-          avatar: user.avatar,
-          contentId: contentId ?? user.uid);
+        uuid: "",
+        title: title,
+        message: message,
+        senderId: user.uid,
+        receiverId: recieverId,
+        type: type,
+        createdAt: DateTime.now(),
+        avatar: avatar,
+        contentId: contentId ?? user.uid,
+        data: data,
+      );
       FirestoreService().saveWithSpecificIdFiled(
           path: FIREBASE_COLLECTION_NOTIFICATION,
           data: model.toMap(),

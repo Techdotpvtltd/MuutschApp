@@ -86,10 +86,7 @@ class LocalNotificationServices {
         FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(
       initialSetting,
-      onDidReceiveBackgroundNotificationResponse: (details) {
-        debugPrint(details.toString());
-        log("notification received");
-      },
+      onDidReceiveBackgroundNotificationResponse: (details) {},
     );
 
     const AndroidNotificationDetails androidDetails =

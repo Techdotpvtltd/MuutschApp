@@ -39,7 +39,7 @@ class _UserChatPageState extends State<UserChatPage> {
     context.read<MessageBloc>().add(MessageEventSend(
         content: fileUrl,
         type: MessageType.photo,
-        conversationId: widget.chat.uuid,
+        chat: widget.chat,
         friendId: friend?.uid ?? ""));
   }
 
@@ -59,7 +59,7 @@ class _UserChatPageState extends State<UserChatPage> {
           MessageEventSend(
               content: messageController.text,
               type: MessageType.text,
-              conversationId: widget.chat.uuid,
+              chat: widget.chat,
               friendId: friend?.uid ?? ""),
         );
   }

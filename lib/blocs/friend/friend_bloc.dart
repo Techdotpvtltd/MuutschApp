@@ -35,16 +35,22 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
               await FriendRepo().sendRequest(recieverId: event.recieverId);
           emit(FriendStateSent(friend: friend));
           FireNotification().sendNotification(
-              title: "Friend Request",
-              type: 'request',
-              description:
-                  "${UserRepo().currentUser.name} sends you a friend request.",
-              topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST${friend.recieverId}");
+            title: "Friend Request",
+            type: 'request',
+            description:
+                "${UserRepo().currentUser.name} sends you a friend request.",
+            topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST${friend.recieverId}",
+            additionalData: {
+              'friend': friend.toJson(),
+            },
+          );
           NotificationRepo().save(
               recieverId: event.recieverId,
               title: "Friend Request",
+              avatar: UserRepo().currentUser.avatar,
               message:
                   "${UserRepo().currentUser.name} sends you a friend request.",
+              data: friend.toMap(),
               type: NotificationType.user);
         } on AppException catch (e) {
           emit(FriendStateSendFailure(exception: e));
@@ -157,13 +163,19 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
                 description:
                     "${UserRepo().currentUser.name} accepted your friend request.",
                 topic:
-                    "$PUSH_NOTIFICATION_FRIEND_REQUEST${friends[index].senderId}");
+                    "$PUSH_NOTIFICATION_FRIEND_REQUEST${friends[index].senderId}",
+                additionalData: {
+                  'friend': friends[index].toJson(),
+                });
             NotificationRepo().save(
-                recieverId: friends[index].senderId,
-                title: "Friend Request Accepted",
-                message:
-                    "${UserRepo().currentUser.name} accepted your friend request. Now you can start chat.",
-                type: NotificationType.user);
+              recieverId: friends[index].senderId,
+              title: "Friend Request Accepted",
+              avatar: UserRepo().currentUser.avatar,
+              message:
+                  "${UserRepo().currentUser.name} accepted your friend request. Now you can start chat.",
+              type: NotificationType.user,
+              data: friends[index].toMap(),
+            );
           }
         } on AppException catch (e) {
           emit(FriendStateAcceptFailure(exception: e));

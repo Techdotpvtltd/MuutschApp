@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'child_model.dart';
@@ -72,13 +74,15 @@ class UserModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool isFromJson = false}) {
     return <String, dynamic>{
       'uid': uid,
       'name': name,
       'email': email,
       'avatar': avatar,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': isFromJson
+          ? createdAt.millisecondsSinceEpoch
+          : Timestamp.fromDate(createdAt),
       'isActived': true,
       'numOfChildren': numberOfChildren,
       'role': role,
@@ -89,7 +93,8 @@ class UserModel {
     };
   }
 
-  factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map,
+      {bool isFromJson = false}) {
     return UserModel(
       uid: map['uid'] as String,
       name: map['name'] as String? ?? "",
@@ -105,7 +110,9 @@ class UserModel {
               .map((e) => ChildModel.fromMap(e))
               .toList()
           : null,
-      createdAt: (map['createdAt'] as Timestamp? ?? Timestamp.now()).toDate(),
+      createdAt: isFromJson
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int)
+          : (map['createdAt'] as Timestamp).toDate(),
       isActived: (map['isActived'] as bool? ?? false),
       interests: map['interests'] != null
           ? (map['interests'] as List<dynamic>)
@@ -116,6 +123,11 @@ class UserModel {
     );
   }
 
+  String toJson() => json.encode(toMap(isFromJson: true));
+
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>,
+          isFromJson: true);
   @override
   String toString() {
     return 'UserModel(uid: $uid, name: $name, email: $email, avatar: $avatar, createdAt: $createdAt, isActived: $isActived, numberOfChildren: $numberOfChildren, children: ${children.toString()}, location: ${location.toString()}, interests: $interests, bio:$bio)';

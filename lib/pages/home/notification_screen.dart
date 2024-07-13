@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/blocs/notification/notification_bloc.dart';
+import 'package:musch/models/chat_model.dart';
 import 'package:musch/models/event_model.dart';
-import 'package:musch/repos/event_repo.dart';
+import 'package:musch/pages/home/chat/chat_page.dart';
+import 'package:musch/repos/chat_repo.dart';
 import 'package:musch/widgets/custom_dropdown.dart';
 
 import 'package:musch/widgets/text_widget.dart';
@@ -152,30 +154,46 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       notifications[index];
                                   return InkWell(
                                     onTap: () async {
+                                      // For user
                                       if (notification.type ==
                                           NotificationType.user) {
                                         Get.to(FriendView(
                                             userId: notification.senderId));
                                       }
-
+                                      // For Chat
                                       if (notification.type ==
-                                          NotificationType.event) {
-                                        final EventModel? event =
-                                            await EventRepo().fetchWith(
-                                                eventid:
-                                                    notification.contentId);
-                                        if (event != null) {
-                                          Get.to(
-                                            EventView(
+                                              NotificationType.chat &&
+                                          notification.data != null) {
+                                        final _ = ChatModel.fromMap(
+                                            notification.data!);
+                                        final ChatModel? chat = await ChatRepo()
+                                            .fetchChat(
+                                                id: _.uuid, isGroupChat: true);
+                                        if (chat != null) {
+                                          Get.to(UserChatPage(chat: chat));
+                                        } else {
+                                          CustomDialogs().successBox(
+                                            message:
+                                                "Group is not available. Once it available, we'll inform you.",
+                                            title: chat?.groupTitle ??
+                                                "Group Chat",
+                                          );
+                                        }
+                                      }
+
+                                      // For Event
+                                      if (notification.type ==
+                                              NotificationType.event &&
+                                          notification.data != null) {
+                                        final EventModel event =
+                                            EventModel.fromMap(
+                                                notification.data!);
+                                        Get.to(
+                                          EventView(
                                               event: event,
                                               joinMembers:
-                                                  event.joinMemberDetails,
-                                            ),
-                                          );
-                                        } else {
-                                          CustomDialogs().errorBox(
-                                              message: "Event not found.");
-                                        }
+                                                  event.joinMemberDetails),
+                                        );
                                       }
                                     },
                                     child: Container(
@@ -188,22 +206,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: ListTile(
-                                        leading: InkWell(
-                                          onTap: () {
-                                            Get.to(FriendView(
-                                                userId: notification.senderId));
-                                          },
-                                          child: SizedBox(
-                                            width: 55,
-                                            height: 55,
-                                            child: Center(
-                                              child: AvatarWidget(
-                                                backgroundColor:
-                                                    Color(0xffBD9691),
-                                                placeholderChar: notification
-                                                    .title.characters.first,
-                                                avatarUrl: notification.avatar,
-                                              ),
+                                        leading: SizedBox(
+                                          width: 55,
+                                          height: 55,
+                                          child: Center(
+                                            child: AvatarWidget(
+                                              backgroundColor:
+                                                  Color(0xffBD9691),
+                                              placeholderChar: notification
+                                                  .title.characters.first,
+                                              avatarUrl: notification.avatar,
                                             ),
                                           ),
                                         ),
@@ -211,10 +223,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            textWidget(
-                                              notification.title,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w400,
+                                            Flexible(
+                                              child: textWidget(
+                                                notification.title,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                             ),
                                             CustomMenuDropdown(
                                               buttonColor: Colors.black,

@@ -20,6 +20,7 @@ class NotificationModel {
   final DateTime createdAt;
   final String contentId;
   final String avatar;
+  final Map<String, dynamic>? data;
   NotificationModel({
     required this.uuid,
     required this.title,
@@ -30,6 +31,7 @@ class NotificationModel {
     required this.createdAt,
     required this.contentId,
     required this.avatar,
+    this.data,
   });
 
   NotificationModel copyWith({
@@ -42,6 +44,7 @@ class NotificationModel {
     DateTime? createdAt,
     String? contentId,
     String? avatar,
+    Map<String, dynamic>? data,
   }) {
     return NotificationModel(
       uuid: uuid ?? this.uuid,
@@ -53,6 +56,7 @@ class NotificationModel {
       createdAt: createdAt ?? this.createdAt,
       contentId: contentId ?? this.contentId,
       avatar: avatar ?? this.avatar,
+      data: data ?? this.data,
     );
   }
 
@@ -67,6 +71,7 @@ class NotificationModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'contentId': contentId,
       'avatar': avatar,
+      'data': data,
     };
   }
 
@@ -82,6 +87,7 @@ class NotificationModel {
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       contentId: map['contentId'] as String,
       avatar: map['avatar'] as String,
+      data: (map['data'] != null) ? map['data'] as Map<String, dynamic> : null,
     );
   }
 
@@ -92,7 +98,7 @@ class NotificationModel {
 
   @override
   String toString() {
-    return 'NotificationModel(uuid: $uuid, title: $title, message: $message, senderId: $senderId, recieverId: $receiverId, type: $type, createdAt: $createdAt, contentId: $contentId, avatar: $avatar)';
+    return 'NotificationModel(uuid: $uuid, title: $title, message: $message, senderId: $senderId, recieverId: $receiverId, type: $type, createdAt: $createdAt, contentId: $contentId, avatar: $avatar, data: $data)';
   }
 
   @override
@@ -124,4 +130,4 @@ class NotificationModel {
   }
 }
 
-enum NotificationType { user, event }
+enum NotificationType { user, event, chat }

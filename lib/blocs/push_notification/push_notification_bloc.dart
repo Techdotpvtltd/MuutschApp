@@ -25,6 +25,8 @@ class PushNotificationBloc
           await PushNotificationServices().subscribe(
               forTopic:
                   "$PUSH_NOTIFICATION_FRIEND_REQUEST${UserRepo().currentUser.uid}");
+          await PushNotificationServices().subscribe(
+              forTopic: "$PUSH_NOTIFICATION_USER${UserRepo().currentUser.uid}");
           emit(PushNotificationStateUserSubscribed());
         } catch (e) {
           log("[debug UserRequestSubscribed] $e");
@@ -35,8 +37,11 @@ class PushNotificationBloc
     on<PushNotificationEventUserUnSubscribed>(
       (event, emit) async {
         try {
-          await PushNotificationServices()
-              .unsubscribe(forTopic: PUSH_NOTIFICATION_FRIEND_REQUEST);
+          await PushNotificationServices().unsubscribe(
+              forTopic:
+                  "${PUSH_NOTIFICATION_FRIEND_REQUEST}${UserRepo().currentUser.uid}");
+          await PushNotificationServices().unsubscribe(
+              forTopic: "$PUSH_NOTIFICATION_USER${UserRepo().currentUser.uid}");
           emit(PushNotificationStateUserUnSubscribed());
         } catch (e) {
           log("[debug UserRequestUnSubscribed] $e");

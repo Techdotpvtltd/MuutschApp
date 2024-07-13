@@ -43,7 +43,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
         try {
           emit(MessageStateSending());
           await MessageRepo().sendMessage(
-            conversationId: event.conversationId,
+            conversationId: event.chat.uuid,
             type: event.type,
             content: event.content,
             onMessagePrepareToSend: () {
@@ -51,13 +51,23 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
             },
           );
           emit(MessageStateSent());
-          FireNotification().sendNotification(
+          for (final String uuid in event.chat.participantUids) {
+            if (uuid == UserRepo().currentUser.uid) {
+              continue;
+            }
+
+            FireNotification().sendNotification(
               title: UserRepo().currentUser.name,
-              type: "chat",
+              type: "message",
               description: event.type == MessageType.text
                   ? event.content
                   : "Sent a media.",
-              topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST${event.friendId}");
+              topic: "$PUSH_NOTIFICATION_USER${uuid}",
+              additionalData: {
+                'chat': event.chat,
+              },
+            );
+          }
         } on AppException catch (e) {
           emit(MessageStateSendFailure(exception: e));
         }

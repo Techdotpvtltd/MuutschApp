@@ -192,15 +192,17 @@ class ChatRepo {
   }
 
   /// Single Chat Method
-  Future<ChatModel?> fetchChat({required String friendUid}) async {
+  Future<ChatModel?> fetchChat(
+      {required String id, bool isGroupChat = false}) async {
     try {
       final String userId = UserRepo().currentUser.uid;
-      final List<String> participants = [userId, friendUid];
+      final List<String> participants = [userId, id];
       participants.sort();
 
       /// Check if chat exists and already fetched
-      final int index = _chats
-          .indexWhere((element) => element.participantUids.contains(friendUid));
+      final int index = _chats.indexWhere((element) => isGroupChat
+          ? element.uuid == id
+          : element.participantUids.contains(id));
       if (index > -1) {
         return _chats[index];
       }
@@ -210,11 +212,24 @@ class ChatRepo {
           await FirestoreService().fetchWithMultipleConditions(
         collection: FIREBASE_COLLECTION_CHAT,
         queries: [
-          QueryModel(
-            field: "compositeKey",
-            value: participants.join("_").toString(),
-            type: QueryType.isEqual,
-          ),
+          if (!isGroupChat)
+            QueryModel(
+              field: "compositeKey",
+              value: participants.join("_").toString(),
+              type: QueryType.isEqual,
+            ),
+          if (isGroupChat)
+            QueryModel(
+              field: "uuid",
+              value: id,
+              type: QueryType.isEqual,
+            ),
+          if (isGroupChat)
+            QueryModel(
+              field: "isChatEnabled",
+              value: true,
+              type: QueryType.isEqual,
+            ),
           QueryModel(field: "", value: 1, type: QueryType.limit),
         ],
       );

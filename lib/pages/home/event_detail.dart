@@ -309,19 +309,13 @@ class _EventViewState extends State<EventView> {
                                     if (chat!.isChatEnabled) {
                                       context.read<ChatBloc>().add(
                                           ChatEventUpdateVisibilityStatus(
-                                              status: false,
-                                              memberIds: event.joinMemberIds,
-                                              chatId: chat!.uuid,
-                                              groupTitle: event.title));
+                                              status: false, chat: chat!));
                                       return;
                                     }
                                     if (!chat!.isChatEnabled) {
                                       context.read<ChatBloc>().add(
                                           ChatEventUpdateVisibilityStatus(
-                                              status: true,
-                                              memberIds: event.joinMemberIds,
-                                              chatId: chat!.uuid,
-                                              groupTitle: event.title));
+                                              status: true, chat: chat!));
                                       return;
                                     }
                                   },

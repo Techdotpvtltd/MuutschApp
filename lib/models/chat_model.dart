@@ -75,12 +75,15 @@ class ChatModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool isToJson = false}) {
     return {
       'uuid': uuid,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': isToJson
+          ? createdAt.millisecondsSinceEpoch
+          : Timestamp.fromDate(createdAt),
       'createdBy': createdBy,
-      'participants': participants.map((x) => x.toMap()).toList(),
+      'participants':
+          participants.map((x) => x.toMap(isToJson: isToJson)).toList(),
       'participantUids': participantUids,
       'isChatEnabled': isChatEnabled,
       'isGroup': isGroup,
@@ -90,13 +93,16 @@ class ChatModel {
     };
   }
 
-  factory ChatModel.fromMap(Map<String, dynamic> map) {
+  factory ChatModel.fromMap(Map<String, dynamic> map,
+      {bool isFromJson = false}) {
     return ChatModel(
       uuid: map['uuid'] as String,
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      createdAt: isFromJson
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int)
+          : (map['createdAt'] as Timestamp).toDate(),
       createdBy: map['createdBy'] as String,
       participants: (map['participants'] as List<dynamic>)
-          .map((e) => OtherUserModel.fromMap(e))
+          .map((e) => OtherUserModel.fromMap(e, isFromJson: isFromJson))
           .toList(),
       participantUids: List<String>.from(map['participantUids'] as List),
       isChatEnabled: map['isChatEnabled'] as bool,
@@ -107,7 +113,7 @@ class ChatModel {
     );
   }
 
-  String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toMap(isToJson: true));
 
   factory ChatModel.fromJson(String source) =>
       ChatModel.fromMap(json.decode(source) as Map<String, dynamic>);

@@ -211,11 +211,27 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
             location: event.eventLocation,
           );
           emit(EventStateUpdated(updatedEvent: updatedEvent));
-          FireNotification().sendNotification(
+          for (String memberId in event.oldEvent.joinMemberIds) {
+            FireNotification().sendNotification(
               title: event.title,
               description: "Event has been updated",
-              topic: "$PUSH_NOTIFICATION_EVENT_UPDATES${event.eventId}",
-              type: 'events');
+              topic: "$PUSH_NOTIFICATION_USER${memberId}",
+              type: 'event',
+              additionalData: {
+                'event': updatedEvent.toJson(),
+              },
+            );
+
+            NotificationRepo().save(
+              recieverId: memberId,
+              title: event.oldEvent.title,
+              message: "Event has been updated",
+              type: NotificationType.event,
+              avatar: updatedEvent.imageUrls.firstOrNull ?? "",
+              contentId: event.oldEvent.id,
+              data: updatedEvent.toMap(),
+            );
+          }
         } on AppException catch (e) {
           emit(EventStateUpdateFailure(exception: e));
         }
@@ -281,22 +297,28 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
           e.joinMemberIds.add(otherUser.uid);
           emit(EventStateJoined(event: e));
           FireNotification().sendNotification(
-              title: events
-                  .firstWhere((element) => element.id == event.eventId)
-                  .title,
-              description: "${UserRepo().currentUser.name} joined your event.",
-              topic:
-                  "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).createdBy}",
-              type: 'events');
+            title: events
+                .firstWhere((element) => element.id == event.eventId)
+                .title,
+            description: "${UserRepo().currentUser.name} joined your event.",
+            topic:
+                "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).createdBy}",
+            type: 'event',
+            additionalData: {
+              'event': e.toJson(),
+            },
+          );
           NotificationRepo().save(
             recieverId: events
                 .firstWhere((element) => element.id == event.eventId)
                 .createdBy,
             title: "Event Update",
+            avatar: e.imageUrls.firstOrNull ?? "",
             contentId: event.eventId,
             message:
                 "${UserRepo().currentUser.name} joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
             type: NotificationType.event,
+            data: e.toMap(),
           );
         } on AppException catch (e) {
           log("[debug EventFetchAll] $e");

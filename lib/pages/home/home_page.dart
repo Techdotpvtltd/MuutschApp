@@ -8,6 +8,7 @@ import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/home/all_events.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/notification_screen.dart';
+import 'package:musch/services/notification_services/push_notification_services.dart';
 import 'package:musch/utils/dialogs/dialogs.dart';
 import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/event_widget.dart';
@@ -79,12 +80,24 @@ class _HomePageState extends State<HomePage> {
     bloc.add(NotificationEventFetch());
   }
 
+  void getNotificationOnClick() async {
+    try {
+      final remote = await PushNotificationServices().getInitialMessage();
+      if (remote != null) {
+        CustomDialogs().successBox(message: remote.data[''] ?? "");
+      }
+    } catch (e) {
+      debugPrint("Notification Get Initial Error: $e");
+    }
+  }
+
   @override
   void initState() {
     triggerCurrentLocationEvent(context.read<EventBloc>());
     triggerFetchFriends(context.read<FriendBloc>());
     triggerPushNotificationSubscriptionEvents();
     triggerFetchNotificationEvent(context.read<NotificationBloc>());
+    getNotificationOnClick();
     super.initState();
   }
 

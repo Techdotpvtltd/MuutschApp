@@ -36,13 +36,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final String uid = UserRepo().currentUser.uid;
 
   void triggerDisabledChat() {
-    context.read<ChatBloc>().add(
-          ChatEventUpdateVisibilityStatus(
-              status: false,
-              memberIds: chat.participantUids,
-              chatId: chat.uuid,
-              groupTitle: chat.groupTitle ?? "---"),
-        );
+    context
+        .read<ChatBloc>()
+        .add(ChatEventUpdateVisibilityStatus(status: false, chat: chat));
   }
 
   void triggerRemoveMember(OtherUserModel member) {

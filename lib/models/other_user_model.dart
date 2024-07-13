@@ -40,24 +40,29 @@ class OtherUserModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool isToJson = false}) {
     return <String, dynamic>{
       'uid': uid,
       'name': name,
       'avatarUrl': avatarUrl,
       'about': about,
-      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+      'createdAt': isToJson
+          ? null
+          : (createdAt != null ? Timestamp.fromDate(createdAt!) : null),
     };
   }
 
-  factory OtherUserModel.fromMap(Map<String, dynamic> map) {
+  factory OtherUserModel.fromMap(Map<String, dynamic> map,
+      {bool isFromJson = false}) {
     return OtherUserModel(
       uid: map['uid'] as String,
       name: map['name'] as String,
       about: map['about'] as String? ?? "",
-      createdAt: map['createdAt'] != null
-          ? (map['createdAt'] as Timestamp).toDate()
-          : null,
+      createdAt: isFromJson
+          ? null
+          : (map['createdAt'] != null
+              ? (map['createdAt'] as Timestamp).toDate()
+              : null),
       avatarUrl: map['avatarUrl'] as String,
     );
   }
