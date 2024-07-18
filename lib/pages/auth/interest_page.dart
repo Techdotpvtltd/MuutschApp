@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:musch/blocs/interest/interest_bloc.dart';
+import 'package:musch/blocs/interest/interest_event.dart';
+import 'package:musch/blocs/interest/interest_state.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:remixicon/remixicon.dart';
@@ -23,25 +29,17 @@ class InterestPage extends StatefulWidget {
 }
 
 class _InterestPageState extends State<InterestPage> {
-  List txt1 = [
-    "True Love",
-    "Luxury Lifestyle",
-    "Active Lifestyle",
-    "Flexible Schedule",
-    "Emotional connection",
-    "Emotional connection",
-    "All Ethicalities",
-    "Attentive",
-    "Discretion",
-    "Long term",
-    "Fine Dining",
-    "Investor",
-    "Marriage minded",
-  ];
+  List interests = [];
   List<String> selectedInterests = [];
   List current2 = [];
-  bool isLoading = false;
+  bool isSaving = false;
+  bool isFetchingInterests = false;
+
   final TextEditingController bioController = TextEditingController();
+
+  void triggerFetchAllInterestEvent() {
+    context.read<InterestBloc>().add(InterestEventFetchAll());
+  }
 
   void triggerUpdateProfileEvent(UserBloc bloc) {
     if (selectedInterests.isEmpty) {
@@ -55,52 +53,85 @@ class _InterestPageState extends State<InterestPage> {
 
   @override
   void initState() {
-    super.initState();
-    selectedInterests = UserRepo().currentUser.interests ?? [];
+    triggerFetchAllInterestEvent();
     bioController.text = UserRepo().currentUser.bio ?? "";
-    if (selectedInterests.isNotEmpty) {
-      selectedInterests.forEach((a) {
-        final index = txt1.indexWhere(
-            (element) => element.toString().toLowerCase() == a.toLowerCase());
-        if (index > -1) {
-          current2.add(index);
-        }
-      });
-    }
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserBloc, UserState>(
-      listener: (context, state) {
-        if (state is UserStateProfileUpdating ||
-            state is UserStateProfileUpdated ||
-            state is UserStateProfileUpdatingFailure) {
-          setState(() {
-            isLoading = state.isLoading;
-          });
+    return MultiBlocListener(
+      listeners: [
+        /// InterestBloc
+        BlocListener<InterestBloc, InterestState>(
+          listener: (context, state) {
+            if (state is InterestStateFetching ||
+                state is InterestStateFetchFailure ||
+                state is InterestStateFetched) {
+              setState(() {
+                isFetchingInterests = state.isLoading;
+              });
 
-          if (state is UserStateProfileUpdatingFailure) {
-            CustomDialogs().errorBox(message: state.exception.message);
-          }
+              if (state is InterestStateFetched) {
+                setState(() {
+                  interests = state.interests
+                      .map((e) => e.name.capitalizeFirstCharacter())
+                      .toList();
 
-          if (state is UserStateProfileUpdated) {
-            if (!widget.isComingFromSignup) {
-              Get.back();
-              Get.back();
-              return;
+                  selectedInterests = UserRepo().currentUser.interests ?? [];
+                  if (selectedInterests.isNotEmpty) {
+                    selectedInterests.forEach((a) {
+                      final index = interests.indexWhere((element) =>
+                          element.toString().toLowerCase() == a.toLowerCase());
+                      if (index > -1) {
+                        current2.add(index);
+                      }
+                    });
+                  }
+                });
+              }
+
+              if (state is InterestStateFetchFailure) {
+                log(state.exception.message);
+              }
             }
-            CustomDialogs().successBox(
-              message:
-                  "We've sent you an email verification link to email. Please verify your email by clicking the link before logging in.",
-              positiveTitle: "Go to Login",
-              onPositivePressed: () {
-                Get.off(const LoginPage());
-              },
-            );
-          }
-        }
-      },
+          },
+        ),
+
+        /// UserBloc
+        BlocListener<UserBloc, UserState>(
+          listener: (context, state) {
+            if (state is UserStateProfileUpdating ||
+                state is UserStateProfileUpdated ||
+                state is UserStateProfileUpdatingFailure) {
+              setState(() {
+                isSaving = state.isLoading;
+              });
+
+              if (state is UserStateProfileUpdatingFailure) {
+                CustomDialogs().errorBox(message: state.exception.message);
+              }
+
+              if (state is UserStateProfileUpdated) {
+                if (!widget.isComingFromSignup) {
+                  Get.back();
+                  Get.back();
+                  return;
+                }
+                CustomDialogs().successBox(
+                  message:
+                      "We've sent you an email verification link to email. Please verify your email by clicking the link before logging in.",
+                  positiveTitle: "Go to Login",
+                  onPositivePressed: () {
+                    Get.off(const LoginPage());
+                  },
+                );
+              }
+            }
+          },
+        ),
+      ],
       child: Stack(
         children: [
           Positioned.fill(
@@ -180,7 +211,7 @@ class _InterestPageState extends State<InterestPage> {
                       Wrap(
                         children: [
                           ...List.generate(
-                              txt1.length,
+                              interests.length,
                               (index) => Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 4.0, vertical: 4),
@@ -190,12 +221,13 @@ class _InterestPageState extends State<InterestPage> {
                                           setState(() {
                                             current2.remove(index);
                                             selectedInterests
-                                                .remove(txt1[index]);
+                                                .remove(interests[index]);
                                           });
                                         } else {
                                           setState(() {
                                             current2.add(index);
-                                            selectedInterests.add(txt1[index]);
+                                            selectedInterests
+                                                .add(interests[index]);
                                           });
                                         }
                                       },
@@ -205,7 +237,7 @@ class _InterestPageState extends State<InterestPage> {
                                                 ? MyColors.primary
                                                 : Colors.transparent,
 
-                                        label: textWidget(txt1[index],
+                                        label: textWidget(interests[index],
                                             fontSize: 14.sp,
                                             color: current2.contains(index)
                                                 ? Colors.white
@@ -228,7 +260,7 @@ class _InterestPageState extends State<InterestPage> {
                       SizedBox(height: 5.h),
                       gradientButton(
                         widget.isComingFromSignup ? "Next" : 'Save',
-                        isLoading: isLoading,
+                        isLoading: isSaving,
                         font: 16,
                         txtColor: MyColors.white,
                         ontap: () {

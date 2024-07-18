@@ -9,11 +9,9 @@ import 'package:musch/controller/nav_controller.dart';
 import 'package:musch/pages/auth/change_password.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/contact_us.dart';
-import 'package:musch/pages/home/faq_screen.dart';
 import 'package:musch/pages/home/notification_screen.dart';
 import 'package:musch/pages/home/privacy_policy.dart';
 import 'package:musch/pages/home/profile_page.dart';
-import 'package:musch/pages/home/term_page.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -27,10 +25,7 @@ List titles = [
   "Notifications",
   "Change Password",
   "Privacy Policy",
-  "Teams & Conditions",
   "Contact us",
-  "Faq’s",
-  // "Setting",
 ];
 
 List images = [
@@ -39,9 +34,7 @@ List images = [
   "assets/nav/d3.png",
   "assets/nav/d4.png",
   "assets/nav/d5.png",
-  "assets/nav/d6.png",
   "assets/nav/d7.png",
-  "assets/nav/d8.png"
 ];
 
 class HomeDrawer extends StatefulWidget {
@@ -199,16 +192,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
         return PrivacyPolicyPage(
           isDrawer: true,
         );
-      case 5:
-        return TermPage(
-          isDrawer: true,
-        );
+
       case 6:
         return ContactUsPage(
-          isDrawer: true,
-        );
-      case 7:
-        return FaqScreen(
           isDrawer: true,
         );
       default:
@@ -241,13 +227,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
     PrivacyPolicyPage(
       isDrawer: true,
     ),
-    TermPage(
-      isDrawer: true,
-    ),
     ContactUsPage(
-      isDrawer: true,
-    ),
-    FaqScreen(
       isDrawer: true,
     ),
   ];
