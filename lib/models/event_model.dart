@@ -84,19 +84,22 @@ class EventModel {
   Map<String, dynamic> toMap({bool isFromJson = false}) {
     return <String, dynamic>{
       'id': id,
-      'creatorDetail': creatorDetail.toMap(),
+      'creatorDetail': creatorDetail.toMap(isToJson: isFromJson),
       'createdAt': isFromJson
           ? createdAt.millisecondsSinceEpoch
           : Timestamp.fromDate(createdAt),
       'imageUrls': imageUrls,
       'title': title,
       'createdBy': createdBy,
-      'dateTime': Timestamp.fromDate(dateTime),
+      'dateTime': isFromJson
+          ? dateTime.millisecondsSinceEpoch
+          : Timestamp.fromDate(dateTime),
       'location': location.toMap(),
       'description': description,
       'maxPersons': maxPersons,
       'joinMemberIds': joinMemberIds,
-      'joinMemberDetails': joinMemberDetails.map((e) => e.toMap()).toList(),
+      'joinMemberDetails':
+          joinMemberDetails.map((e) => e.toMap(isToJson: isFromJson)).toList(),
     };
   }
 

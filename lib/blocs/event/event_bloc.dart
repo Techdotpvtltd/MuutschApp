@@ -291,29 +291,25 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
           e.joinMemberDetails.add(otherUser);
           e.joinMemberIds.add(otherUser.uid);
           emit(EventStateJoined(event: e));
-          FireNotification().sendNotification(
-            title: events
-                .firstWhere((element) => element.id == event.eventId)
-                .title,
-            description: "${UserRepo().currentUser.name} joined your event.",
-            topic:
-                "$PUSH_NOTIFICATION_FRIEND_REQUEST${events.firstWhere((element) => element.id == event.eventId).createdBy}",
-            type: 'event',
-            additionalData: {
-              'event': e.toJson(),
-            },
-          );
           NotificationRepo().save(
-            recieverId: events
-                .firstWhere((element) => element.id == event.eventId)
-                .createdBy,
-            title: "Event Update",
-            avatar: e.imageUrls.firstOrNull ?? "",
+            recieverId: e.createdBy,
+            title: e.title,
+            avatar: otherUser.avatarUrl,
             contentId: event.eventId,
-            message:
-                "${UserRepo().currentUser.name} joined your ${events.firstWhere((element) => element.id == event.eventId).title} event.",
-            type: NotificationType.event,
-            data: e.toMap(),
+            message: "${otherUser.name} joined your ${e.title} event.",
+            type: NotificationType.user,
+            data: otherUser.toMap(),
+          );
+
+          FireNotification().sendNotification(
+            title: e.title,
+            description: "${otherUser.name} joined your event.",
+            topic:
+                "$PUSH_NOTIFICATION_USER${events.firstWhere((element) => element.id == event.eventId).createdBy}",
+            type: 'member',
+            additionalData: {
+              'member': otherUser.toMap(isToJson: true),
+            },
           );
         } on AppException catch (e) {
           log("[debug EventFetchAll] $e");

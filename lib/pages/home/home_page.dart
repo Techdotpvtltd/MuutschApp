@@ -9,6 +9,7 @@ import 'package:musch/blocs/notification/notification_state.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/models/chat_model.dart';
+import 'package:musch/models/other_user_model.dart';
 import 'package:musch/pages/home/all_events.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/chat/chat_page.dart';
@@ -149,6 +150,13 @@ class _HomePageState extends State<HomePage> {
       if (type == "event") {
         final EventModel event = EventModel.fromJson(data['event']);
         Get.to(EventView(event: event, joinMembers: event.joinMemberDetails));
+      }
+
+      if (type == "member") {
+        // who's join your event
+        final OtherUserModel other =
+            OtherUserModel.fromMap(data['member'], isFromJson: true);
+        Get.to(FriendView(userId: other.uid));
       }
     } catch (e) {
       CustomDialogs().errorBox(message: e.toString());

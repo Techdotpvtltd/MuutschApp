@@ -149,9 +149,7 @@ class EventRepo {
   }
 
   /// Join Event
-  Future<OtherUserModel> joinEvent({
-    required String eventId,
-  }) async {
+  Future<OtherUserModel> joinEvent({required String eventId}) async {
     try {
       final UserModel user = UserRepo().currentUser;
       final OtherUserModel otherUser = OtherUserModel(
