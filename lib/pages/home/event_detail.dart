@@ -471,8 +471,10 @@ class _EventViewState extends State<EventView> {
                         height: 25.h,
                         child: MapCard(
                           isPin: true,
-                          defaultLocation: LatLng(event.location.latitude,
-                              event.location.longitude),
+                          defaultLocation: LatLng(
+                            event.location.latitude,
+                            event.location.longitude,
+                          ),
                         ),
                       ),
                     ),
