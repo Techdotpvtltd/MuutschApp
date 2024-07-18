@@ -22,3 +22,5 @@ const FIREBASE_COLLECTION_CONTACTS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Contacts";
 const FIREBASE_COLLECTION_INTERESTS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Interests";
+const FIREBASE_COLLECTION_AGREEMENTS =
+    "${kReleaseMode ? "Rel-" : "Dev-"}Agreements";
