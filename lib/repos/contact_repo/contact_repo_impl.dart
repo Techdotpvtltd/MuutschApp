@@ -6,6 +6,7 @@
 // Description:
 
 import 'package:musch/exceptions/exception_parsing.dart';
+import 'package:musch/repos/contact_repo/validation.dart';
 import 'package:musch/repos/user_repo.dart';
 import 'package:musch/utils/constants/firebase_collections.dart';
 import 'package:musch/web_services/firestore_services.dart';
@@ -21,6 +22,8 @@ class ContactRepo implements ContactRepoInterface {
     required String message,
   }) async {
     try {
+      await ContactValidation.validate(
+          name: name, email: email, message: message);
       final ContactUsModel model = ContactUsModel(
         uuid: '',
         username: name,
