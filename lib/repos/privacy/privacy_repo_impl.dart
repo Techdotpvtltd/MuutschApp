@@ -20,7 +20,7 @@ class PrivacyRepo implements PrivacyRepoInterface {
           await FirestoreService().fetchWithMultipleConditions(
         collection: FIREBASE_COLLECTION_AGREEMENTS,
         queries: [
-          QueryModel(field: "createdAt", value: true, type: QueryType.isEqual)
+          QueryModel(field: "createdAt", value: false, type: QueryType.orderBy)
         ],
       );
 
