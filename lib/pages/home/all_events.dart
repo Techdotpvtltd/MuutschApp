@@ -32,6 +32,7 @@ class AllEvents extends StatefulWidget {
 class _AllEventsState extends State<AllEvents> {
   bool isGrid = false;
   List<EventModel> events = [];
+
   bool isLoading = false;
   String? searchText;
   LocationModel? location;
@@ -223,6 +224,7 @@ class _AllEventsState extends State<AllEvents> {
                         mainTxtColor: Colors.black,
                         radius: 12,
                         bColor: Colors.transparent,
+                        textInputAction: TextInputAction.search,
                         onSubmitted: (value) {
                           searchText = value;
                           triggerFilteredEvent(context.read<EventBloc>());

@@ -16,8 +16,10 @@ import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
 // import 'package:musch/widgets/map_sample.dart';
 import 'package:musch/widgets/text_widget.dart';
+import 'package:place_picker/place_picker.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
@@ -27,6 +29,7 @@ import '../../repos/user_repo.dart';
 import '../../utils/constants/constants.dart';
 import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/custom_network_image.dart';
+import '../../widgets/map_sample.dart';
 import 'add_event.dart';
 import 'chat/chat_page.dart';
 import 'event_member_list.dart';
@@ -46,6 +49,7 @@ class EventView extends StatefulWidget {
 }
 
 class _EventViewState extends State<EventView> {
+  final PageController pageController = PageController();
   late EventModel event = widget.event;
   bool isDeleting = false;
   bool isJoiningEvent = false;
@@ -232,9 +236,48 @@ class _EventViewState extends State<EventView> {
                       child: SizedBox(
                         height: 38.h,
                         width: 100.w,
-                        child: CustomNetworkImage(
-                          imageUrl: event.imageUrls.first,
-                          backgroundColor: Colors.grey,
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: PageView(
+                                controller: pageController,
+                                children: [
+                                  for (int i = 0;
+                                      i < event.imageUrls.length;
+                                      i++)
+                                    ColorFiltered(
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.black.withOpacity(0.1),
+                                        BlendMode.srcOver,
+                                      ),
+                                      child: CustomNetworkImage(
+                                        imageUrl: event.imageUrls[i],
+                                        backgroundColor: Colors.grey,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            if (event.imageUrls.length > 1)
+                              Positioned.fill(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: SmoothPageIndicator(
+                                      controller: pageController,
+                                      count: event.imageUrls.length,
+                                      effect: WormEffect(
+                                        offset: 8,
+                                        dotWidth: 10,
+                                        dotHeight: 10,
+                                        activeDotColor: MyColors.primary3,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
@@ -308,14 +351,20 @@ class _EventViewState extends State<EventView> {
 
                                     if (chat!.isChatEnabled) {
                                       context.read<ChatBloc>().add(
-                                          ChatEventUpdateVisibilityStatus(
-                                              status: false, chat: chat!));
+                                            ChatEventUpdateVisibilityStatus(
+                                              status: false,
+                                              chat: chat!,
+                                            ),
+                                          );
                                       return;
                                     }
                                     if (!chat!.isChatEnabled) {
                                       context.read<ChatBloc>().add(
-                                          ChatEventUpdateVisibilityStatus(
-                                              status: true, chat: chat!));
+                                            ChatEventUpdateVisibilityStatus(
+                                              status: true,
+                                              chat: chat!,
+                                            ),
+                                          );
                                       return;
                                     }
                                   },
@@ -415,18 +464,18 @@ class _EventViewState extends State<EventView> {
                         ),
                       ],
                     ),
-                    // SizedBox(height: 3.h),
-                    // Card(
-                    //   elevation: 3,
-                    //   child: SizedBox(
-                    //     height: 25.h,
-                    //     child: MapCard(
-                    //       isPin: true,
-                    //       defaultLocation: LatLng(event.location.latitude,
-                    //           event.location.longitude),
-                    //     ),
-                    //   ),
-                    // ),
+                    SizedBox(height: 3.h),
+                    Card(
+                      elevation: 3,
+                      child: SizedBox(
+                        height: 25.h,
+                        child: MapCard(
+                          isPin: true,
+                          defaultLocation: LatLng(event.location.latitude,
+                              event.location.longitude),
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 4.h),
                     widget.isFromMyEvents
                         ? Row(

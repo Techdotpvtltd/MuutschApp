@@ -19,6 +19,7 @@ Widget textFieldWithPrefixSuffuxIconAndHintText(
   color,
   iconColor,
   bool obsecure = false,
+  TextInputAction? textInputAction,
   void Function(String)? onSubmitted,
   void Function(String)? onChanged,
 }) {
@@ -37,6 +38,7 @@ Widget textFieldWithPrefixSuffuxIconAndHintText(
         onSubmitted: onSubmitted,
         style: GoogleFonts.poppins(
             color: mainTxtColor ?? Colors.black, fontSize: 15.sp),
+        textInputAction: textInputAction,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: GoogleFonts.poppins(
