@@ -459,6 +459,8 @@ class _HomePageState extends State<HomePage> {
                                         setState(
                                           () {
                                             events = state.events;
+                                            debugPrint(
+                                                state.events.length.toString());
                                             filteredEvents =
                                                 state.events.take(5).toList();
                                           },

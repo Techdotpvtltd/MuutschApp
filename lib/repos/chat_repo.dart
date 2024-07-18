@@ -104,7 +104,9 @@ class ChatRepo {
           }
           onSuccess();
         },
-        onAllDataGet: () {},
+        onAllDataGet: () {
+          onSuccess();
+        },
         onCompleted: (l) {},
         queries: queries);
   }

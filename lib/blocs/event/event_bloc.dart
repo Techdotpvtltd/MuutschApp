@@ -242,11 +242,6 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
     on<EventsEventFetchAll>(
       (event, emit) async {
         try {
-          if (events.isNotEmpty) {
-            emit(EventStateFetched(events: events));
-            emit(EventStateFetchedAll(events: events));
-            return;
-          }
           emit(EventStateFetching());
           final List<EventModel> fetchEvents = await EventRepo().fetchAllEvents(
             userLat: position?.latitude ?? 0,

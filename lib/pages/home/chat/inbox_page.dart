@@ -173,22 +173,26 @@ class _InboxPageState extends State<InboxPage> {
                             ? Center(
                                 child: CircularProgressIndicator(),
                               )
-                            : ListView.builder(
-                                itemCount: filteredChats.length,
-                                itemBuilder: (context, index) {
-                                  return chatList(
-                                    chat: filteredChats[index],
-                                    willChatUpdate: (chat) {
-                                      final int index =
-                                          filteredChats.indexWhere((element) =>
-                                              element.uuid == chat.uuid);
-                                      if (index > -1) {
-                                        filteredChats[index] = chat;
-                                      }
+                            : filteredChats.isEmpty
+                                ? Center(
+                                    child: Text("No Chat"),
+                                  )
+                                : ListView.builder(
+                                    itemCount: filteredChats.length,
+                                    itemBuilder: (context, index) {
+                                      return chatList(
+                                        chat: filteredChats[index],
+                                        willChatUpdate: (chat) {
+                                          final int index = filteredChats
+                                              .indexWhere((element) =>
+                                                  element.uuid == chat.uuid);
+                                          if (index > -1) {
+                                            filteredChats[index] = chat;
+                                          }
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                              ),
+                                  ),
                       ),
                     ],
                   ),
