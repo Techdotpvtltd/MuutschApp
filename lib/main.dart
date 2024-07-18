@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:musch/blocs/contact_us/contact_us_bloc.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/controller/nav_controller.dart';
 import 'package:musch/firebase_options.dart';
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => NotificationBloc()),
             BlocProvider(create: (context) => ChatBloc()),
             BlocProvider(create: (context) => MessageBloc()),
+            BlocProvider(create: (context) => ContactUsBloc()),
           ],
           child: GetMaterialApp(
             navigatorKey: navKey,

@@ -5,8 +5,6 @@
 // Date:        18-07-24 12:54:49 -- Thursday
 // Description:
 
-import '../../models/contact_us_model.dart';
-
 abstract class ContactRepoInterface {
   Future<void> save({
     required String name,

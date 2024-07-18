@@ -15,6 +15,7 @@ class ContactUsModel {
   final String message;
   final String avatar;
   final DateTime createdAt;
+  final String senderId;
   ContactUsModel({
     required this.uuid,
     required this.username,
@@ -22,6 +23,7 @@ class ContactUsModel {
     required this.message,
     required this.avatar,
     required this.createdAt,
+    required this.senderId,
   });
 
   Map<String, dynamic> toMap() {
@@ -32,11 +34,12 @@ class ContactUsModel {
       'email': email,
       'message': message,
       'createdAt': Timestamp.fromDate(createdAt),
+      'senderId': senderId,
     };
   }
 
   @override
   String toString() {
-    return 'ContactUsModel(uuid: $uuid, username: $username, email: $email, message: $message, createdAt: $createdAt, avatar: $avatar)';
+    return 'ContactUsModel(uuid: $uuid, username: $username, email: $email, message: $message, createdAt: $createdAt, avatar: $avatar, senderId: $senderId)';
   }
 }

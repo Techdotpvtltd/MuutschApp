@@ -31,6 +31,7 @@ class ContactRepo implements ContactRepoInterface {
         message: message,
         avatar: UserRepo().currentUser.avatar,
         createdAt: DateTime.now(),
+        senderId: UserRepo().currentUser.uid,
       );
 
       await FirestoreService().saveWithSpecificIdFiled(

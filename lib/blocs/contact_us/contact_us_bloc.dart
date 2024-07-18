@@ -12,7 +12,7 @@ import 'package:musch/exceptions/app_exceptions.dart';
 import 'package:musch/repos/contact_repo/contact_repo_impl.dart';
 
 class ContactUsBloc extends Bloc<ContactUsEvent, ContactUsState> {
-  ContactUsBloc(super.initialState) {
+  ContactUsBloc() : super(ContactStateInitial()) {
     /// ON Send Contact us Event Trigger
     on<ContactEventSend>(
       (event, emit) async {
