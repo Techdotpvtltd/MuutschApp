@@ -222,7 +222,9 @@ class _SignupPageState extends State<SignupPage> {
                             width: 90,
                             isLoading: isLoading,
                             height: 6.6, ontap: () {
-                          triggerSignupEvent(context.read<AuthBloc>());
+                          triggerSignupEvent(
+                            context.read<AuthBloc>(),
+                          );
                         }, isColor: true, clr: MyColors.primary),
                         SizedBox(height: 2.h),
                         Center(

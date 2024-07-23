@@ -61,8 +61,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
           }
 
           if (state is ContactStateSent) {
-            CustomDialogs()
-                .successBox(message: "Your message has been recorded.");
+            CustomDialogs().successBox(
+              message: "Your message has been recorded.",
+              positiveTitle: "Back",
+              barrierDismissible: false,
+              onPositivePressed: () {
+                Get.back();
+              },
+            );
             // messageController.clear();
           }
         }

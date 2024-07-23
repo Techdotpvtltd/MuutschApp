@@ -92,13 +92,12 @@ class _HomePageState extends State<HomePage> {
   void filteredEventsBy(String search) {
     if (search == "") {
       setState(() {
-        filteredEvents = events.take(5).toList();
+        filteredEvents = events;
       });
     }
     setState(() {
       filteredEvents = events
           .where((e) => e.title.toLowerCase().contains(search.toLowerCase()))
-          .take(5)
           .toList();
     });
   }

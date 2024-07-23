@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: 15.sp, color: Color(0xff8C8C8C)),
                       SizedBox(height: 6.h),
                       textFieldWithPrefixSuffuxIconAndHintText(
-                        "Enter Phone Number",
+                        "Enter your email",
                         controller: emailController,
                         fillColor: Colors.white,
                         mainTxtColor: Colors.black,
@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 2.h),
                       textFieldWithPrefixSuffuxIconAndHintText(
-                        "Enter Phone Number",
+                        "Enter your password",
                         controller: passwordController,
                         fillColor: Colors.white,
                         mainTxtColor: Colors.black,
