@@ -58,12 +58,14 @@ class UserModel {
     LocationModel? location,
     List<String>? interests,
     String? bio,
+    String? role,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
       name: name ?? this.name,
       email: email ?? this.email,
       avatar: avatar ?? this.avatar,
+      role: role ?? this.role,
       createdAt: createdAt ?? this.createdAt,
       isActived: isActived ?? this.isActived,
       children: children ?? this.children,

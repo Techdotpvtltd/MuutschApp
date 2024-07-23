@@ -43,8 +43,6 @@ class AuthRepo {
     required String email,
     required String password,
     required String role,
-    // required String confirmPassword,
-    // required String phoenNumber,
   }) async {
     try {
       /// Make validation
