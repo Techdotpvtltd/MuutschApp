@@ -9,6 +9,16 @@ import 'package:musch/utils/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageServices {
+  Future<void> saveFirstLogin() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setBool("FIRST_TIME_LOGIN", true);
+  }
+
+  Future<bool> getFirstLogin() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getBool("FIRST_TIME_LOGIN") ?? false;
+  }
+
   Future<List<String>> getNotificationIds() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getStringList(SHARED_PREFERENCES_NOTIFICATION_IDS) ?? [];

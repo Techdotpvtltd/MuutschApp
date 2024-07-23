@@ -20,6 +20,7 @@ class PushNotificationServices {
 
   late FirebaseMessaging _fcm;
   final messageStreamController = BehaviorSubject<RemoteMessage>();
+  List<String> subscribedTopics = [];
 
   Future<void> initialize(
       {required Function(RemoteMessage message) onNotificationReceived}) async {
@@ -38,6 +39,7 @@ class PushNotificationServices {
     final String topic = '$forTopic${kDebugMode ? "-Dev" : "-Rel"}';
     await _fcm.subscribeToTopic(topic);
     debugPrint("Notification Subscribe topic: $topic");
+    subscribedTopics.add(topic);
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     _firebaseMessagingForgroundHandler();
   }
@@ -45,8 +47,16 @@ class PushNotificationServices {
   Future<void> unsubscribe({required String forTopic}) async {
     final String topic = '$forTopic${kDebugMode ? "-Dev" : "-Rel"}';
     await _fcm.unsubscribeFromTopic(topic);
+    subscribedTopics.remove(topic);
     debugPrint("Notification UnSubscribe topic: $topic");
     messageStreamController.close();
+  }
+
+  Future<void> unSubscribeAllTopics() async {
+    for (String topic in subscribedTopics) {
+      await unsubscribe(forTopic: topic);
+    }
+    subscribedTopics = [];
   }
 
   /// A notification will pass. When Click on notification in the background.

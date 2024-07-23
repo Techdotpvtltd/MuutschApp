@@ -36,7 +36,7 @@ class UserRepo {
 
   /// Clear all
   void clearAll() {
-    _instance = UserRepo._internal();
+    _userModel = null;
   }
 
   /// Fetch user

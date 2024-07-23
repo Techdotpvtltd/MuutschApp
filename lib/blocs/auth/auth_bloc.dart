@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:musch/manager/app_manager.dart';
+import 'package:musch/services/local_storage_services/local_storage_services.dart';
 
 import '../../exceptions/app_exceptions.dart';
 import '../../exceptions/auth_exceptions.dart';
@@ -21,8 +23,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // On Logout Request  ============================================
     on<AuthEventPerformLogout>(
       (event, emit) async {
-        Get.offAll(const SplashScreen());
         AuthRepo().performLogout();
+        AppManager.clearAll();
+        Get.offAll(const SplashScreen());
         emit(AuthStateInitialize());
       },
     );
@@ -30,6 +33,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Splash Process completed  ============================================
     on<AuthEventSplashAction>((event, emit) async {
       try {
+        // If the app install first time
+        if (await LocalStorageServices().getFirstLogin() == false) {
+          emit(AuthStateLoginRequired());
+          return;
+        }
         if (FirebaseAuth.instance.currentUser == null) {
           emit(AuthStateLoginRequired());
           return;
@@ -60,6 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await AuthRepo()
             .loginUser(withEmail: event.email, withPassword: event.password);
         emit(AuthStateLoggedIn());
+        LocalStorageServices().saveFirstLogin();
         // NavigationService.offAll(navKey.currentContext!, SplashScreen());
       } on AppException catch (e) {
         if (e is AuthExceptionEmailVerificationRequired) {
@@ -107,6 +116,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthStateLogging(loadingText: "Signing with Apple."));
         await AuthRepo().loginWithApple();
         emit(AuthStateAppleLoggedIn());
+        LocalStorageServices().saveFirstLogin();
       } on AppException catch (e) {
         emit(AuthStateLoginFailure(exception: e));
       }
@@ -119,6 +129,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         await AuthRepo().loginWithGoogle();
         emit(AuthStateGoogleLoggedIn());
+        LocalStorageServices().saveFirstLogin();
       } on AppException catch (e) {
         emit(AuthStateLoginFailure(exception: e));
       }
