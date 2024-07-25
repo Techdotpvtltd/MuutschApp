@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 /// Author:       Ali Akbar
 /// Date:        15-02-24 16:51:20 -- Thursday
 /// Description:
+// FIXME
 class FireNotification {
   final String serverKey =
       'AAAA47Au-sM:APA91bG4KYcpm0mab5ppugT8y6whJQhehm-nOqfIoFIUG1QCLEUMv0xAhuwpDEXmnm1udt5dj0PJk1Z4k3TAuJ4fI_xI_V0eYlJrtM_uSHIAouFPGvkMVHcF9Wifb-bV8W-h0Fi0_BNM';
@@ -24,7 +25,7 @@ class FireNotification {
     const String fcmUrl = 'https://fcm.googleapis.com/fcm/send';
 
     // Payload for the notification
-    final String toTopic = '$topic${kDebugMode ? "-Dev" : "-Rel"}';
+    final String toTopic = '$topic${kDebugMode ? "-Rel" : "-Rel"}';
     final Map<String, dynamic> notification = {
       'to': '/topics/$toTopic',
       'notification': {'title': title, 'body': description},

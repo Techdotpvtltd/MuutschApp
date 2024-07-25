@@ -58,6 +58,7 @@ class _HomePageState extends State<HomePage> {
   List<EventModel> events = [];
   List<FriendModel> friends = [];
   bool isNewNotifications = false;
+  bool isFetchingEvents = false;
 
   void triggerFetchAllEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchAll());
@@ -366,9 +367,9 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () async {
-                          await Future.delayed(Duration(milliseconds: 500));
                           triggerFetchAllEvents(context.read<EventBloc>());
                           triggerFetchFriends(context.read<FriendBloc>());
+                          await Future.doWhile(() => isFetchingEvents);
                         },
                         child: SingleChildScrollView(
                           physics: AlwaysScrollableScrollPhysics(),
@@ -463,13 +464,15 @@ class _HomePageState extends State<HomePage> {
                                         state is EventStateFetching ||
                                         state is EventStateJoined) {
                                       if (state is EventStateFetchedAll) {
+                                        setState(() {
+                                          isFetchingEvents = state.isLoading;
+                                        });
                                         setState(
                                           () {
                                             events = state.events;
                                             debugPrint(
                                                 state.events.length.toString());
-                                            filteredEvents =
-                                                state.events.take(5).toList();
+                                            filteredEvents = state.events;
                                           },
                                         );
                                       }

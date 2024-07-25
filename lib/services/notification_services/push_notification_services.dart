@@ -11,6 +11,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'local_notification_services.dart';
 
+//FIXME
 class PushNotificationServices {
   static final PushNotificationServices _instance =
       PushNotificationServices._internal();
@@ -36,7 +37,7 @@ class PushNotificationServices {
   }
 
   Future<void> subscribe({required String forTopic}) async {
-    final String topic = '$forTopic${kDebugMode ? "-Dev" : "-Rel"}';
+    final String topic = '$forTopic${kDebugMode ? "-Rel" : "-Rel"}';
     await _fcm.subscribeToTopic(topic);
     debugPrint("Notification Subscribe topic: $topic");
     subscribedTopics.add(topic);
@@ -45,7 +46,7 @@ class PushNotificationServices {
   }
 
   Future<void> unsubscribe({required String forTopic}) async {
-    final String topic = '$forTopic${kDebugMode ? "-Dev" : "-Rel"}';
+    final String topic = '$forTopic${kDebugMode ? "-Rel" : "-Rel"}';
     await _fcm.unsubscribeFromTopic(topic);
     subscribedTopics.remove(topic);
     debugPrint("Notification UnSubscribe topic: $topic");

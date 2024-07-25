@@ -209,14 +209,12 @@ class EventRepo {
 
       Query collectionReference =
           FirebaseFirestore.instance.collection(FIREBASE_COLLECTION_EVENTS);
-      final Stream<List<DocumentSnapshot>> stream = geoflutterfire
-          .collection(collectionRef: collectionReference)
-          .withinAsSingleStreamSubscription(
-            center: center,
-            radius: 5, // IN Killo Meters
-            field: 'position',
-            strictMode: true,
-          );
+      final Stream<List<DocumentSnapshot>> stream =
+          geoflutterfire.collection(collectionRef: collectionReference).within(
+                center: center,
+                radius: 5, // IN Killo Meters
+                field: 'position',
+              );
 
       final List<DocumentSnapshot> documents = await stream.first;
 
