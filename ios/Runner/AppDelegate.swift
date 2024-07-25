@@ -10,7 +10,7 @@ import UserNotifications
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey("AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0")
+    GMSServices.provideAPIKey("AIzaSyAqSjBWxORHHKlLY7ISV5BmookK7fQlw4U")
     GeneratedPluginRegistrant.register(with: self)
       if #available(iOS 10.0, *) {
           UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate

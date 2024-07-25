@@ -83,7 +83,7 @@ class _AddEventState extends State<AddEvent> {
   void pickLocation() async {
     final LocationResult result = await Get.to(
       PlacePicker(
-        "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
+        "AIzaSyAqSjBWxORHHKlLY7ISV5BmookK7fQlw4U",
         displayLocation: (selectedLocation?.latitude != null &&
                 selectedLocation?.longitude != null)
             ? LatLng(selectedLocation!.latitude, selectedLocation!.longitude)

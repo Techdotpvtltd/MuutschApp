@@ -57,7 +57,7 @@ class _EditProfileState extends State<EditProfile> {
   void pickLocation() async {
     final LocationResult result = await Get.to(
       PlacePicker(
-        "AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0",
+        "AIzaSyAqSjBWxORHHKlLY7ISV5BmookK7fQlw4U",
         defaultLocation:
             (location?.latitude != null && location?.longitude != null)
                 ? LatLng(location!.latitude, location!.longitude)

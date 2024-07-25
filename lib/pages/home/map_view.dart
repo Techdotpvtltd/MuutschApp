@@ -70,7 +70,7 @@ class MapSampleState extends State<MapSample> {
 
   void onSearchPressed() async {
     final LocationResult result = await Get.to(
-      PlacePicker("AIzaSyCtEDCykUDeCa7QkT-LK63xQ7msSXNZoq0"),
+      PlacePicker("AIzaSyAqSjBWxORHHKlLY7ISV5BmookK7fQlw4U"),
     );
 
     _controller?.animateCamera(CameraUpdate.newLatLngZoom(
