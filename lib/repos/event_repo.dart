@@ -149,7 +149,7 @@ class EventRepo {
   }
 
   /// Join Event
-  Future<OtherUserModel> joinEvent({required String eventId}) async {
+  OtherUserModel joinEvent({required String eventId}) {
     try {
       final UserModel user = UserRepo().currentUser;
       final OtherUserModel otherUser = OtherUserModel(
@@ -160,7 +160,7 @@ class EventRepo {
         about: user.bio,
       );
 
-      await FirestoreService().updateWithDocId(
+      FirestoreService().updateWithDocId(
           path: FIREBASE_COLLECTION_EVENTS,
           data: {
             "joinMemberDetails": FieldValue.arrayUnion([otherUser.toMap()]),

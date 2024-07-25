@@ -286,7 +286,7 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
         try {
           emit(EventStateJoining(eventId: event.eventId));
           final OtherUserModel otherUser =
-              await EventRepo().joinEvent(eventId: event.eventId);
+              EventRepo().joinEvent(eventId: event.eventId);
           final e = events.firstWhere((element) => element.id == event.eventId);
           e.joinMemberDetails.add(otherUser);
           e.joinMemberIds.add(otherUser.uid);
