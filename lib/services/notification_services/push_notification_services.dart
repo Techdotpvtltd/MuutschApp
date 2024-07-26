@@ -46,10 +46,9 @@ class PushNotificationServices {
   }
 
   Future<void> unsubscribe({required String forTopic}) async {
-    final String topic = '$forTopic${kDebugMode ? "-Rel" : "-Rel"}';
-    await _fcm.unsubscribeFromTopic(topic);
-    subscribedTopics.remove(topic);
-    debugPrint("Notification UnSubscribe topic: $topic");
+    await _fcm.unsubscribeFromTopic(forTopic);
+    subscribedTopics.remove(forTopic);
+    debugPrint("Notification UnSubscribe topic: $forTopic");
     messageStreamController.close();
   }
 

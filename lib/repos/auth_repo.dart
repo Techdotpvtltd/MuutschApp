@@ -1,13 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:musch/repos/chat_repo.dart';
-import 'package:musch/services/notification_services/push_notification_services.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../exceptions/app_exceptions.dart';
 import '../exceptions/auth_exceptions.dart';
 import '../exceptions/exception_parsing.dart';
-import '../utils/constants/constants.dart';
 import '../utils/utils.dart';
 import '../web_services/firebase_auth_serivces.dart';
 import 'user_repo.dart';
@@ -77,17 +73,7 @@ class AuthRepo {
 
   /// Perform Logout
   Future<void> performLogout() async {
-    FirebaseAuthService().logoutUser();
-    UserRepo().clearAll();
-    ChatRepo().clearAll();
-
-    /// UnSubscribe notifications
-    PushNotificationServices().unsubscribe(
-        forTopic:
-            "$PUSH_NOTIFICATION_FRIEND_REQUEST${UserRepo().currentUser.uid}");
-
-    /// Removing Get Instances
-    Get.deleteAll(force: true);
+    await FirebaseAuthService().logoutUser();
   }
 
   /// Perform Logout

@@ -9,8 +9,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:musch/repos/chat_repo.dart';
 import 'package:musch/repos/user_repo.dart';
 
-import '../services/notification_services/push_notification_services.dart';
-
 class AppManager {
   static final AppManager _instance = AppManager._internal();
 
@@ -20,7 +18,6 @@ class AppManager {
   Position? currentLocationPosition;
 
   static void clearAll() {
-    PushNotificationServices().unSubscribeAllTopics();
     UserRepo().clearAll();
     ChatRepo().clearAll();
   }

@@ -109,7 +109,8 @@ class EventModel {
         id: map['id'] as String,
         createdBy: map['createdBy'] as String,
         creatorDetail: OtherUserModel.fromMap(
-            map['creatorDetail'] as Map<String, dynamic>),
+            map['creatorDetail'] as Map<String, dynamic>,
+            isFromJson: isFromJson),
         createdAt: isFromJson
             ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int)
             : (map['createdAt'] as Timestamp).toDate(),
@@ -120,7 +121,9 @@ class EventModel {
         joinMemberIds: map['joinMemberIds'] == null
             ? []
             : (map['joinMemberIds'] as List).map((e) => (e as String)).toList(),
-        dateTime: (map['dateTime'] as Timestamp).toDate(),
+        dateTime: isFromJson
+            ? DateTime.fromMillisecondsSinceEpoch((map['dateTime'] as int))
+            : (map['dateTime'] as Timestamp).toDate(),
         location:
             LocationModel.fromMap(map['location'] as Map<String, dynamic>),
         description:
@@ -129,7 +132,8 @@ class EventModel {
         joinMemberDetails: map['joinMemberDetails'] == null
             ? []
             : (map['joinMemberDetails'] as List)
-                .map((e) => OtherUserModel.fromMap((e as Map<String, dynamic>)))
+                .map((e) => OtherUserModel.fromMap((e as Map<String, dynamic>),
+                    isFromJson: isFromJson))
                 .toList());
   }
   @override

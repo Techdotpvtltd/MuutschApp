@@ -6,6 +6,7 @@
 // Description:
 
 import 'package:musch/models/chat_model.dart';
+import 'package:musch/models/event_model.dart';
 
 import '../../models/other_user_model.dart';
 
@@ -30,12 +31,14 @@ class ChatEventCreate extends ChatEvent {
   OtherUserModel? friendProfile;
   String? eventId;
   final List<String> ids;
+  final EventModel? event;
   ChatEventCreate(
       {this.isGroup = false,
       this.isChatEnabled = true,
       this.chatAvatar,
       this.eventId,
       this.chatTitle,
+      this.event,
       required this.ids,
       this.friendProfile});
 }

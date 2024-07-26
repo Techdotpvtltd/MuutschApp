@@ -5,6 +5,7 @@
 // Date:        31-05-24 13:44:34 -- Friday
 // Description:
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musch/repos/user_repo.dart';
 import 'package:musch/services/notification_services/fire_notification.dart';
@@ -77,17 +78,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                 title: "Event Chat Created",
                 message:
                     "Group Chat is available for the event ${event.chatTitle}. You can now connect with the member of this event.",
-                type: NotificationType.chat,
-                data: chat.toMap(),
+                type: NotificationType.event,
+                data: event.event?.toMap(),
               );
 
               FireNotification().sendNotification(
                   title: event.chatTitle ?? "",
                   description:
                       "Group Chat is available for the event ${event.chatTitle ?? ""}. You can now connect with the member of this event.",
-                  topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
-                  type: "chat",
-                  additionalData: {"chat": chat.toMap(isToJson: true)});
+                  topic: "$PUSH_NOTIFICATION_USER$id",
+                  type: "event",
+                  additionalData: {
+                    "event": event.event?.toMap(isFromJson: true)
+                  });
+
+              debugPrint(event.event?.toMap(isFromJson: true).toString());
             }
           }
         } on AppException catch (e) {
@@ -125,7 +130,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                 description: event.status
                     ? "Group Chat is available for the event ${event.chat.groupTitle ?? "-"}. You can now connect with the member of this event."
                     : "Group Chat is disabled for the event ${event.chat.groupTitle ?? "-"}.",
-                topic: "$PUSH_NOTIFICATION_FRIEND_REQUEST$id",
+                topic: "$PUSH_NOTIFICATION_USER$id",
                 type: "chat",
                 additionalData: {"chat": event.chat.toMap(isToJson: true)},
               );

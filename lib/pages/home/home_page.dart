@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:musch/blocs/auth/auth_bloc.dart';
+import 'package:musch/blocs/auth/auth_state.dart';
 import 'package:musch/blocs/notification/notification_state.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
@@ -43,6 +45,7 @@ import '../../repos/user_repo.dart';
 import '../../utils/constants/constants.dart';
 import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
+import '../auth/splash_screen.dart';
 import 'edit_profile.dart';
 import 'event_detail.dart';
 
@@ -119,6 +122,7 @@ class _HomePageState extends State<HomePage> {
       final String type = remote.data['type'];
       final additionalData = remote.data['additionalData'];
       final data = json.decode(additionalData) as Map<String, dynamic>;
+      // CustomDialogs().successBox(message: remote.data.toString());
 
       /// For Chat
       if (type == "chat" || type == "message") {
@@ -130,7 +134,9 @@ class _HomePageState extends State<HomePage> {
           final ChatModel? chat =
               await ChatRepo().fetchChat(id: chatJson.uuid, isGroupChat: true);
           if (chat != null && chat.isChatEnabled) {
-            Get.to(UserChatPage(chat: chat));
+            if (chat.participantUids.contains(UserRepo().currentUser.uid)) {
+              Get.to(UserChatPage(chat: chat));
+            }
           } else {
             CustomDialogs().successBox(
               message:
@@ -148,7 +154,8 @@ class _HomePageState extends State<HomePage> {
       }
 
       if (type == "event") {
-        final EventModel event = EventModel.fromJson(data['event']);
+        final EventModel event =
+            EventModel.fromMap(data['event'], isFromJson: true);
         Get.to(EventView(event: event, joinMembers: event.joinMemberDetails));
       }
 
@@ -177,6 +184,23 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        /// Auth Listener
+        BlocListener<AuthBloc, AuthState>(
+          listener: (_, state) {
+            if (state is AuthStateLogout) {
+              context
+                  .read<PushNotificationBloc>()
+                  .add(PushNotificationEventUserUnSubscribed());
+
+              AppManager.clearAll();
+              Get.offAll(const SplashScreen());
+
+              /// Removing Get Instances
+              Get.deleteAll(force: true);
+            }
+          },
+        ),
+
         /// Event Listener
         BlocListener<EventBloc, EventState>(
           listener: (context, state) {

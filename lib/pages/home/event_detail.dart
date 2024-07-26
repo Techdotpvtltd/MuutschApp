@@ -354,6 +354,7 @@ class _EventViewState extends State<EventView> {
                                               eventId: event.id,
                                               isChatEnabled: true,
                                               ids: event.joinMemberIds,
+                                              event: event,
                                             ),
                                           );
                                       return;
