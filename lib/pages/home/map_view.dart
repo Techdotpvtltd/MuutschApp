@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,6 +43,7 @@ class MapSample extends StatefulWidget {
 class MapSampleState extends State<MapSample> {
   // late String _mapStyle;
   Set<Marker> markers = {};
+  Timer? _timer;
 
   GoogleMapController? _controller;
   CustomInfoWindowController _customInfoWindowController =
@@ -63,9 +65,19 @@ class MapSampleState extends State<MapSample> {
     if (previousBounds == null ||
         !previousBounds!.contains(bounds!.southwest) ||
         !previousBounds!.contains(bounds.northeast)) {
-      triggerFetchUserEvent(context.read<UserBloc>(), bounds);
+      triggerAPI(bounds);
       previousBounds = bounds;
     }
+  }
+
+  void triggerAPI(LatLngBounds? bounds) {
+    if (_timer?.isActive ?? false) _timer?.cancel();
+    _timer = Timer(
+      Duration(seconds: 1),
+      () {
+        triggerFetchUserEvent(context.read<UserBloc>(), bounds);
+      },
+    );
   }
 
   void onSearchPressed() async {
@@ -164,82 +176,77 @@ class MapSampleState extends State<MapSample> {
         body: Stack(
           children: [
             Positioned.fill(
+              child: GoogleMap(
+                onCameraMove: _onCameraMove,
+                mapType: MapType.normal,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                initialCameraPosition: CameraPosition(
+                    target: LatLng(33.489044, 73.089211), zoom: 40.0),
+                zoomControlsEnabled: false,
+                markers: markers,
+                onMapCreated: (GoogleMapController controller) {
+                  _controller = controller;
+                },
+              ),
+            ),
+            Positioned.fill(
               child: Column(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xffF4F4F4),
-                    ),
-                    child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 22.0, vertical: 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    setState(
-                                      () {
-                                        current = 0;
-                                      },
-                                    );
-                                    Get.find<NavScreenController>()
-                                        .controller
-                                        .jumpToTab(current);
-                                    widget.updateParentState();
-                                    setState(() {});
-                                  },
-                                  child: Icon(
-                                    Remix.arrow_left_s_line,
-                                    color: Colors.black,
-                                    size: 3.h,
-                                  ),
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 22.0, vertical: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      current = 0;
+                                    },
+                                  );
+                                  Get.find<NavScreenController>()
+                                      .controller
+                                      .jumpToTab(current);
+                                  widget.updateParentState();
+                                  setState(() {});
+                                },
+                                child: Icon(
+                                  Remix.arrow_left_s_line,
+                                  color: Colors.black,
+                                  size: 3.h,
                                 ),
-                                SizedBox(width: 3.w),
-                                textWidget(
-                                  "Find Near by",
-                                  fontSize: 19.sp,
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 2.h),
-                            InkWell(
-                              onTap: () {
-                                onSearchPressed();
-                              },
-                              child: textFieldWithPrefixSuffuxIconAndHintText(
-                                "Search Place.",
-                                controller: searchController,
-                                enable: false,
-                                fillColor: Colors.white,
-                                mainTxtColor: Colors.black,
-                                radius: 12,
-                                bColor: Colors.transparent,
-                                prefixIcon: "assets/nav/s1.png",
-                                isPrefix: true,
                               ),
+                              SizedBox(width: 3.w),
+                              textWidget(
+                                "Find Near by",
+                                fontSize: 19.sp,
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 2.h),
+                          InkWell(
+                            onTap: () {
+                              onSearchPressed();
+                            },
+                            child: textFieldWithPrefixSuffuxIconAndHintText(
+                              "Search Place.",
+                              controller: searchController,
+                              enable: false,
+                              fillColor: Colors.white,
+                              mainTxtColor: Colors.black,
+                              radius: 12,
+                              bColor: Colors.transparent,
+                              prefixIcon: "assets/nav/s1.png",
+                              isPrefix: true,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GoogleMap(
-                      onCameraMove: _onCameraMove,
-                      mapType: MapType.normal,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: false,
-                      initialCameraPosition: CameraPosition(
-                          target: LatLng(33.489044, 73.089211), zoom: 40.0),
-                      zoomControlsEnabled: false,
-                      markers: markers,
-                      onMapCreated: (GoogleMapController controller) {
-                        _controller = controller;
-                      },
                     ),
                   ),
                 ],

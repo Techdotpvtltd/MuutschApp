@@ -2,26 +2,25 @@
 
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
-/// FIXME
 const String FIREBASE_COLLECTION_USER =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Users";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Users";
 const String FIREBASE_COLLECTION_USER_PROFILES =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Avatars";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Avatars";
 const String FIREBASE_COLLECTION_EVENTS =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Events";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Events";
 
 const String FIREBASE_COLLECTION_FRIENDS =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Friends";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Friends";
 const String FIREBASE_COLLECTION_NOTIFICATION =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Notifications";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Notifications";
 const String FIREBASE_COLLECTION_CHAT =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Chats";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Chats";
 
 const FIREBASE_COLLECTION_MESSAGES =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Messages";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Messages";
 const FIREBASE_COLLECTION_CONTACTS =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Contacts";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Contacts";
 const FIREBASE_COLLECTION_INTERESTS =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Interests";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Interests";
 const FIREBASE_COLLECTION_AGREEMENTS =
-    "${kReleaseMode ? "Rel-" : "Rel-"}Agreements";
+    "${kReleaseMode ? "Rel-" : "Dev-"}Agreements";
