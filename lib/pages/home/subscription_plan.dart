@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:musch/config/colors.dart';
-import 'package:musch/pages/home/payment_sucess.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../blocs/subscription/subscription_bloc.dart';
+import '../../blocs/subscription/subscription_event.dart';
+import '../../blocs/subscription/subscription_state.dart';
+import '../../manager/app_manager.dart';
+import '../../repos/subscription/subscription_repo.dart';
+import '../../utils/dialogs/dialogs.dart';
 
 class SubscriptionPlan extends StatefulWidget {
   const SubscriptionPlan({super.key});
@@ -19,45 +27,33 @@ class SubscriptionPlan extends StatefulWidget {
 int currentPage = 0;
 
 class _SubscriptionPlanState extends State<SubscriptionPlan> {
-  List<Widget> cards = [
-    CardFb1(
-        text: "One time Payment",
-        imageUrl:
-            "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/illustrations%2Fundraw_Working_late_re_0c3y%201.png?alt=media&token=7b880917-2390-4043-88e5-5d58a9d70555",
-        subtitle: "Lorem Ipsum is simply",
-        onPressed: () {}),
-    CardFb1(
-        text: "Digital Spotlight",
-        imageUrl:
-            "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/illustrations%2Fundraw_Designer_re_5v95%201.png?alt=media&token=5d053bd8-d0ea-4635-abb6-52d87539b7ec",
-        subtitle: "One Day Boost Packages",
-        onPressed: () {}),
-  ];
+  String activeSubscriptionId = AppManager().isActiveSubscription
+      ? SubscriptionRepo().lastSubscription?.productId ?? ""
+      : "";
+  List<ProductDetails> productDetails = [];
+  bool isLoading = false;
+
+  void triggerBuySubscriptionEvent(ProductDetails product) {
+    context
+        .read<SubscriptionBloc>()
+        .add(SubscriptionEventBuySubscription(productDetails: product));
+  }
+
+  void triggerGetProductsEvent() {
+    context.read<SubscriptionBloc>().add(SubscriptionEventReady());
+  }
 
   final double carouselItemMargin = 4;
 
   int position = 0;
   late PageController _pageController;
-
-  Widget imageSlider(int position) {
-    return AnimatedBuilder(
-      animation: _pageController,
-      builder: (BuildContext context, widget) {
-        return Container(
-          margin: EdgeInsets.all(carouselItemMargin),
-          child: Center(child: widget),
-        );
-      },
-      child: Container(
-        child: cards[position],
-      ),
-    );
-  }
+  bool isSubscribing = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0, viewportFraction: 0.94);
+    triggerGetProductsEvent();
   }
 
   List<bool> faqs = [false, false, false, false, false];
@@ -65,16 +61,72 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
   int current = 0;
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-            child: Image.asset(
-          "assets/icons/sub.png",
-          fit: BoxFit.fill,
-        )),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
+    return BlocListener<SubscriptionBloc, SubscriptionState>(
+      listener: (context, state) {
+        if (state is SubscriptionStateGettingProducts ||
+            state is SubscriptionStateGotProducts) {
+          setState(() {
+            isLoading = state.isLoading;
+          });
+
+          if (state is SubscriptionStateGotProducts) {
+            productDetails = state.products;
+            productDetails.sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
+            activeSubscriptionId = AppManager().isActiveSubscription
+                ? SubscriptionRepo().lastSubscription?.productId ?? ""
+                : "";
+            setState(() {});
+          }
+        }
+
+        if (state is SubscriptionStateReady ||
+            state is SubscriptionStateFailure ||
+            state is SubscriptionStateStoreStatus ||
+            state is SubscriptionStatePurchased ||
+            state is SubscriptionStatePurchaseFailure) {
+          setState(() {
+            isSubscribing = state.isLoading;
+          });
+
+          if (state is SubscriptionStateFailure) {
+            debugPrint(state.exception.message);
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+
+          if (state is SubscriptionStatePurchaseFailure) {
+            debugPrint(state.exception.message);
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+
+          if (state is SubscriptionStatePurchased) {
+            setState(() {
+              activeSubscriptionId = AppManager().isActiveSubscription
+                  ? SubscriptionRepo().lastSubscription?.productId ?? ""
+                  : "";
+            });
+
+            AppManager().isActiveSubscription = true;
+            CustomDialogs().successBox(
+              message:
+                  "Thank you for subscribing! Your subscription is now active. Enjoy all the benefits and features available to you.",
+              positiveTitle: "Go to Home",
+              onPositivePressed: () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+            );
+          }
+        }
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+              child: Image.asset(
+            "assets/icons/sub.png",
+            fit: BoxFit.fill,
+          )),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
               bottom: false,
               child: Padding(
                 padding:
@@ -94,47 +146,80 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                               size: 4.h,
                             )),
                         SizedBox(width: 3.w),
-                        textWidget("Subscription Plan",
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            fontSize: 20.sp),
+                        textWidget(
+                          "Subscription Plan",
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                        ),
                       ],
                     ),
                     // SizedBox(height: 1.h),
                     SizedBox(height: 6.h),
                     Expanded(
-                        child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: cards.length,
-                            onPageChanged: (int position) {
-                              setState(() {
-                                position = position;
-                                currentPage = position;
-                              });
-                              setState(() {});
-                            },
-                            itemBuilder: (BuildContext context, int position) {
-                              return imageSlider(position);
-                            })),
-                    SizedBox(height: 2.h),
-                    Center(
-                      child: SmoothPageIndicator(
-                        controller: _pageController,
-                        count: 2,
-                        axisDirection: Axis.horizontal,
-                        effect: WormEffect(
+                      child: isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : PageView.builder(
+                              controller: _pageController,
+                              itemCount: productDetails.length,
+                              onPageChanged: (int position) {
+                                setState(() {
+                                  position = position;
+                                  currentPage = position;
+                                });
+                                setState(() {});
+                              },
+                              itemBuilder:
+                                  (BuildContext context, int position) {
+                                final product = productDetails[position];
+                                return AnimatedBuilder(
+                                  animation: _pageController,
+                                  builder: (BuildContext context, widget) {
+                                    return Container(
+                                      margin:
+                                          EdgeInsets.all(carouselItemMargin),
+                                      child: Center(child: widget),
+                                    );
+                                  },
+                                  child: Container(
+                                    child: CardFb1(
+                                      text: product.title,
+                                      showButton: !isSubscribing,
+                                      imageUrl: "",
+                                      subtitle: product.description,
+                                      onPressed: () {
+                                        triggerBuySubscriptionEvent(product);
+                                      },
+                                      price: product.price,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                    if (productDetails.length > 1) SizedBox(height: 2.h),
+                    if (productDetails.length > 1)
+                      Center(
+                        child: SmoothPageIndicator(
+                          controller: _pageController,
+                          count: productDetails.length,
+                          axisDirection: Axis.horizontal,
+                          effect: WormEffect(
                             dotHeight: 1.5.h,
                             dotWidth: 1.5.h,
                             dotColor: Color(0xffFFAD85).withOpacity(0.4),
-                            activeDotColor: Color(0xff9B8E6D)),
+                            activeDotColor: Color(0xff9B8E6D),
+                          ),
+                        ),
                       ),
-                    ),
                     SizedBox(height: 12.h),
                   ],
                 ),
-              )),
-        ),
-      ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -144,13 +229,17 @@ class CardFb1 extends StatelessWidget {
   final String imageUrl;
   final String subtitle;
   final Function() onPressed;
+  final String price;
+  final bool showButton;
 
   const CardFb1(
       {required this.text,
       required this.imageUrl,
       required this.subtitle,
       required this.onPressed,
-      Key? key})
+      required this.showButton,
+      Key? key,
+      required this.price})
       : super(key: key);
 
   @override
@@ -189,13 +278,13 @@ class CardFb1 extends StatelessWidget {
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 textWidget(
-                  "\$4.45",
+                  price,
                   fontSize: 21.sp,
                   fontWeight: FontWeight.bold,
                   color: MyColors.primary,
                 ),
                 textWidget(
-                  "/Package",
+                  "/Month",
                   fontSize: 15.sp,
                   color: Color(0xffB9B9B9),
                 ),
@@ -228,16 +317,18 @@ class CardFb1 extends StatelessWidget {
               ),
             ),
             SizedBox(height: 2.h),
-            Center(
-              child: gradientButton("Choose Plan", ontap: () async {
-                Get.to(DonePayment());
-              },
+            if (showButton)
+              Center(
+                child: gradientButton(
+                  "Choose Plan",
+                  ontap: onPressed,
                   height: 4.8,
                   font: 13.5,
                   width: 60,
                   isColor: true,
-                  clr: MyColors.primary),
-            ),
+                  clr: MyColors.primary,
+                ),
+              ),
             SizedBox(height: 2.h),
           ],
         ),
@@ -247,10 +338,9 @@ class CardFb1 extends StatelessWidget {
 }
 
 List txts = [
-  "Lorem Ipsum is simply",
-  "Lorem Ipsum is simply",
-  "24-Hour Visibility",
-  "Instant Visibility",
-  "Short-Term Impact",
-  "Memorable Impression",
+  "Unlimited Friend requests per Month",
+  "Create and Join Events",
+  "Find friends worldwide",
+  "Find Events worldwide",
+  "See Events time and date.",
 ];

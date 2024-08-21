@@ -24,3 +24,5 @@ const FIREBASE_COLLECTION_INTERESTS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Interests";
 const FIREBASE_COLLECTION_AGREEMENTS =
     "${kReleaseMode ? "Rel-" : "Dev-"}Agreements";
+const String FIREBASE_COLLECTION_SUBSCRIPTIONS =
+    "${kReleaseMode ? "Rel-" : "Dev-"}Subscriptions";

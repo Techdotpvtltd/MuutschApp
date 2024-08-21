@@ -11,22 +11,12 @@ class Loader {
     return _intsance;
   }
 
-  final List<GlobalKey> _alertKeys = [];
-
-  void show(
-      {String? withText,
-      bool barrierDismissible = false,
-      GlobalKey? alertKey}) {
-    hide(); // Remove If any existed
-    final key = alertKey ?? GlobalKey();
-    _alertKeys.add(key);
-
+  void show({String? withText, bool barrierDismissible = false}) {
     showDialog(
       context: navKey.currentContext!,
       barrierDismissible: barrierDismissible,
       builder: (alertContext) {
         return AlertDialog(
-          key: key,
           contentPadding: EdgeInsets.zero,
           insetPadding: const EdgeInsets.symmetric(horizontal: 100),
           backgroundColor: Colors.transparent,
@@ -65,10 +55,6 @@ class Loader {
   }
 
   void hide() {
-    for (GlobalKey key in _alertKeys) {
-      if (key.currentContext != null) {
-        Navigator.pop(key.currentContext!);
-      }
-    }
+    Navigator.pop(navKey.currentContext!);
   }
 }

@@ -37,6 +37,8 @@ import '../../blocs/notification/notification_bloc.dart';
 import '../../blocs/notification/notification_event.dart';
 import '../../blocs/push_notification/psuh_notification_event.dart';
 import '../../blocs/push_notification/push_notification_bloc.dart';
+import '../../blocs/subscription/subscription_bloc.dart';
+import '../../blocs/subscription/subscription_event.dart';
 import '../../manager/app_manager.dart';
 import '../../models/event_model.dart';
 import '../../models/friend_model.dart';
@@ -91,6 +93,14 @@ class _HomePageState extends State<HomePage> {
 
   void triggerFetchNotificationEvent(NotificationBloc bloc) {
     bloc.add(NotificationEventFetch());
+  }
+
+  void triggerSubscriptionListenerEvent(SubscriptionBloc bloc) {
+    bloc.add(SubscriptionEventListener());
+  }
+
+  void triggerGetLastSubscriptionEvent(SubscriptionBloc bloc) {
+    bloc.add(SubscriptionEventGetLast());
   }
 
   void filteredEventsBy(String search) {
@@ -177,6 +187,8 @@ class _HomePageState extends State<HomePage> {
     triggerPushNotificationSubscriptionEvents();
     triggerFetchNotificationEvent(context.read<NotificationBloc>());
     getNotificationOnClick();
+    triggerGetLastSubscriptionEvent(context.read<SubscriptionBloc>());
+    triggerSubscriptionListenerEvent(context.read<SubscriptionBloc>());
     super.initState();
   }
 

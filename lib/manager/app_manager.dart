@@ -16,6 +16,7 @@ class AppManager {
   factory AppManager() => _instance;
 
   Position? currentLocationPosition;
+  bool isActiveSubscription = false;
 
   static void clearAll() {
     UserRepo().clearAll();
