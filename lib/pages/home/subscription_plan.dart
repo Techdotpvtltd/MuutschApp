@@ -320,13 +320,15 @@ class CardFb1 extends StatelessWidget {
             if (showButton)
               Center(
                 child: gradientButton(
-                  "Choose Plan",
-                  ontap: onPressed,
+                  AppManager().isActiveSubscription ? "Actived" : "Choose Plan",
+                  ontap: AppManager().isActiveSubscription ? () {} : onPressed,
                   height: 4.8,
-                  font: 13.5,
+                  font: 16.5,
                   width: 60,
                   isColor: true,
-                  clr: MyColors.primary,
+                  clr: AppManager().isActiveSubscription
+                      ? Colors.green
+                      : MyColors.primary,
                 ),
               ),
             SizedBox(height: 2.h),

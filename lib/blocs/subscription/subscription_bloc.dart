@@ -66,15 +66,15 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
             }
 
             if (purchaseDetails.status == PurchaseStatus.pending) {
-              emit(
-                SubscriptionStatePurchaseFailure(
-                  exception: DataExceptionSubscriptionFailure(
-                      message:
-                          "It seems there's an unfinished transaction for this subscription. Please wait for the current transaction to complete, or finish it manually in your purchase history to proceed.",
-                      code: purchaseDetails.error?.code,
-                      source: purchaseDetails.error?.source),
-                ),
-              );
+              // emit(
+              //   SubscriptionStatePurchaseFailure(
+              //     exception: DataExceptionSubscriptionFailure(
+              //         message:
+              //             "It seems there's an unfinished transaction for this subscription. Please wait for the current transaction to complete, or finish it manually in your purchase history to proceed.",
+              //         code: purchaseDetails.error?.code,
+              //         source: purchaseDetails.error?.source),
+              //   ),
+              // );
             }
 
             if (purchaseDetails.status == PurchaseStatus.restored) {
