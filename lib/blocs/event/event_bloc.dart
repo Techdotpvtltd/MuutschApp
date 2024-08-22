@@ -10,6 +10,7 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:musch/manager/app_manager.dart';
 import 'package:musch/models/other_user_model.dart';
 import 'package:musch/models/user_model.dart';
 import 'package:place_picker/uuid.dart';
@@ -242,11 +243,16 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
     on<EventsEventFetchAll>(
       (event, emit) async {
         try {
+          final bool isActiveSubscription = AppManager().isActiveSubscription;
+
           emit(EventStateFetching());
-          final List<EventModel> fetchEvents = await EventRepo().fetchAllEvents(
-            userLat: position?.latitude ?? 0,
-            userLng: position?.longitude ?? 0,
-          );
+          final List<EventModel> fetchEvents = isActiveSubscription
+              ? await EventRepo().fetchAllEventsForPremium()
+              : await EventRepo().fetchAllEvents(
+                  userLat: position?.latitude ?? 0,
+                  userLng: position?.longitude ?? 0,
+                );
+
           for (final event in fetchEvents) {
             if (events.contains(event)) {
               continue; // skip the process
@@ -258,7 +264,11 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
                 bLong: event.location.longitude);
             events.add(event);
           }
-          events.sort((a, b) => a.distance.compareTo(b.distance));
+
+          if (!isActiveSubscription) {
+            events.sort((a, b) => a.distance.compareTo(b.distance));
+          }
+
           emit(EventStateFetched(events: events));
           emit(EventStateFetchedAll(events: events));
         } on AppException catch (e) {

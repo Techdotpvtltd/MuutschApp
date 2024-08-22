@@ -30,6 +30,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
           SubscriptionManager()
               .restorePurchases(); // Check for previous purchases
         } on AppException catch (e) {
+          emit(SubscriptionStateGotLast());
           log("[debug GetLastSubscription] ${e.message.toString()}");
         }
       },

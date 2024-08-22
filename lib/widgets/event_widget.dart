@@ -7,6 +7,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../blocs/event/event_bloc.dart';
 import '../blocs/event/event_state.dart';
+import '../manager/app_manager.dart';
 import 'custom_network_image.dart';
 
 Widget eventWidget({
@@ -20,6 +21,8 @@ Widget eventWidget({
   required String creator,
   bool isVisibleJoinButton = true,
 }) {
+  final bool isSubscribed = AppManager().isActiveSubscription;
+
   return BlocListener<EventBloc, EventState>(
     listener: (context, state) {
       if (state is EventStateJoined) {
@@ -83,22 +86,26 @@ Widget eventWidget({
                   ],
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  onClickJoinButton();
-                },
-                child: Visibility(
-                  visible: isVisibleJoinButton,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: MyColors.primary,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: textWidget(
-                      "Join",
-                      color: Colors.white,
-                      fontSize: 14.sp,
+              Visibility(
+                visible: isSubscribed,
+                child: InkWell(
+                  onTap: () {
+                    onClickJoinButton();
+                  },
+                  child: Visibility(
+                    visible: isVisibleJoinButton,
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: MyColors.primary,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: textWidget(
+                        "Join",
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                      ),
                     ),
                   ),
                 ),

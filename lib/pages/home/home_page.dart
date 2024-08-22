@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:musch/blocs/auth/auth_bloc.dart';
 import 'package:musch/blocs/auth/auth_state.dart';
 import 'package:musch/blocs/notification/notification_state.dart';
+import 'package:musch/blocs/subscription/subscription_state.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/models/chat_model.dart';
@@ -64,6 +65,7 @@ class _HomePageState extends State<HomePage> {
   List<FriendModel> friends = [];
   bool isNewNotifications = false;
   bool isFetchingEvents = false;
+  final bool isSubscribed = AppManager().isActiveSubscription;
 
   void triggerFetchAllEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchAll());
@@ -182,13 +184,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    triggerCurrentLocationEvent(context.read<EventBloc>());
-    triggerFetchFriends(context.read<FriendBloc>());
-    triggerPushNotificationSubscriptionEvents();
-    triggerFetchNotificationEvent(context.read<NotificationBloc>());
-    getNotificationOnClick();
-    triggerGetLastSubscriptionEvent(context.read<SubscriptionBloc>());
     triggerSubscriptionListenerEvent(context.read<SubscriptionBloc>());
+    triggerGetLastSubscriptionEvent(context.read<SubscriptionBloc>());
     super.initState();
   }
 
@@ -196,6 +193,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        BlocListener<SubscriptionBloc, SubscriptionState>(
+          listener: (ctx, state) {
+            if (state is SubscriptionStateGotLast) {
+              triggerCurrentLocationEvent(context.read<EventBloc>());
+              triggerFetchFriends(context.read<FriendBloc>());
+              triggerPushNotificationSubscriptionEvents();
+              triggerFetchNotificationEvent(context.read<NotificationBloc>());
+              getNotificationOnClick();
+            }
+          },
+        ),
+
         /// Auth Listener
         BlocListener<AuthBloc, AuthState>(
           listener: (_, state) {

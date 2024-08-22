@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/pages/auth/splash_screen.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 
@@ -109,9 +110,9 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
             CustomDialogs().successBox(
               message:
                   "Thank you for subscribing! Your subscription is now active. Enjoy all the benefits and features available to you.",
-              positiveTitle: "Go to Home",
+              positiveTitle: "Restart App",
               onPositivePressed: () {
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                Get.offAll(SplashScreen());
               },
             );
           }

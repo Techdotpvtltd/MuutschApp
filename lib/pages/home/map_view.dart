@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/manager/app_manager.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/widgets/custom_button.dart';
@@ -118,7 +119,8 @@ class MapSampleState extends State<MapSample> {
           showDialog(
               context: context,
               barrierColor: MyColors.primary.withOpacity(0.8),
-              builder: (context) => UserDetailDialog(user: user));
+              builder: (context) =>
+                  isSusbcribed ? UserDetailDialog(user: user) : NotAccess());
         },
         markerId: MarkerId(user.uid),
         position: LatLng(user.location!.latitude, user.location!.longitude),
@@ -128,6 +130,8 @@ class MapSampleState extends State<MapSample> {
       setState(() {});
     }
   }
+
+  final bool isSusbcribed = AppManager().isActiveSubscription;
 
   @override
   Widget build(BuildContext context) {
@@ -183,6 +187,9 @@ class MapSampleState extends State<MapSample> {
                 initialCameraPosition: CameraPosition(
                     target: LatLng(33.489044, 73.089211), zoom: 40.0),
                 zoomControlsEnabled: false,
+                zoomGesturesEnabled: isSusbcribed,
+                compassEnabled: false,
+                scrollGesturesEnabled: isSusbcribed,
                 markers: markers,
                 onMapCreated: (GoogleMapController controller) {
                   _controller = controller;
@@ -228,22 +235,37 @@ class MapSampleState extends State<MapSample> {
                             ],
                           ),
                           SizedBox(height: 2.h),
-                          InkWell(
-                            onTap: () {
-                              onSearchPressed();
-                            },
-                            child: textFieldWithPrefixSuffuxIconAndHintText(
-                              "Search Place.",
-                              controller: searchController,
-                              enable: false,
-                              fillColor: Colors.white,
-                              mainTxtColor: Colors.black,
-                              radius: 12,
-                              bColor: Colors.transparent,
-                              prefixIcon: "assets/nav/s1.png",
-                              isPrefix: true,
-                            ),
-                          ),
+                          isSusbcribed
+                              ? InkWell(
+                                  onTap: () {
+                                    onSearchPressed();
+                                  },
+                                  child:
+                                      textFieldWithPrefixSuffuxIconAndHintText(
+                                    "Search Place.",
+                                    controller: searchController,
+                                    enable: false,
+                                    fillColor: Colors.white,
+                                    mainTxtColor: Colors.black,
+                                    radius: 12,
+                                    bColor: Colors.transparent,
+                                    prefixIcon: "assets/nav/s1.png",
+                                    isPrefix: true,
+                                  ),
+                                )
+                              : Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.6),
+                                  ),
+                                  child: Text(
+                                    "In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full functionilty.",
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
                         ],
                       ),
                     ),

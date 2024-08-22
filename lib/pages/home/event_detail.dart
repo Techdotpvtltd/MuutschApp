@@ -9,8 +9,10 @@ import 'package:musch/blocs/chat/%20chat_bloc.dart';
 import 'package:musch/blocs/chat/chat_event.dart';
 import 'package:musch/blocs/chat/chat_state.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/manager/app_manager.dart';
 import 'package:musch/models/chat_model.dart';
 import 'package:musch/models/other_user_model.dart';
+import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/utils/extensions/date_extension.dart';
 import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
@@ -51,6 +53,8 @@ class EventView extends StatefulWidget {
 class _EventViewState extends State<EventView> {
   final PageController pageController = PageController();
   late EventModel event = widget.event;
+  final bool isSubscribed = AppManager().isActiveSubscription;
+
   bool isDeleting = false;
   bool isJoiningEvent = false;
   bool isChatLoading = false;
@@ -313,122 +317,123 @@ class _EventViewState extends State<EventView> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 1.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Image.asset("assets/icons/d2.png", height: 1.8.h),
-                            SizedBox(width: 2.w),
-                            textWidget(
-                              (event.dateTime).dateToString('dd MMMM, yyyy'),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w300,
-                            ),
-                            SizedBox(width: 6.w),
-                            Image.asset("assets/icons/cl.png", height: 1.8.h),
-                            SizedBox(width: 2.w),
-                            textWidget(
-                              (event.dateTime).dateToString('hh:mm a'),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ],
-                        ),
+                    if (isSubscribed) SizedBox(height: 1.h),
+                    if (isSubscribed)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Image.asset("assets/icons/d2.png", height: 1.8.h),
+                              SizedBox(width: 2.w),
+                              textWidget(
+                                (event.dateTime).dateToString('dd MMMM, yyyy'),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w300,
+                              ),
+                              SizedBox(width: 6.w),
+                              Image.asset("assets/icons/cl.png", height: 1.8.h),
+                              SizedBox(width: 2.w),
+                              textWidget(
+                                (event.dateTime).dateToString('hh:mm a'),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ],
+                          ),
 
-                        /// For Admin
-                        if (event.createdBy == UserRepo().currentUser.uid)
-                          isChatLoading
-                              ? Center(child: CircularProgressIndicator())
-                              : InkWell(
-                                  onTap: () {
-                                    if (chat == null) {
-                                      context.read<ChatBloc>().add(
-                                            ChatEventCreate(
-                                              isGroup: true,
-                                              chatAvatar:
-                                                  event.imageUrls.firstOrNull ??
-                                                      "",
-                                              chatTitle: event.title,
-                                              eventId: event.id,
-                                              isChatEnabled: true,
-                                              ids: event.joinMemberIds,
-                                              event: event,
-                                            ),
-                                          );
-                                      return;
-                                    }
-
-                                    if (chat!.isChatEnabled) {
-                                      context.read<ChatBloc>().add(
-                                            ChatEventUpdateVisibilityStatus(
-                                              status: false,
-                                              chat: chat!,
-                                            ),
-                                          );
-                                      return;
-                                    }
-                                    if (!chat!.isChatEnabled) {
-                                      context.read<ChatBloc>().add(
-                                            ChatEventUpdateVisibilityStatus(
-                                              status: true,
-                                              chat: chat!,
-                                            ),
-                                          );
-                                      return;
-                                    }
-                                  },
-                                  child: Text(
-                                    chat != null
-                                        ? chat!.isChatEnabled
-                                            ? "Disable Group Chat"
-                                            : "Enable Group Chat"
-                                        : "Create Group Chat",
-                                    style: TextStyle(
-                                      color: MyColors.primary3,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
-
-                        /// For Users
-                        if (event.createdBy != UserRepo().currentUser.uid &&
-                            chat != null &&
-                            chat!.isChatEnabled &&
-                            event.joinMemberIds
-                                .contains(UserRepo().currentUser.uid))
-                          isChatLoading
-                              ? Center(child: CircularProgressIndicator())
-                              : InkWell(
-                                  onTap: () {
-                                    chat!.participantUids.contains(
-                                      UserRepo().currentUser.uid,
-                                    )
-                                        ? NavigationService.go(
-                                            UserChatPage(chat: chat!))
-                                        : context.read<ChatBloc>().add(
-                                              ChatEventJoinGroupChat(
+                          /// For Admin
+                          if (event.createdBy == UserRepo().currentUser.uid)
+                            isChatLoading
+                                ? Center(child: CircularProgressIndicator())
+                                : InkWell(
+                                    onTap: () {
+                                      if (chat == null) {
+                                        context.read<ChatBloc>().add(
+                                              ChatEventCreate(
+                                                isGroup: true,
+                                                chatAvatar: event.imageUrls
+                                                        .firstOrNull ??
+                                                    "",
+                                                chatTitle: event.title,
                                                 eventId: event.id,
+                                                isChatEnabled: true,
+                                                ids: event.joinMemberIds,
+                                                event: event,
                                               ),
                                             );
-                                  },
-                                  child: Text(
-                                    chat!.participantUids.contains(
-                                      UserRepo().currentUser.uid,
-                                    )
-                                        ? "View Group Chat"
-                                        : "Join Group Chat",
-                                    style: TextStyle(
-                                      color: MyColors.primary3,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 13,
+                                        return;
+                                      }
+
+                                      if (chat!.isChatEnabled) {
+                                        context.read<ChatBloc>().add(
+                                              ChatEventUpdateVisibilityStatus(
+                                                status: false,
+                                                chat: chat!,
+                                              ),
+                                            );
+                                        return;
+                                      }
+                                      if (!chat!.isChatEnabled) {
+                                        context.read<ChatBloc>().add(
+                                              ChatEventUpdateVisibilityStatus(
+                                                status: true,
+                                                chat: chat!,
+                                              ),
+                                            );
+                                        return;
+                                      }
+                                    },
+                                    child: Text(
+                                      chat != null
+                                          ? chat!.isChatEnabled
+                                              ? "Disable Group Chat"
+                                              : "Enable Group Chat"
+                                          : "Create Group Chat",
+                                      style: TextStyle(
+                                        color: MyColors.primary3,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                   ),
-                                ),
-                      ],
-                    ),
+
+                          /// For Users
+                          if (event.createdBy != UserRepo().currentUser.uid &&
+                              chat != null &&
+                              chat!.isChatEnabled &&
+                              event.joinMemberIds
+                                  .contains(UserRepo().currentUser.uid))
+                            isChatLoading
+                                ? Center(child: CircularProgressIndicator())
+                                : InkWell(
+                                    onTap: () {
+                                      chat!.participantUids.contains(
+                                        UserRepo().currentUser.uid,
+                                      )
+                                          ? NavigationService.go(
+                                              UserChatPage(chat: chat!))
+                                          : context.read<ChatBloc>().add(
+                                                ChatEventJoinGroupChat(
+                                                  eventId: event.id,
+                                                ),
+                                              );
+                                    },
+                                    child: Text(
+                                      chat!.participantUids.contains(
+                                        UserRepo().currentUser.uid,
+                                      )
+                                          ? "View Group Chat"
+                                          : "Join Group Chat",
+                                      style: TextStyle(
+                                        color: MyColors.primary3,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                        ],
+                      ),
                     if (event.description != "" || event.description == null)
                       SizedBox(height: 3.h),
                     if (event.description != "" || event.description == null)
@@ -533,30 +538,45 @@ class _EventViewState extends State<EventView> {
                               ),
                             ],
                           )
-                        : Visibility(
-                            visible: widget.joinMembers
-                                    .where((element) =>
-                                        element.uid ==
-                                        UserRepo().currentUser.uid)
-                                    .length <
-                                1,
-                            child: gradientButton(
-                              isJoiningEvent && joiningEventId == event.id
-                                  ? "Joining..."
-                                  : "Join Event",
-                              font: 17,
-                              isLoading:
-                                  isJoiningEvent && joiningEventId == event.id,
-                              txtColor: MyColors.white,
-                              ontap: () {
-                                triggerJoinEvent(context.read<EventBloc>());
-                              },
-                              width: 90,
-                              height: 6.6,
-                              isColor: true,
-                              clr: MyColors.primary,
-                            ),
-                          ),
+                        : isSubscribed
+                            ? Visibility(
+                                visible: widget.joinMembers
+                                        .where((element) =>
+                                            element.uid ==
+                                            UserRepo().currentUser.uid)
+                                        .length <
+                                    1,
+                                child: gradientButton(
+                                  isJoiningEvent && joiningEventId == event.id
+                                      ? "Joining..."
+                                      : "Join Event",
+                                  font: 17,
+                                  isLoading: isJoiningEvent &&
+                                      joiningEventId == event.id,
+                                  txtColor: MyColors.white,
+                                  ontap: () {
+                                    triggerJoinEvent(context.read<EventBloc>());
+                                  },
+                                  width: 90,
+                                  height: 6.6,
+                                  isColor: true,
+                                  clr: MyColors.primary,
+                                ),
+                              )
+                            : gradientButton(
+                                "Buy Subscription",
+                                font: 17,
+                                isLoading: isJoiningEvent &&
+                                    joiningEventId == event.id,
+                                txtColor: MyColors.white,
+                                ontap: () {
+                                  Get.to(SubscriptionPlan());
+                                },
+                                width: 90,
+                                height: 6.6,
+                                isColor: true,
+                                clr: MyColors.primary,
+                              ),
                     gapH20,
                   ],
                 ),

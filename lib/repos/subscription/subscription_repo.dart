@@ -5,6 +5,8 @@
 // Date:        28-05-24 16:49:07 -- Tuesday
 // Description:
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:ntp/ntp.dart';
@@ -69,7 +71,7 @@ class SubscriptionRepo {
               field: "subscribedBy",
               value: UserRepo().currentUser.uid,
               type: QueryType.isEqual),
-          QueryModel(field: "startTime", value: false, type: QueryType.orderBy),
+          QueryModel(field: "endTime", value: true, type: QueryType.orderBy),
           QueryModel(field: "", value: 1, type: QueryType.limit),
         ],
       );
@@ -90,5 +92,7 @@ class SubscriptionRepo {
         now.millisecondsSinceEpoch) {
       AppManager().isActiveSubscription = true;
     }
+
+    log("${AppManager().isActiveSubscription}", name: "Active Subscription");
   }
 }

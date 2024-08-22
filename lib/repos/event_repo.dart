@@ -237,6 +237,32 @@ class EventRepo {
     }
   }
 
+  Future<List<EventModel>> fetchAllEventsForPremium(
+      {DocumentSnapshot? lastDoc}) async {
+    try {
+      final String userId = UserRepo().currentUser.uid;
+      final List<Map<String, dynamic>> maps =
+          await FirestoreService().fetchWithMultipleConditions(
+        collection: FIREBASE_COLLECTION_EVENTS,
+        queries: [
+          QueryModel(field: "dateTime", value: true, type: QueryType.orderBy),
+          if (lastDoc != null)
+            QueryModel(
+                field: "", value: lastDoc, type: QueryType.startAfterDocument),
+        ],
+      );
+
+      final List<EventModel> events = maps
+          .map((e) => EventModel.fromMap(e))
+          .where((element) => element.createdBy != userId)
+          .toList();
+      return events;
+    } catch (e) {
+      debugPrint("[debug EventFetchAll] $e");
+      throw throwAppException(e: e);
+    }
+  }
+
   Future<EventModel?> fetchWith({required String eventid}) async {
     try {
       final Map<String, dynamic>? data = await FirestoreService()
