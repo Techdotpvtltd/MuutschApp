@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:musch/manager/app_manager.dart';
 import 'package:musch/pages/home/add_event.dart';
+import 'package:musch/pages/home/subscription_plan.dart';
+import 'package:musch/utils/extensions/navigation_service.dart';
+import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
@@ -10,6 +14,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
+import '../../config/colors.dart';
 import '../../models/event_model.dart';
 import '../../utils/constants/app_theme.dart';
 import '../../utils/constants/constants.dart';
@@ -29,6 +34,7 @@ class _MyEventsState extends State<MyEvents> {
   bool isLoading = true;
   List<EventModel> events = [];
   List<EventModel> filteredEvents = [];
+  final bool isSusbcribed = AppManager().isActiveSubscription;
 
   void triggerFetchOwnEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchOwn());
@@ -110,21 +116,24 @@ class _MyEventsState extends State<MyEvents> {
           Positioned.fill(
             child: SafeArea(
               child: Scaffold(
-                floatingActionButton: InkWell(
-                  onTap: () {
-                    Get.to(AddEvent());
-                  },
-                  child: FloatingActionButton(
-                    onPressed: () {
+                floatingActionButton: Visibility(
+                  visible: isSusbcribed,
+                  child: InkWell(
+                    onTap: () {
                       Get.to(AddEvent());
                     },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Remix.add_line,
-                      color: Color(0xffFFAD85),
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        Get.to(AddEvent());
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Remix.add_line,
+                        color: Color(0xffFFAD85),
+                      ),
                     ),
                   ),
                 ),
@@ -187,7 +196,7 @@ class _MyEventsState extends State<MyEvents> {
                               )
                             : Center(
                                 child: filteredEvents.isEmpty
-                                    ? Text("No Events.")
+                                    ? _emptyMessage(isSusbcribed)
                                     : ListView.builder(
                                         itemCount: filteredEvents.length,
                                         padding: EdgeInsets.only(
@@ -288,4 +297,40 @@ class _MyEventsState extends State<MyEvents> {
       ),
     );
   }
+}
+
+Widget _emptyMessage(bool isSubscribed) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: isSubscribed
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("No Events."),
+            ],
+          )
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "You can't add new events in the free version. Please subscribe to the premium version to create a new event.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              gapH20,
+              gradientButton(
+                "Get Susbcription",
+                font: 17,
+                txtColor: MyColors.white,
+                ontap: () {
+                  NavigationService.go(SubscriptionPlan());
+                },
+                width: 90,
+                height: 6.6,
+                isColor: true,
+                clr: MyColors.primary,
+              ),
+            ],
+          ),
+  );
 }
