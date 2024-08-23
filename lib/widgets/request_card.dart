@@ -32,13 +32,13 @@ Widget requestCard({bool isAccept = false}) {
                     children: [
                       Row(
                         children: [
-                          text_widget(
+                          textWidget(
                             "Ronaldo Seemd",
                             fontSize: 15.8.sp,
                             fontWeight: FontWeight.w500,
                           ),
                           Spacer(),
-                          text_widget("2 day ago",
+                          textWidget("2 day ago",
                               fontSize: 13.4.sp,
                               color: Color(0xff525252),
                               fontWeight: FontWeight.w400),
@@ -47,12 +47,12 @@ Widget requestCard({bool isAccept = false}) {
                       SizedBox(height: 0.3.h),
                       Row(
                         children: [
-                          text_widget("Traveling",
+                          textWidget("Traveling",
                               fontSize: 13.4.sp,
                               color: Color(0xff525252),
                               fontWeight: FontWeight.w400),
                           SizedBox(width: 2.w),
-                          text_widget("Photography",
+                          textWidget("Photography",
                               fontSize: 13.4.sp,
                               color: Color(0xff525252),
                               fontWeight: FontWeight.w400),

@@ -51,7 +51,7 @@ class _RequestPageState extends State<RequestPage> {
                             Icon(Remix.arrow_left_s_line,
                                 color: Colors.white, size: 4.h),
                             SizedBox(width: 2.w),
-                            text_widget("All Request",
+                            textWidget("All Request",
                                 color: Colors.white, fontSize: 18.sp),
                           ],
                         ),
@@ -65,7 +65,7 @@ class _RequestPageState extends State<RequestPage> {
                                   current = 0;
                                 });
                               },
-                              child: text_widget("Friend Request ",
+                              child: textWidget("Friend Request ",
                                   fontSize: 15.sp,
                                   color: current == 0
                                       ? MyColors.primary
@@ -78,7 +78,7 @@ class _RequestPageState extends State<RequestPage> {
                                   current = 1;
                                 });
                               },
-                              child: text_widget("View Send Request ",
+                              child: textWidget("View Send Request ",
                                   fontSize: 15.sp,
                                   color: current == 1
                                       ? MyColors.primary

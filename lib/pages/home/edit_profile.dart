@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
+import 'package:place_picker/place_picker.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../blocs/user/user_bloc.dart';
+import '../../blocs/user/user_event.dart';
+import '../../blocs/user/user_state.dart';
+import '../../models/location_model.dart';
+import '../../models/user_model.dart';
+import '../../repos/user_repo.dart';
+import '../../utils/dialogs/dialogs.dart';
+import '../../widgets/avatar_widget.dart';
+import '../../widgets/my_image_picker.dart';
+import '../auth/interest_page.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -16,13 +30,126 @@ class _EditProfileState extends State<EditProfile> {
   List<bool> faqs = [false, false, false, false, false];
   bool status4 = false;
   int current = 0;
+  final UserModel user = UserRepo().currentUser;
+  String? selectedAvatar;
+  List<String> interests = [];
+  LocationModel? location;
+  bool isLoading = false;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+
+  void selectImage() {
+    final MyImagePicker imagePicker = MyImagePicker();
+    imagePicker.pick();
+    imagePicker.onSelection(
+      (exception, data) {
+        if (data is XFile) {
+          setState(() {
+            selectedAvatar = data.path;
+          });
+        }
+      },
+    );
+  }
+
+  void pickLocation() async {
+    final LocationResult result = await Get.to(
+      PlacePicker(
+        "AIzaSyAqSjBWxORHHKlLY7ISV5BmookK7fQlw4U",
+        defaultLocation:
+            (location?.latitude != null && location?.longitude != null)
+                ? LatLng(location!.latitude, location!.longitude)
+                : null,
+      ),
+    );
+
+    location = LocationModel(
+      address: result.formattedAddress,
+      city: result.city?.name,
+      country: result.country?.name,
+      latitude: result.latLng?.latitude ?? 0,
+      longitude: result.latLng?.longitude ?? 0,
+    );
+
+    setState(() {
+      locationController.text = location?.address ?? "";
+    });
+  }
+
+  void triggerUpdateProfileEvent(UserBloc bloc) {
+    if (interests.isEmpty) {
+      CustomDialogs().errorBox(message: "Please select interests.");
+      return;
+    }
+
+    if (nameController.text.isEmpty) {
+      CustomDialogs().errorBox(message: "Please enter name.");
+      return;
+    }
+
+    if (emailController.text.isEmpty) {
+      CustomDialogs().errorBox(message: "Please enter email.");
+      return;
+    }
+
+    if (location == null) {
+      CustomDialogs().errorBox(message: "Please select location.");
+      return;
+    }
+
+    bloc.add(
+      UserEventUpdateProfile(
+          location: location,
+          avatar: selectedAvatar,
+          name: nameController.text,
+          email: emailController.text),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController.text = user.name;
+    emailController.text = user.email;
+    locationController.text = user.location?.address ?? "";
+    emailController.text = user.email;
+    interests = user.interests ?? [];
+    location = user.location;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xfff2f2f2),
-      body: SingleChildScrollView(
-        child: SafeArea(
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserStateProfileUpdating ||
+            state is UserStateProfileUpdated ||
+            state is UserStateProfileUpdatingFailure ||
+            state is UserStateAvatarUploading ||
+            state is UserStateAvatarUploaded ||
+            state is UserStatAvatareUploadingFailure) {
+          setState(() {
+            isLoading = state.isLoading;
+          });
+
+          if (state is UserStateProfileUpdatingFailure) {
+            CustomDialogs().errorBox(message: state.exception.message);
+          }
+
+          if (state is UserStateProfileUpdated) {
+            CustomDialogs().successBox(message: "Profile Updated");
+            setState(() {
+              nameController.text = nameController.text;
+            });
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Color(0xfff2f2f2),
+        body: SingleChildScrollView(
+          child: SafeArea(
             bottom: false,
             child: Padding(
               padding:
@@ -42,7 +169,7 @@ class _EditProfileState extends State<EditProfile> {
                             size: 3.8.h,
                           )),
                       SizedBox(width: 3.w),
-                      text_widget(
+                      textWidget(
                         "Edit Profile",
                         fontWeight: FontWeight.w600,
                         fontSize: 18.sp,
@@ -55,203 +182,159 @@ class _EditProfileState extends State<EditProfile> {
                   Center(
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: MyColors.primary,
-                          radius: 5.7.h,
-                          backgroundImage: AssetImage('assets/images/girl.png'),
+                        AvatarWidget(
+                          backgroundColor: Colors.black,
+                          avatarUrl: selectedAvatar ?? user.avatar,
+                          onEditPressed: () {
+                            selectImage();
+                          },
                         ),
-                        Positioned.fill(
-                            child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Image.asset(
-                            "assets/icons/cam1.png",
-                            height: 3.h,
-                          ),
-                        ))
+                        // Positioned(
+                        //   child: Image.asset(
+                        //     "assets/icons/cam1.png",
+                        //     height: 3.h,
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
                   SizedBox(height: 2.h),
                   Center(
-                    child: text_widget(
-                      "Irene foks",
+                    child: textWidget(
+                      user.name,
                       fontSize: 17.8.sp,
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  text_widget(
+                  textWidget(
                     "Name",
                     fontSize: 15.6.sp,
                   ),
                   SizedBox(height: 1.h),
 
-                  textFieldWithPrefixSuffuxIconAndHintText("Hammad Habbib",
-                      // controller: _.password,
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: true,
-                      suffixIcon: "assets/icons/edit.png"),
+                  textFieldWithPrefixSuffuxIconAndHintText(
+                    "Enter Name",
+                    controller: nameController,
+                    fillColor: Colors.white,
+                    mainTxtColor: Colors.black,
+                    radius: 12,
+                    bColor: Colors.transparent,
+                  ),
 
                   SizedBox(height: 3.h),
-                  text_widget(
+                  textWidget(
                     "Email",
                     fontSize: 15.6.sp,
                   ),
                   SizedBox(height: 1.h),
 
-                  textFieldWithPrefixSuffuxIconAndHintText("sddmnbhr@gmail.com",
-                      // controller: _.password,
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: true,
-                      suffixIcon: "assets/icons/edit.png"),
-                  SizedBox(height: 3.h),
-                  text_widget(
-                    "Password",
-                    fontSize: 15.6.sp,
+                  textFieldWithPrefixSuffuxIconAndHintText(
+                    user.email != "" ? user.email : "Enter email",
+                    fillColor: Colors.white,
+                    mainTxtColor: Colors.black,
+                    enable: user.email == "",
+                    radius: 12,
+                    bColor: Colors.transparent,
                   ),
-                  SizedBox(height: 1.h),
-
-                  textFieldWithPrefixSuffuxIconAndHintText("***********",
-                      // controller: _.password,
-                      obsecure: true,
-                      fillColor: Colors.white,
-                      mainTxtColor: Colors.black,
-                      radius: 12,
-                      bColor: Colors.transparent,
-                      isSuffix: true,
-                      suffixIcon: "assets/icons/edit.png"),
-
                   SizedBox(height: 3.h),
-                  text_widget(
+
+                  textWidget(
                     "Location",
                     fontSize: 15.6.sp,
                   ),
                   SizedBox(height: 1.h),
 
-                  textFieldWithPrefixSuffuxIconAndHintText("New York",
-                      // controller: _.password,
+                  InkWell(
+                    onTap: () {
+                      pickLocation();
+                    },
+                    child: textFieldWithPrefixSuffuxIconAndHintText(
+                      "Select Location",
+                      controller: locationController,
                       fillColor: Colors.white,
                       mainTxtColor: Colors.black,
+                      enable: false,
                       radius: 12,
                       bColor: Colors.transparent,
-                      isSuffix: true,
-                      suffixIcon: "assets/icons/edit.png"),
+                    ),
+                  ),
                   SizedBox(height: 3.h),
-                  text_widget(
-                    "Interest",
-                    fontSize: 15.6.sp,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      textWidget(
+                        "Interest",
+                        fontSize: 15.6.sp,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Get.to(InterestPage(isComingFromSignup: false));
+
+                          setState(() {
+                            interests = UserRepo().currentUser.interests ?? [];
+                          });
+                        },
+                        icon: Image.asset(
+                          'assets/icons/edit.png',
+                          width: 16,
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(height: 1.h),
 
-                  Container(
-                    height: 6.h,
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Container(
-                          height: 6.h,
+                  /// List Of Interests
+                  GridView.custom(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 4,
+                    ),
+                    childrenDelegate: SliverChildBuilderDelegate(
+                      childCount: interests.length,
+                      (context, index) {
+                        return Container(
+                          padding: EdgeInsets.symmetric(horizontal: 14),
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Row(
-                              children: [
-                                text_widget("Traveling",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.5.sp),
-                                Spacer(),
-                                Image.asset(
-                                  "assets/icons/edit.png",
-                                  height: 2.3.h,
-                                )
-                              ],
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: textWidget(
+                              interests[index],
+                              textAlign: TextAlign.center,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15.5.sp,
                             ),
                           ),
-                        )),
-                        SizedBox(width: 2.5.w),
-                        Expanded(
-                            child: Container(
-                          height: 6.h,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Row(
-                              children: [
-                                text_widget("Shopping",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.5.sp),
-                                Spacer(),
-                                Image.asset(
-                                  "assets/icons/edit.png",
-                                  height: 2.3.h,
-                                )
-                              ],
-                            ),
-                          ),
-                        ))
-                      ],
+                        );
+                      },
                     ),
                   ),
-                  SizedBox(height: 1.h),
 
-                  Container(
-                    height: 6.h,
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Container(
-                          height: 6.h,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Row(
-                              children: [
-                                text_widget("Photography",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.5.sp),
-                                Spacer(),
-                                Image.asset(
-                                  "assets/icons/edit.png",
-                                  height: 2.3.h,
-                                )
-                              ],
-                            ),
-                          ),
-                        )),
-                        SizedBox(width: 2.5.w),
-                        Expanded(
-                            child: Container(
-                          height: 6.h,
-                        ))
-                      ],
-                    ),
-                  ),
                   SizedBox(height: 4.h),
-                  gradientButton("Save Change",
-                      font: 17, txtColor: MyColors.white, ontap: () {
-                    // _.loginUser();
-                  },
-                      width: 90,
-                      height: 6.6,
-                      isColor: true,
-                      clr: MyColors.primary),
+                  gradientButton(
+                    "Save Change",
+                    isLoading: isLoading,
+                    font: 17,
+                    txtColor: MyColors.white,
+                    ontap: () {
+                      triggerUpdateProfileEvent(context.read<UserBloc>());
+                    },
+                    width: 90,
+                    height: 6.6,
+                    isColor: true,
+                    clr: MyColors.primary,
+                  ),
                   SizedBox(height: 10.h),
                 ],
               ),
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }

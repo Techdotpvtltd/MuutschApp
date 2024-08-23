@@ -88,7 +88,7 @@ class _EditEventState extends State<EditEvent> {
                             size: 3.8.h,
                           )),
                       SizedBox(width: 3.w),
-                      text_widget(
+                      textWidget(
                         isEdit ? "Edit Event " : "Event Detail",
                         fontWeight: FontWeight.w600,
                         fontSize: 18.sp,
@@ -146,7 +146,7 @@ class _EditEventState extends State<EditEvent> {
                       },
                     ),
                   ),
-                  text_widget(
+                  textWidget(
                     "Event Title",
                     fontSize: 15.6.sp,
                   ),
@@ -173,7 +173,7 @@ class _EditEventState extends State<EditEvent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            text_widget(
+                            textWidget(
                               "Date",
                               fontSize: 15.6.sp,
                             ),
@@ -215,7 +215,7 @@ class _EditEventState extends State<EditEvent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            text_widget(
+                            textWidget(
                               "Time",
                               fontSize: 15.6.sp,
                             ),
@@ -237,7 +237,7 @@ class _EditEventState extends State<EditEvent> {
                     ],
                   ),
                   SizedBox(height: 2.h),
-                  text_widget(
+                  textWidget(
                     "Location",
                     fontSize: 15.6.sp,
                   ),
@@ -260,7 +260,7 @@ class _EditEventState extends State<EditEvent> {
                     ),
                   ),
                   SizedBox(height: 2.h),
-                  text_widget(
+                  textWidget(
                     "Description",
                     fontSize: 15.6.sp,
                   ),

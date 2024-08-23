@@ -49,7 +49,7 @@ class _DonePaymentState extends State<DonePayment> {
                               size: 4.h,
                             )),
                         SizedBox(width: 3.w),
-                        text_widget("Payment Success",
+                        textWidget("Payment Success",
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                             fontSize: 20.sp),
@@ -77,14 +77,14 @@ class _DonePaymentState extends State<DonePayment> {
                                 children: [
                                   SizedBox(height: 6.h),
                                   Center(
-                                    child: text_widget(
+                                    child: textWidget(
                                       "Great",
                                       color: MyColors.primary,
                                       fontSize: 15.8.sp,
                                     ),
                                   ),
                                   Center(
-                                    child: text_widget(
+                                    child: textWidget(
                                       "Payment Success",
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.w600,
@@ -93,12 +93,12 @@ class _DonePaymentState extends State<DonePayment> {
                                   SizedBox(height: 3.h),
                                   Row(
                                     children: [
-                                      text_widget("Payment Mode",
+                                      textWidget("Payment Mode",
                                           fontSize: 15.sp,
                                           color: Color(0xff757575),
                                           fontWeight: FontWeight.w400),
                                       Spacer(),
-                                      text_widget(
+                                      textWidget(
                                         "Apple Pay",
                                         fontSize: 15.sp,
                                         color: MyColors.black,
@@ -108,12 +108,12 @@ class _DonePaymentState extends State<DonePayment> {
                                   SizedBox(height: 2.h),
                                   Row(
                                     children: [
-                                      text_widget("Total Amount",
+                                      textWidget("Total Amount",
                                           fontSize: 15.sp,
                                           color: Color(0xff757575),
                                           fontWeight: FontWeight.w400),
                                       Spacer(),
-                                      text_widget(
+                                      textWidget(
                                         "\$23.00",
                                         fontSize: 15.sp,
                                         color: MyColors.black,
@@ -123,12 +123,12 @@ class _DonePaymentState extends State<DonePayment> {
                                   SizedBox(height: 2.h),
                                   Row(
                                     children: [
-                                      text_widget("Pay Date",
+                                      textWidget("Pay Date",
                                           fontSize: 15.sp,
                                           color: Color(0xff757575),
                                           fontWeight: FontWeight.w400),
                                       Spacer(),
-                                      text_widget(
+                                      textWidget(
                                         "Apr 10, 2023",
                                         fontSize: 15.sp,
                                         color: MyColors.black,
@@ -138,12 +138,12 @@ class _DonePaymentState extends State<DonePayment> {
                                   SizedBox(height: 2.h),
                                   Row(
                                     children: [
-                                      text_widget("Pay Time",
+                                      textWidget("Pay Time",
                                           fontSize: 15.sp,
                                           color: Color(0xff757575),
                                           fontWeight: FontWeight.w400),
                                       Spacer(),
-                                      text_widget(
+                                      textWidget(
                                         "Pay Time",
                                         fontSize: 15.sp,
                                         color: MyColors.black,
@@ -156,7 +156,7 @@ class _DonePaymentState extends State<DonePayment> {
                                   ),
                                   SizedBox(height: 3.h),
                                   Center(
-                                    child: text_widget(
+                                    child: textWidget(
                                       "Total Pay",
                                       fontSize: 14.5.sp,
                                       color: Color(0xff757575),
@@ -164,7 +164,7 @@ class _DonePaymentState extends State<DonePayment> {
                                   ),
                                   SizedBox(height: 0.4.h),
                                   Center(
-                                    child: text_widget("\$23.00",
+                                    child: textWidget("\$23.00",
                                         color: MyColors.primary,
                                         fontSize: 18.6.sp,
                                         fontWeight: FontWeight.bold),

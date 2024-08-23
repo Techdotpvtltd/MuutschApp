@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:musch/blocs/event/event_bloc.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/auth/change_password.dart';
-import 'package:musch/pages/auth/login_page.dart';
 import 'package:musch/pages/home/my_eventss.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
@@ -15,6 +16,16 @@ import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_event.dart';
+import '../../blocs/event/events_event.dart';
+import '../../blocs/user/user_bloc.dart';
+import '../../blocs/user/user_state.dart';
+import '../../models/user_model.dart';
+import '../../repos/user_repo.dart';
+import '../../utils/dialogs/dialogs.dart';
+import '../../widgets/avatar_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isDrawer;
@@ -30,18 +41,35 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   List<bool> faqs = [false, false, false, false, false];
   bool status4 = false;
+  final UserModel user = UserRepo().currentUser;
+
   // int current = 0;
+
+  void trigegrLogoutEvent(AuthBloc bloc) {
+    CustomDialogs().alertBox(
+      title: "Logout Action",
+      message: "Are you sure to logout this account?",
+      negativeTitle: "No",
+      positiveTitle: "Yes",
+      onPositivePressed: () {
+        bloc.add(AuthEventPerformLogout());
+        context.read<EventBloc>().add(EventsEventClearAndUnSubscribe());
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Positioned.fill(
-            child: Image.asset(
-          "assets/nav/dp.png",
-          // height: 20.h,
-          fit: BoxFit.fill,
-        )),
+          /// Background
+          child: Image.asset(
+            "assets/nav/dp.png",
+            // height: 20.h,
+            fit: BoxFit.fill,
+          ),
+        ),
         Scaffold(
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
@@ -78,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 size: 3.h,
                               )),
                           SizedBox(width: 3.w),
-                          text_widget("Profile",
+                          textWidget("Profile",
                               fontWeight: FontWeight.w600, fontSize: 18.sp),
                         ],
                       ),
@@ -96,35 +124,45 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(18.0),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 3.5.h,
-                                  backgroundColor: MyColors.background,
-                                  backgroundImage:
-                                      AssetImage("assets/images/girl.png"),
-                                ),
-                                SizedBox(width: 4.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      text_widget("Arslan Goursi",
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600),
-                                      SizedBox(height: 0.5.h),
-                                      text_widget(
-                                        "arslangoursi123@gmail.com",
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                      ),
-                                    ],
+                            child:
+                                BlocSelector<UserBloc, UserState, UserModel?>(
+                                    selector: (state) {
+                              return state is UserStateProfileUpdated
+                                  ? UserRepo().currentUser
+                                  : null;
+                            }, builder: (context, statedData) {
+                              return Row(
+                                children: [
+                                  AvatarWidget(
+                                    height: 60,
+                                    width: 60,
+                                    backgroundColor: Colors.black,
+                                    avatarUrl: (statedData ?? user).avatar,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  SizedBox(width: 4.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        textWidget(
+                                          (statedData ?? user).name,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        SizedBox(height: 0.5.h),
+                                        textWidget(
+                                          (statedData ?? user).email,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
                           ),
                         ),
                       ),
@@ -146,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 "assets/icons/lock.png",
                                 height: 2.8.h,
                               ),
-                              title: text_widget("Change password",
+                              title: textWidget("Change password",
                                   fontSize: 15.2.sp),
                             ),
                           ),
@@ -170,14 +208,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                   height: 2.8.h,
                                 ),
                                 title:
-                                    text_widget("My Event", fontSize: 15.2.sp),
+                                    textWidget("My Event", fontSize: 15.2.sp),
                               ),
                             ),
                           )),
                       SizedBox(height: 2.h),
                       InkWell(
                         onTap: () {
-                          Get.to(AllFriends());
+                          Get.to(
+                            AllFriends(),
+                          );
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -192,7 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 2.8.h,
                               ),
                               title:
-                                  text_widget("My Friends", fontSize: 15.2.sp),
+                                  textWidget("My Friends", fontSize: 15.2.sp),
                             ),
                           ),
                         ),
@@ -214,8 +254,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 "assets/icons/sub1.png",
                                 height: 2.8.h,
                               ),
-                              title: text_widget("Subscription",
-                                  fontSize: 15.2.sp),
+                              title:
+                                  textWidget("Subscription", fontSize: 15.2.sp),
                             ),
                           ),
                         ),
@@ -223,7 +263,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(height: 5.h),
                       gradientButton("Log Out",
                           font: 17, txtColor: MyColors.white, ontap: () {
-                        Get.offAll(LoginPage());
+                        trigegrLogoutEvent(context.read<AuthBloc>());
                         // _.loginUser();
                       },
                           width: 90,

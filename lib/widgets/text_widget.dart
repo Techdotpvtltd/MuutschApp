@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-Widget text_widget(String text,
+Widget textWidget(String text,
     {fontSize,
     color,
     fontWeight,
@@ -17,6 +17,7 @@ Widget text_widget(String text,
     text,
     maxLines: maxline,
     textAlign: textAlign,
+    overflow: TextOverflow.ellipsis,
     style: GoogleFonts.poppins(
       color: color ?? Colors.black,
       fontSize: fontSize ?? 17.sp,
@@ -28,5 +29,3 @@ Widget text_widget(String text,
     ),
   );
 }
-
-

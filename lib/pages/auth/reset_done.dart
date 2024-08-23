@@ -51,11 +51,11 @@ class _ResetDoneState extends State<ResetDone> {
                     )),
                     SizedBox(height: 4.h),
                     Center(
-                      child: text_widget("Email has been sent!",
+                      child: textWidget("Email has been sent!",
                           fontSize: 21.sp, fontWeight: FontWeight.w600),
                     ),
                     SizedBox(height: 0.4.h),
-                    text_widget(
+                    textWidget(
                         "Please check your inbox and follow the instructions to reset your password.",
                         fontSize: 15.sp,
                         color: Color(0xff8C8C8C),
@@ -71,7 +71,7 @@ class _ResetDoneState extends State<ResetDone> {
                         clr: MyColors.primary),
                     SizedBox(height: 2.h),
                     Center(
-                      child: text_widget("Didn’t receive the link?",
+                      child: textWidget("Didn’t receive the link?",
                           fontSize: 15.sp,
                           color: MyColors.primary,
                           textAlign: TextAlign.center),
@@ -85,7 +85,7 @@ class _ResetDoneState extends State<ResetDone> {
                           height: 1.7.h,
                         ),
                         SizedBox(width: 2.w),
-                        text_widget("Reset",
+                        textWidget("Reset",
                             fontSize: 15.sp,
                             color: MyColors.primary,
                             textAlign: TextAlign.center),

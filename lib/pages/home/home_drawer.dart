@@ -9,14 +9,15 @@ import 'package:musch/controller/nav_controller.dart';
 import 'package:musch/pages/auth/change_password.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/contact_us.dart';
-import 'package:musch/pages/home/faq_screen.dart';
 import 'package:musch/pages/home/notification_screen.dart';
 import 'package:musch/pages/home/privacy_policy.dart';
 import 'package:musch/pages/home/profile_page.dart';
-import 'package:musch/pages/home/term_page.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../repos/user_repo.dart';
+import '../../widgets/avatar_widget.dart';
 
 List titles = [
   "Home",
@@ -24,10 +25,7 @@ List titles = [
   "Notifications",
   "Change Password",
   "Privacy Policy",
-  "Teams & Conditions",
   "Contact us",
-  "Faq’s",
-  // "Setting",
 ];
 
 List images = [
@@ -36,9 +34,7 @@ List images = [
   "assets/nav/d3.png",
   "assets/nav/d4.png",
   "assets/nav/d5.png",
-  "assets/nav/d6.png",
   "assets/nav/d7.png",
-  "assets/nav/d8.png"
 ];
 
 class HomeDrawer extends StatefulWidget {
@@ -60,89 +56,117 @@ class _HomeDrawerState extends State<HomeDrawer> {
           _.closeDrawer();
         },
         child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Color(0xfff2f2f2),
-            body: Builder(builder: (context) {
-              return Stack(children: [
-                Positioned.fill(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Color(0xfff2f2f2),
+          body: Builder(
+            builder: (context) {
+              return Stack(
+                children: [
+                  Positioned.fill(
                     child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Image.asset(
-                    "assets/images/shape2.png",
-                    height: 25.h,
-                    fit: BoxFit.fill,
+                      alignment: Alignment.bottomLeft,
+                      child: Image.asset(
+                        "assets/images/shape2.png",
+                        height: 25.h,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
-                )),
-                ZoomDrawer(
-                    disableDragGesture: true,
-                    controller: _.zoomDrawerController,
-                    menuScreen: DrawerScreen(setIndex: (index) {
-                      setState(() {
-                        currentIndex = index;
-                        _.open = false;
-                      });
-                    }),
-                    mainScreen: Builder(builder: (context) {
-                      return currentScreen();
-                    }),
-                    borderRadius: 30,
-                    // style: DrawerStyle.style2,
-                    showShadow: true,
-                    angle: -0,
-                    slideWidth: 290,
-                    shadowLayer1Color: Colors.grey.shade200,
-                    // slideHeight: 0,
-                    menuBackgroundColor: Colors.transparent),
-                _.open
-                    ? Positioned.fill(
-                        child: SafeArea(
+                  ZoomDrawer(
+                      disableDragGesture: true,
+                      controller: _.zoomDrawerController,
+                      menuScreen: DrawerScreen(
+                        setIndex: (index) {
+                          setState(
+                            () {
+                              currentIndex = index;
+                              _.open = false;
+                            },
+                          );
+                        },
+                      ),
+                      mainScreen: Builder(
+                        builder: (context) {
+                          return currentScreen();
+                        },
+                      ),
+                      borderRadius: 30,
+                      // style: DrawerStyle.style2,
+                      showShadow: true,
+                      angle: -0,
+                      slideWidth: 290,
+                      shadowLayer1Color: Colors.grey.shade200,
+                      // slideHeight: 0,
+                      menuBackgroundColor: Colors.transparent),
+                  _.open
+                      ? Positioned.fill(
+                          child: SafeArea(
                             child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
                                     children: [
-                                      Row(children: [
-                                        InkWell(
-                                            onTap: () {
-                                              _.closeDrawer();
-                                            },
-                                            child: const Icon(
-                                                Icons
-                                                    .arrow_back_ios_new_rounded,
-                                                color: Colors.black)),
-                                        SizedBox(width: 2.w),
-                                        text_widget(
-                                          "Setting",
-                                          fontSize: 18.sp,
+                                      InkWell(
+                                        onTap: () {
+                                          _.closeDrawer();
+                                        },
+                                        child: const Icon(
+                                          Icons.arrow_back_ios_new_rounded,
+                                          color: Colors.black,
                                         ),
-                                        const Spacer(),
-                                      ]),
-                                      SizedBox(height: 3.h),
-                                      Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                CircleAvatar(
-                                                    radius: 4.h,
-                                                    backgroundColor:
-                                                        MyColors.primary,
-                                                    backgroundImage: AssetImage(
-                                                        "assets/images/girl.png")),
-                                                SizedBox(height: 1.h),
-                                                text_widget("Amber Bajh",
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w600)
-                                              ]))
-                                    ]))))
-                    : const SizedBox(),
-              ]);
-            })),
+                                      ),
+                                      SizedBox(width: 2.w),
+                                      textWidget(
+                                        "Setting",
+                                        fontSize: 18.sp,
+                                      ),
+                                      const Spacer(),
+                                    ],
+                                  ),
+                                  SizedBox(height: 3.h),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0,
+                                    ),
+                                    child: SizedBox(
+                                      width: 100,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          AvatarWidget(
+                                            height: 80,
+                                            width: 80,
+                                            backgroundColor: Colors.black,
+                                            avatarUrl:
+                                                UserRepo().currentUser.avatar,
+                                          ),
+                                          SizedBox(height: 1.h),
+                                          textWidget(
+                                            UserRepo().currentUser.name,
+                                            color: Colors.black,
+                                            maxline: 1,
+                                            fontWeight: FontWeight.w600,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -168,16 +192,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
         return PrivacyPolicyPage(
           isDrawer: true,
         );
-      case 5:
-        return TermPage(
-          isDrawer: true,
-        );
+
       case 6:
         return ContactUsPage(
-          isDrawer: true,
-        );
-      case 7:
-        return FaqScreen(
           isDrawer: true,
         );
       default:
@@ -210,111 +227,100 @@ class _DrawerScreenState extends State<DrawerScreen> {
     PrivacyPolicyPage(
       isDrawer: true,
     ),
-    TermPage(
-      isDrawer: true,
-    ),
     ContactUsPage(
-      isDrawer: true,
-    ),
-    FaqScreen(
       isDrawer: true,
     ),
   ];
   @override
   Widget build(BuildContext context) {
     return GetBuilder<MyDrawerController>(
-        init: MyDrawerController(),
-        builder: (MyDrawerController _) => Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(children: [
-              Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SizedBox(
-                          height: 80.h,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                    child: Center(
-                                        child: SizedBox(
-                                            width: 43.w,
-                                            child: ListView.builder(
-                                                // padding: EdgeInsets.zero,
-                                                itemCount: titles.length,
-                                                itemBuilder: (context, index) =>
-                                                    InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            // widget.setIndex(
-                                                            //     index);
-
-                                                            _.update();
-                                                            log(_.active
-                                                                .toString());
-                                                            Get.to(
-                                                                pages[index]);
-                                                            _.closeDrawer();
-                                                            if (_.active != 3 &&
-                                                                _.active != 5 &&
-                                                                _.active != 6) {
-                                                              Get.find<NavController>()
-                                                                      .isVisible =
-                                                                  true;
-                                                              Get.find<
-                                                                      NavController>()
-                                                                  .update();
-                                                            }
-                                                            ZoomDrawer.of(
-                                                                    context)!
-                                                                .close();
-                                                            _.closeDrawer();
-                                                          });
-                                                        },
-                                                        child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        6.0),
-                                                            child: Container(
-                                                                height: 5.h,
-                                                                decoration: BoxDecoration(
-                                                                    color: _.active ==
-                                                                            index
-                                                                        ? Color(
-                                                                            0xffFFFFFF)
-                                                                        : Colors
-                                                                            .transparent,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            30)),
-                                                                child: Row(
-                                                                    children: [
-                                                                      SizedBox(
-                                                                          width:
-                                                                              4.w),
-                                                                      Image
-                                                                          .asset(
-                                                                        images[
-                                                                            index],
-                                                                        height:
-                                                                            2.h,
-                                                                        color: Colors
-                                                                            .black,
-                                                                      ),
-                                                                      SizedBox(
-                                                                          width:
-                                                                              4.w),
-                                                                      Text(
-                                                                          titles[
-                                                                              index],
-                                                                          style: GoogleFonts.plusJakartaSans(
-                                                                              color: MyColors.black,
-                                                                              fontSize: 14.sp,
-                                                                              fontWeight: _.active == index ? FontWeight.w600 : FontWeight.w500)),
-                                                                    ]))))))))
-                              ]))))
-            ])));
+      init: MyDrawerController(),
+      builder: (MyDrawerController _) => Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  height: 80.h,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: SizedBox(
+                            width: 43.w,
+                            child: ListView.builder(
+                              // padding: EdgeInsets.zero,
+                              itemCount: titles.length,
+                              itemBuilder: (context, index) => InkWell(
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      _.update();
+                                      log(_.active.toString());
+                                      Get.to(pages[index]);
+                                      _.closeDrawer();
+                                      if (_.active != 3 &&
+                                          _.active != 5 &&
+                                          _.active != 6) {
+                                        Get.find<NavController>().isVisible =
+                                            true;
+                                        Get.find<NavController>().update();
+                                      }
+                                      ZoomDrawer.of(context)!.close();
+                                      _.closeDrawer();
+                                    },
+                                  );
+                                },
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6.0),
+                                  child: Container(
+                                    height: 5.h,
+                                    decoration: BoxDecoration(
+                                      color: _.active == index
+                                          ? Color(0xffFFFFFF)
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: 4.w),
+                                        Image.asset(
+                                          images[index],
+                                          height: 2.h,
+                                          color: Colors.black,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          titles[index],
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: MyColors.black,
+                                            fontSize: 14.sp,
+                                            fontWeight: _.active == index
+                                                ? FontWeight.w600
+                                                : FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

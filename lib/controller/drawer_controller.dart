@@ -4,7 +4,6 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:musch/controller/nav_controller.dart';
 
 class MyDrawerController extends GetxController {
-  @override
   final zoomDrawerController = ZoomDrawerController();
   bool open = false;
   void toggleDrawer() {
@@ -23,7 +22,6 @@ class MyDrawerController extends GetxController {
   int active = 0;
 
   void closeDrawer() {
-    print("Close drawer");
     Timer(const Duration(microseconds: 800), () {
       open = false;
       Get.find<NavController>().isVisible = true;
@@ -32,6 +30,5 @@ class MyDrawerController extends GetxController {
       update();
     });
     zoomDrawerController.close?.call();
-    update();
   }
 }

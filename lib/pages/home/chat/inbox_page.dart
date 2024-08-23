@@ -1,13 +1,30 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:musch/config/colors.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/chat/chat_page.dart';
+import 'package:musch/services/local_storage_services/local_storage_services.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
 
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../../blocs/chat/ chat_bloc.dart';
+import '../../../blocs/chat/chat_event.dart';
+import '../../../blocs/chat/chat_state.dart';
+import '../../../config/colors.dart';
+import '../../../models/chat_model.dart';
+import '../../../models/other_user_model.dart';
+import '../../../models/message_model.dart';
+import '../../../repos/chat_repo.dart';
+import '../../../repos/message_repo.dart';
+import '../../../repos/user_repo.dart';
+import '../../../utils/helping_methods.dart';
+import '../../../widgets/avatar_widget.dart';
 
 class InboxPage extends StatefulWidget {
   final VoidCallback updateParentState; // Define callback
@@ -19,11 +36,73 @@ class InboxPage extends StatefulWidget {
 }
 
 class _InboxPageState extends State<InboxPage> {
+  bool isLoading = false;
+  List<ChatModel> filteredChats = [];
+  Timer? timer;
+  void updateChatView() {
+    timer = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) async {
+        // final List<String> lastMessageIds =
+        //     await LocalStorageServices().getMessageIds();
+        // for (int i = 0; i < filteredChats.length; i++) {
+        //   if (!lastMessageIds.contains(filteredChats[i].uuid)) {
+        //     filteredChats[i] = filteredChats[i].copyWith(isNewMessage: true);
+        //   }
+        // }
+        setState(() {
+          filteredChats.sort((a, b) => (b.lastMessageTime ??
+                  b.createdAt.millisecondsSinceEpoch)
+              .compareTo(
+                  (a.lastMessageTime ?? a.createdAt.millisecondsSinceEpoch)));
+        });
+      },
+    );
+  }
+
+  void triggerFetchChatsEvent(ChatBloc bloc) {
+    bloc.add(ChatEventFetchAll());
+  }
+
+  void applyFiltered({String? withText}) {
+    if (withText == null || withText == "") {
+      setState(() {
+        filteredChats = ChatRepo().chats;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    triggerFetchChatsEvent(context.read<ChatBloc>());
+    updateChatView();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    timer = null;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusManager.instance.primaryFocus!.unfocus();
+    return BlocListener<ChatBloc, ChatState>(
+      listener: (context, state) {
+        if (state is ChatStateFetchingAll ||
+            state is ChatStateFetchAllFailure ||
+            state is ChatStateFetchedAll) {
+          setState(() {
+            isLoading = state.isLoading;
+          });
+
+          if (state is ChatStateFetchedAll) {
+            applyFiltered();
+          }
+
+          if (state is ChatStateFetchAllFailure) {}
+        }
       },
       child: Stack(
         children: [
@@ -34,60 +113,88 @@ class _InboxPageState extends State<InboxPage> {
                 color: Color(0xffBD9691),
               ),
               Expanded(
-                  child: Container(
-                color: Color(0xfff2f2f2),
-              ))
+                child: Container(
+                  color: Color(0xfff2f2f2),
+                ),
+              )
             ],
           ),
           Positioned.fill(
             child: SafeArea(
               child: Scaffold(
                 backgroundColor: Colors.transparent,
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 18.0, vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    current = 0;
-                                  });
-                                  Get.find<NavScreenController>()
-                                      .controller
-                                      .jumpToTab(current);
-                                  widget.updateParentState();
-                                  setState(() {});
-                                },
-                                child: Icon(
-                                  Remix.arrow_left_s_line,
-                                  color: Colors.white,
-                                  size: 3.h,
-                                )),
-                            SizedBox(width: 2.w),
-                            text_widget("Chat",
-                                color: Colors.white, fontSize: 18.sp),
-                          ],
-                        ),
-                        SizedBox(height: 3.h),
-                        textFieldWithPrefixSuffuxIconAndHintText(
-                          "Search ",
-                          // controller: _.password,
-                          fillColor: Colors.white,
-                          isPrefix: true,
-                          prefixIcon: "assets/nav/s1.png",
-                          mainTxtColor: Colors.black,
-                          radius: 12,
-                          bColor: Colors.transparent,
-                        ),
-                        SizedBox(height: 3.h),
-                        ...List.generate(5, (index) => chatList(index))
-                      ],
-                    ),
+                body: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                current = 0;
+                              });
+                              Get.find<NavScreenController>()
+                                  .controller
+                                  .jumpToTab(current);
+                              widget.updateParentState();
+                              setState(() {});
+                            },
+                            child: Icon(
+                              Remix.arrow_left_s_line,
+                              color: Colors.white,
+                              size: 3.h,
+                            ),
+                          ),
+                          SizedBox(width: 2.w),
+                          textWidget(
+                            "Chat",
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 3.h),
+                      textFieldWithPrefixSuffuxIconAndHintText(
+                        "Search ",
+                        // controller: _.password,
+                        fillColor: Colors.white,
+                        isPrefix: true,
+                        prefixIcon: "assets/nav/s1.png",
+                        mainTxtColor: Colors.black,
+                        radius: 12,
+                        bColor: Colors.transparent,
+                      ),
+                      SizedBox(height: 3.h),
+                      Expanded(
+                        child: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : filteredChats.isEmpty
+                                ? Center(
+                                    child: Text("No Chat"),
+                                  )
+                                : ListView.builder(
+                                    itemCount: filteredChats.length,
+                                    itemBuilder: (context, index) {
+                                      return chatList(
+                                        chat: filteredChats[index],
+                                        willChatUpdate: (chat) {
+                                          final int index = filteredChats
+                                              .indexWhere((element) =>
+                                                  element.uuid == chat.uuid);
+                                          if (index > -1) {
+                                            filteredChats[index] = chat;
+                                          }
+                                        },
+                                      );
+                                    },
+                                  ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -99,48 +206,101 @@ class _InboxPageState extends State<InboxPage> {
   }
 }
 
-Widget chatList(index) {
+Widget chatList(
+    {required ChatModel chat,
+    required Function(ChatModel chat) willChatUpdate}) {
+  OtherUserModel? senderUser;
+  if (!chat.isGroup) {
+    senderUser = chat.participants
+        .firstWhere((e) => e.uid != UserRepo().currentUser.uid);
+  }
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: InkWell(
       onTap: () {
-        Get.to(UserChatPage(
-          IsSupport: false,
-        ));
+        Get.to(
+          UserChatPage(chat: chat),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(12)),
-        child: ListTile(
-          // isThreeLine: true,
-          leading: CircleAvatar(
-            backgroundColor: MyColors.primary,
-            radius: 2.8.h,
-            backgroundImage: AssetImage("assets/images/girl.png"),
-          ),
-          title: text_widget(
-            "Jane Cooper",
-            fontWeight: FontWeight.w500,
-            fontSize: 16.sp,
-          ),
-          subtitle: text_widget("Hi! How Are You Doing",
-              fontSize: 14.4.sp, color: Color(0xff9CA3AF)),
-          trailing: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 1.h),
-              text_widget("54 min Ago",
-                  fontSize: 13.5.sp, color: Color(0xff9CA3AF)),
-              SizedBox(height: 1.h),
-              CircleAvatar(
-                radius: 1.h,
-                backgroundColor: MyColors.primary,
-                child: text_widget("2", color: Colors.white, fontSize: 13.6.sp),
+        child: StreamBuilder<MessageModel?>(
+          stream: MessageRepo().getLastMessageStream(chat.uuid),
+          builder: (context, stream) {
+            if (stream.hasError) {
+              log(stream.error.toString());
+            }
+            MessageModel? lastMessage = stream.data;
+            chat = chat.copyWith(
+                lastMessageTime:
+                    lastMessage?.messageTime.millisecondsSinceEpoch,
+                lastMessageId: lastMessage?.messageId);
+            willChatUpdate(chat);
+            if (lastMessage != null &&
+                lastMessage.senderId != UserRepo().currentUser.uid) {
+              LocalStorageServices()
+                  .saveMessageIds(ids: [lastMessage.messageId]);
+            }
+            return ListTile(
+              // isThreeLine: true,
+              leading: SizedBox(
+                height: 50,
+                width: 50,
+                child: AvatarWidget(
+                    placeholderChar:
+                        ((chat.isGroup ? chat.groupTitle : senderUser?.name) ??
+                                "")
+                            .characters
+                            .first,
+                    avatarUrl: (chat.isGroup
+                            ? chat.groupAvatar
+                            : senderUser?.avatarUrl) ??
+                        ""),
               ),
-              Spacer(),
-            ],
-          ),
+              title: textWidget(
+                (chat.isGroup ? chat.groupTitle : senderUser?.name) ?? "",
+                fontWeight: FontWeight.w500,
+                fontSize: 16.sp,
+              ),
+              subtitle: textWidget(
+                lastMessage == null
+                    ? ""
+                    : lastMessage.senderId == UserRepo().currentUser.uid
+                        ? "You: ${lastMessage.type == MessageType.text ? lastMessage.content : "Sent media"}"
+                        : lastMessage.type == MessageType.text
+                            ? lastMessage.senderName +
+                                ": " +
+                                lastMessage.content
+                            : "${lastMessage.senderName}: sent a media file",
+                fontSize: 14.4.sp,
+                color: Color(0xff9CA3AF),
+              ),
+              trailing: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 1.h),
+                  textWidget(
+                    formatChatDateToString(lastMessage?.messageTime) ?? "",
+                    fontSize: 13.5.sp,
+                    color: Color(
+                      0xff9CA3AF,
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
+                  if (chat.isNewMessage ?? false)
+                    textWidget(
+                      "New",
+                      color: MyColors.primary,
+                      fontSize: 13.6.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  Spacer(),
+                ],
+              ),
+            );
+          },
         ),
       ),
     ),

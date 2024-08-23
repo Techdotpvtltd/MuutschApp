@@ -66,14 +66,14 @@ class _WelcomePageState extends State<WelcomePage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     SizedBox(height: 1.h),
-                                    text_widget(
+                                    textWidget(
                                         "Explore More About\nEvents And People",
                                         fontSize: 19.sp,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         textAlign: TextAlign.center),
                                     SizedBox(height: 1.h),
-                                    text_widget(
+                                    textWidget(
                                         "We can increase your sales traffic in one click and get lots of promos that you can get for new members. We can increase your sales traffic in one click.",
                                         fontSize: 13.sp,
                                         color: Colors.white,
@@ -108,7 +108,7 @@ class _WelcomePageState extends State<WelcomePage> {
             child: SafeArea(
               child: Row(
                 children: [
-                  text_widget(
+                  textWidget(
                     "Next",
                     color: Colors.transparent,
                   ),
@@ -147,7 +147,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     },
                     child: Row(
                       children: [
-                        text_widget(
+                        textWidget(
                           "Next",
                           color: Colors.white,
                         ),
@@ -176,7 +176,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       child: Row(
                         children: [
                           Spacer(),
-                          text_widget(
+                          textWidget(
                             "Skip",
                             color: Colors.white,
                           ),
