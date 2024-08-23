@@ -160,9 +160,8 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                     Expanded(
                       child: isLoading
                           ? Center(child: CircularProgressIndicator())
-                          : PageView.builder(
+                          : PageView(
                               controller: _pageController,
-                              itemCount: productDetails.length,
                               onPageChanged: (int position) {
                                 setState(() {
                                   position = position;
@@ -170,10 +169,8 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                 });
                                 setState(() {});
                               },
-                              itemBuilder:
-                                  (BuildContext context, int position) {
-                                final product = productDetails[position];
-                                return AnimatedBuilder(
+                              children: [
+                                AnimatedBuilder(
                                   animation: _pageController,
                                   builder: (BuildContext context, widget) {
                                     return Container(
@@ -184,18 +181,39 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                   },
                                   child: Container(
                                     child: CardFb1(
-                                      text: product.title,
-                                      showButton: !isSubscribing,
+                                      text: "Free",
+                                      showButton: false,
                                       imageUrl: "",
-                                      subtitle: product.description,
-                                      onPressed: () {
-                                        triggerBuySubscriptionEvent(product);
-                                      },
-                                      price: product.price,
+                                      subtitle: "Limited Access",
+                                      onPressed: () {},
+                                      price: "0",
                                     ),
                                   ),
-                                );
-                              },
+                                ),
+                                for (final product in productDetails)
+                                  AnimatedBuilder(
+                                    animation: _pageController,
+                                    builder: (BuildContext context, widget) {
+                                      return Container(
+                                        margin:
+                                            EdgeInsets.all(carouselItemMargin),
+                                        child: Center(child: widget),
+                                      );
+                                    },
+                                    child: Container(
+                                      child: CardFb1(
+                                        text: product.title,
+                                        showButton: !isSubscribing,
+                                        imageUrl: "",
+                                        subtitle: product.description,
+                                        onPressed: () {
+                                          triggerBuySubscriptionEvent(product);
+                                        },
+                                        price: product.price,
+                                      ),
+                                    ),
+                                  )
+                              ],
                             ),
                     ),
                     if (productDetails.length > 1) SizedBox(height: 2.h),
@@ -297,7 +315,7 @@ class CardFb1 extends StatelessWidget {
             ),
             SizedBox(height: 3.h),
             ...List.generate(
-              txts.length,
+              text == "Free" ? txts1.length : txts.length,
               (index) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 14.0),
                 child: Row(
@@ -308,16 +326,32 @@ class CardFb1 extends StatelessWidget {
                     ),
                     SizedBox(width: 2.w),
                     Expanded(
-                      child: textWidget(txts[index],
-                          color: Color(0xff8A8A8A),
-                          fontSize: 14.5.sp,
-                          fontWeight: FontWeight.w400),
+                      child: textWidget(
+                        text == "Free" ? txts1[index] : txts[index],
+                        color: Color(0xff8A8A8A),
+                        fontSize: 14.5.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
             SizedBox(height: 2.h),
+            if (text == "Free")
+              Center(
+                child: gradientButton(
+                  !AppManager().isActiveSubscription ? "Actived" : "Free",
+                  ontap: () {},
+                  height: 4.8,
+                  font: 16.5,
+                  width: 60,
+                  isColor: true,
+                  clr: !AppManager().isActiveSubscription
+                      ? Colors.green
+                      : MyColors.primary,
+                ),
+              ),
             if (showButton)
               Center(
                 child: gradientButton(
@@ -346,4 +380,10 @@ List txts = [
   "Find friends worldwide",
   "Find Events worldwide",
   "See Events time and date.",
+];
+
+List txts1 = [
+  "Upto 3 friends request per month",
+  "Find Friends in 5km radius",
+  "Find Events in 5km radius",
 ];
