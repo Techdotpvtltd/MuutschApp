@@ -126,4 +126,4 @@ class FriendModel {
   }
 }
 
-enum FriendType { request, friend, rejected, remove }
+enum FriendType { request, friend, rejected, removed }

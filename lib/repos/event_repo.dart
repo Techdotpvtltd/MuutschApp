@@ -245,7 +245,7 @@ class EventRepo {
           await FirestoreService().fetchWithMultipleConditions(
         collection: FIREBASE_COLLECTION_EVENTS,
         queries: [
-          QueryModel(field: "dateTime", value: true, type: QueryType.orderBy),
+          QueryModel(field: "createdAt", value: true, type: QueryType.orderBy),
           if (lastDoc != null)
             QueryModel(
                 field: "", value: lastDoc, type: QueryType.startAfterDocument),

@@ -29,3 +29,8 @@ extension DateTimeExt on DateTime {
     return dateToString("dd-MMM-yyyy");
   }
 }
+
+DateTime monthStartDay() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, 1);
+}
