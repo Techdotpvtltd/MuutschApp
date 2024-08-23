@@ -9,6 +9,7 @@ import 'package:musch/config/colors.dart';
 import 'package:musch/manager/app_manager.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
+import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:place_picker/place_picker.dart';
@@ -85,9 +86,11 @@ class MapSampleState extends State<MapSample> {
       PlacePicker("AIzaSyAqSjBWxORHHKlLY7ISV5BmookK7fQlw4U"),
     );
 
-    _controller?.animateCamera(CameraUpdate.newLatLngZoom(
-        LatLng(result.latLng?.latitude ?? 0, result.latLng?.longitude ?? 0),
-        14));
+    _controller?.animateCamera(
+      CameraUpdate.newLatLngZoom(
+          LatLng(result.latLng?.latitude ?? 0, result.latLng?.longitude ?? 0),
+          14),
+    );
     searchController.text = result.formattedAddress ?? "";
   }
 
@@ -145,9 +148,10 @@ class MapSampleState extends State<MapSample> {
                 await _controller?.animateCamera(
                   CameraUpdate.newCameraPosition(
                     CameraPosition(
-                        target: LatLng(state.position!.latitude,
-                            state.position!.longitude),
-                        zoom: 14),
+                      target: LatLng(
+                          state.position!.latitude, state.position!.longitude),
+                      zoom: isSusbcribed ? 14 : 16,
+                    ),
                   ),
                 );
               }
@@ -185,7 +189,9 @@ class MapSampleState extends State<MapSample> {
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
                 initialCameraPosition: CameraPosition(
-                    target: LatLng(33.489044, 73.089211), zoom: 40.0),
+                  target: LatLng(33.489044, 73.089211),
+                  zoom: 40.0,
+                ),
                 zoomControlsEnabled: false,
                 zoomGesturesEnabled: isSusbcribed,
                 compassEnabled: false,
@@ -253,16 +259,21 @@ class MapSampleState extends State<MapSample> {
                                     isPrefix: true,
                                   ),
                                 )
-                              : Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.6),
-                                  ),
-                                  child: Text(
-                                    "In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full functionilty.",
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w700,
+                              : InkWell(
+                                  onTap: () {
+                                    NavigationService.go(SubscriptionPlan());
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.6),
+                                    ),
+                                    child: Text(
+                                      "In the free version you can just see people in the nearby area of 5km and you are not able to zoom or scroll the map in free version and in the premium version (subscription) you have the full functionilty.",
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -380,7 +391,10 @@ class NotAccess extends StatelessWidget {
     return Dialog(
       insetPadding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        borderRadius: BorderRadius.all(
+          Radius.circular(20.0),
+        ),
+      ),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -388,7 +402,9 @@ class NotAccess extends StatelessWidget {
             width: 90.w,
             // height: 45.h,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20), color: Colors.white),
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
             // color: Color(0xfff9f8f6),
 
             child: Padding(
@@ -402,30 +418,36 @@ class NotAccess extends StatelessWidget {
                     height: 8.h,
                   ),
                   SizedBox(height: 1.4.h),
-                  textWidget("Couldn't access This Feiends",
-                      color: MyColors.black,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold),
+                  textWidget(
+                    "Couldn't access This Feiends",
+                    color: MyColors.black,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                   SizedBox(height: 1.5.h),
                   textWidget(
-                      " In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full function",
-                      textAlign: TextAlign.center,
-                      color: Color(0xff2F3342).withOpacity(0.50),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14.sp),
+                    " In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full function",
+                    textAlign: TextAlign.center,
+                    color: Color(0xff2F3342).withOpacity(0.50),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14.sp,
+                  ),
                   SizedBox(height: 3.h),
                   Row(
                     children: [
                       Expanded(
-                        child: gradientButton("See Plan", ontap: () async {
-                          Navigator.pop(context);
-                          Get.to(SubscriptionPlan());
-                        },
-                            height: 4.8,
-                            font: 13.5,
-                            width: 60,
-                            isColor: true,
-                            clr: MyColors.primary),
+                        child: gradientButton(
+                          "See Plan",
+                          ontap: () async {
+                            Navigator.pop(context);
+                            Get.to(SubscriptionPlan());
+                          },
+                          height: 4.8,
+                          font: 13.5,
+                          width: 60,
+                          isColor: true,
+                          clr: MyColors.primary,
+                        ),
                       ),
                     ],
                   ),
@@ -456,7 +478,9 @@ class UserDetailDialog extends StatelessWidget {
             width: 90.w,
             // height: 45.h,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20), color: Colors.white),
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
             // color: Color(0xfff9f8f6),
 
             child: Padding(
