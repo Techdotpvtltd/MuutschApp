@@ -34,21 +34,35 @@ class SubscriptionRepo {
 
   Future<void> saveSubscription({required PurchaseDetails purchase}) async {
     try {
+      final String id = purchase.productID;
+      final int period = id.contains("1")
+          ? 1
+          : id.contains("3")
+              ? 3
+              : id.contains('6')
+                  ? 6
+                  : 1;
       final DateTime startDate = DateTime.fromMillisecondsSinceEpoch(
           int.tryParse(purchase.transactionDate ?? "0") ?? 0);
+
       final DateTime endDate = startDate.add(kReleaseMode
-          ? Duration(days: purchase.productID.contains("annual") ? 365 : 30)
-          : Duration(minutes: purchase.productID.contains("annual") ? 5 : 3));
+          ? Duration(
+              days: period == 1
+                  ? 30
+                  : period == 3
+                      ? 90
+                      : 180)
+          : Duration(minutes: 5));
       final SubscriptionModel model = SubscriptionModel(
-          id: "",
-          periodDuration:
-              purchase.productID.contains("annual") ? "year" : "month",
-          productId: purchase.productID,
-          startTime: startDate,
-          endTime: endDate,
-          subscribedBy: UserRepo().currentUser.uid,
-          title: purchase.productID.contains("house") ? "House" : "Business",
-          purchaseId: purchase.purchaseID ?? "");
+        id: "",
+        periodDuration: period.toString(),
+        productId: purchase.productID,
+        startTime: startDate,
+        endTime: endDate,
+        subscribedBy: UserRepo().currentUser.uid,
+        title: "Premium for ${period} ${period > 1 ? "months" : "month"}",
+        purchaseId: purchase.purchaseID ?? "",
+      );
       final Map<String, dynamic> map = await FirestoreService()
           .saveWithSpecificIdFiled(
               path: FIREBASE_COLLECTION_SUBSCRIPTIONS,

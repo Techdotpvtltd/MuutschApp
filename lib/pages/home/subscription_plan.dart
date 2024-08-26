@@ -182,7 +182,9 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                   child: Container(
                                     child: CardFb1(
                                       text: "Free",
-                                      showButton: false,
+                                      isLoading: false,
+                                      isActived:
+                                          !AppManager().isActiveSubscription,
                                       imageUrl: "",
                                       subtitle: "Limited Access",
                                       onPressed: () {},
@@ -201,16 +203,34 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                       );
                                     },
                                     child: Container(
-                                      child: CardFb1(
-                                        text: product.title,
-                                        showButton: !isSubscribing,
-                                        imageUrl: "",
-                                        subtitle: product.description,
-                                        onPressed: () {
-                                          triggerBuySubscriptionEvent(product);
-                                        },
-                                        price: product.price,
-                                      ),
+                                      child: Builder(builder: (context) {
+                                        final String id = product.id;
+                                        final int period = id.contains("1")
+                                            ? 1
+                                            : id.contains("3")
+                                                ? 3
+                                                : id.contains('6')
+                                                    ? 6
+                                                    : 1;
+                                        debugPrint(period.toString());
+                                        return CardFb1(
+                                          text: product.title,
+                                          isLoading: isSubscribing,
+                                          isActived: activeSubscriptionId ==
+                                              product.id,
+                                          imageUrl: "",
+                                          subtitle:
+                                              "Access all the feature just in",
+                                          subtitle2:
+                                              " ${product.price} for ${period} ${period > 1 ? "months" : "month"}",
+                                          onPressed: () {
+                                            triggerBuySubscriptionEvent(
+                                                product);
+                                          },
+                                          price:
+                                              "${product.currencySymbol} ${product.rawPrice / period}",
+                                        );
+                                      }),
                                     ),
                                   )
                               ],
@@ -221,7 +241,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                       Center(
                         child: SmoothPageIndicator(
                           controller: _pageController,
-                          count: productDetails.length,
+                          count: productDetails.length + 1,
                           axisDirection: Axis.horizontal,
                           effect: WormEffect(
                             dotHeight: 1.5.h,
@@ -243,28 +263,38 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
   }
 }
 
-class CardFb1 extends StatelessWidget {
+class CardFb1 extends StatefulWidget {
   final String text;
   final String imageUrl;
   final String subtitle;
+  final String? subtitle2;
   final Function() onPressed;
   final String price;
-  final bool showButton;
-
+  final bool isLoading;
+  final bool isActived;
   const CardFb1(
       {required this.text,
       required this.imageUrl,
       required this.subtitle,
+      this.subtitle2,
       required this.onPressed,
-      required this.showButton,
+      required this.isLoading,
       Key? key,
-      required this.price})
+      required this.price,
+      required this.isActived})
       : super(key: key);
+
+  @override
+  State<CardFb1> createState() => _CardFb1State();
+}
+
+class _CardFb1State extends State<CardFb1> {
+  late bool isPressed = widget.isLoading;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: widget.onPressed,
       child: Container(
         // width: 250,
         width: 100.w,
@@ -286,18 +316,35 @@ class CardFb1 extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             textWidget(
-              text,
+              widget.text,
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
             ),
             SizedBox(height: 0.5.h),
-            textWidget(subtitle, color: Color(0xff979797), fontSize: 15.sp),
-            SizedBox(height: 2.5.h),
+            Text.rich(
+              TextSpan(
+                text: widget.subtitle,
+                children: [
+                  TextSpan(
+                    text: widget.subtitle2 ?? "",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: MyColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+              style: TextStyle(
+                color: Color(0xff979797),
+                fontSize: 15.sp,
+              ),
+            ),
+            SizedBox(height: 1.h),
             Row(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 textWidget(
-                  price,
+                  widget.price,
                   fontSize: 21.sp,
                   fontWeight: FontWeight.bold,
                   color: MyColors.primary,
@@ -315,7 +362,7 @@ class CardFb1 extends StatelessWidget {
             ),
             SizedBox(height: 3.h),
             ...List.generate(
-              text == "Free" ? txts1.length : txts.length,
+              widget.text == "Free" ? txts1.length : txts.length,
               (index) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 14.0),
                 child: Row(
@@ -327,7 +374,7 @@ class CardFb1 extends StatelessWidget {
                     SizedBox(width: 2.w),
                     Expanded(
                       child: textWidget(
-                        text == "Free" ? txts1[index] : txts[index],
+                        widget.text == "Free" ? txts1[index] : txts[index],
                         color: Color(0xff8A8A8A),
                         fontSize: 14.5.sp,
                         fontWeight: FontWeight.w400,
@@ -337,8 +384,8 @@ class CardFb1 extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 2.h),
-            if (text == "Free")
+            // SizedBox(height: 2.h),
+            if (widget.text == "Free")
               Center(
                 child: gradientButton(
                   !AppManager().isActiveSubscription ? "Actived" : "Free",
@@ -352,21 +399,24 @@ class CardFb1 extends StatelessWidget {
                       : MyColors.primary,
                 ),
               ),
-            if (showButton)
+            if (widget.text != "Free")
               Center(
-                child: gradientButton(
-                  AppManager().isActiveSubscription ? "Actived" : "Choose Plan",
-                  ontap: AppManager().isActiveSubscription ? () {} : onPressed,
-                  height: 4.8,
-                  font: 16.5,
-                  width: 60,
-                  isColor: true,
-                  clr: AppManager().isActiveSubscription
-                      ? Colors.green
-                      : MyColors.primary,
-                ),
+                child: isPressed
+                    ? CircularProgressIndicator()
+                    : gradientButton(
+                        widget.isActived ? "Actived" : "Choose Plan",
+                        ontap: widget.isActived
+                            ? () {}
+                            : () {
+                                widget.onPressed();
+                              },
+                        height: 4.8,
+                        font: 16.5,
+                        width: 60,
+                        isColor: true,
+                        clr: widget.isActived ? Colors.green : MyColors.primary,
+                      ),
               ),
-            SizedBox(height: 2.h),
           ],
         ),
       ),
