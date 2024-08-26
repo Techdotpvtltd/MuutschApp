@@ -7,14 +7,11 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/manager/app_manager.dart';
-import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:place_picker/place_picker.dart';
-
-import 'package:remixicon/remixicon.dart';
 
 import 'dart:ui' as ui;
 
@@ -122,8 +119,7 @@ class MapSampleState extends State<MapSample> {
           showDialog(
               context: context,
               barrierColor: MyColors.primary.withOpacity(0.8),
-              builder: (context) =>
-                  isSusbcribed ? UserDetailDialog(user: user) : NotAccess());
+              builder: (context) => UserDetailDialog(user: user));
         },
         markerId: MarkerId(user.uid),
         position: LatLng(user.location!.latitude, user.location!.longitude),
@@ -150,7 +146,7 @@ class MapSampleState extends State<MapSample> {
                     CameraPosition(
                       target: LatLng(
                           state.position!.latitude, state.position!.longitude),
-                      zoom: isSusbcribed ? 14 : 16,
+                      zoom: 14,
                     ),
                   ),
                 );
@@ -212,34 +208,7 @@ class MapSampleState extends State<MapSample> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(
-                                    () {
-                                      current = 0;
-                                    },
-                                  );
-                                  Get.find<NavScreenController>()
-                                      .controller
-                                      .jumpToTab(current);
-                                  widget.updateParentState();
-                                  setState(() {});
-                                },
-                                child: Icon(
-                                  Remix.arrow_left_s_line,
-                                  color: Colors.black,
-                                  size: 3.h,
-                                ),
-                              ),
-                              SizedBox(width: 3.w),
-                              textWidget(
-                                "Find Near by",
-                                fontSize: 19.sp,
-                              )
-                            ],
-                          ),
+                          textWidget("Find Near by", fontSize: 19.sp),
                           SizedBox(height: 2.h),
                           isSusbcribed
                               ? InkWell(

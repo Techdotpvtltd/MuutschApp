@@ -7,6 +7,7 @@ import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/controller/nav_controller.dart';
 import 'package:musch/pages/auth/change_password.dart';
+import 'package:musch/pages/auth/reset_password.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/contact_us.dart';
 import 'package:musch/pages/home/notification_screen.dart';
@@ -177,7 +178,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         return NavScreen();
       case 1:
         return ProfilePage(
-          isDrawer: true,
+          isBackShow: true,
           updateParentState: () {},
         );
       case 2:
@@ -215,21 +216,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
   List pages = [
     NavScreen(),
     ProfilePage(
-      isDrawer: false,
+      isBackShow: true,
       updateParentState: () {},
     ),
     NotificationScreen(
       isDrawer: true,
     ),
-    ChangePassword(
-      isDrawer: true,
-    ),
-    PrivacyPolicyPage(
-      isDrawer: true,
-    ),
-    ContactUsPage(
-      isDrawer: true,
-    ),
+    ResetPassword(),
+    PrivacyPolicyPage(isDrawer: true),
+    ContactUsPage(isDrawer: true),
   ];
   @override
   Widget build(BuildContext context) {

@@ -3,13 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/blocs/event/event_bloc.dart';
 import 'package:musch/config/colors.dart';
-import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/auth/change_password.dart';
 import 'package:musch/pages/home/my_eventss.dart';
 import 'package:musch/pages/home/all_friends.dart';
-import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/edit_profile.dart';
-import 'package:musch/pages/home/home_drawer.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
@@ -28,10 +25,10 @@ import '../../utils/dialogs/dialogs.dart';
 import '../../widgets/avatar_widget.dart';
 
 class ProfilePage extends StatefulWidget {
-  final bool isDrawer;
+  final bool isBackShow;
   final VoidCallback updateParentState; // Define callback
   const ProfilePage(
-      {Key? key, required this.isDrawer, required this.updateParentState})
+      {Key? key, required this.isBackShow, required this.updateParentState})
       : super(key: key);
 
   @override
@@ -81,35 +78,27 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          InkWell(
+                      if (widget.isBackShow)
+                        Row(
+                          children: [
+                            InkWell(
                               onTap: () {
-                                if (widget.isDrawer) {
-                                  setState(() {
-                                    current = 0;
-                                  });
-                                  Get.find<NavScreenController>()
-                                      .controller
-                                      .jumpToTab(current);
-                                  Get.find<NavScreenController>().update();
-                                  widget.updateParentState();
-                                  setState(() {});
-                                } else {
-                                  Get.find<MyDrawerController>().closeDrawer();
-                                  Get.to(HomeDrawer());
-                                }
+                                Get.back();
                               },
                               child: Icon(
                                 Remix.arrow_left_s_line,
                                 color: Colors.black,
                                 size: 3.h,
-                              )),
-                          SizedBox(width: 3.w),
-                          textWidget("Profile",
-                              fontWeight: FontWeight.w600, fontSize: 18.sp),
-                        ],
-                      ),
+                              ),
+                            ),
+                            if (widget.isBackShow) SizedBox(width: 3.w),
+                            textWidget(
+                              "Profile",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18.sp,
+                            ),
+                          ],
+                        ),
                       // SizedBox(height: 1.h),
                       SizedBox(height: 5.h),
 

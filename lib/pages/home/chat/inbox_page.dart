@@ -4,13 +4,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/chat/chat_page.dart';
 import 'package:musch/services/local_storage_services/local_storage_services.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
 
-import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../blocs/chat/ chat_bloc.dart';
@@ -131,24 +129,24 @@ class _InboxPageState extends State<InboxPage> {
                     children: [
                       Row(
                         children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                current = 0;
-                              });
-                              Get.find<NavScreenController>()
-                                  .controller
-                                  .jumpToTab(current);
-                              widget.updateParentState();
-                              setState(() {});
-                            },
-                            child: Icon(
-                              Remix.arrow_left_s_line,
-                              color: Colors.white,
-                              size: 3.h,
-                            ),
-                          ),
-                          SizedBox(width: 2.w),
+                          // InkWell(
+                          //   onTap: () {
+                          //     setState(() {
+                          //       current = 0;
+                          //     });
+                          //     Get.find<NavScreenController>()
+                          //         .controller
+                          //         .jumpToTab(current);
+                          //     widget.updateParentState();
+                          //     setState(() {});
+                          //   },
+                          //   child: Icon(
+                          //     Remix.arrow_left_s_line,
+                          //     color: Colors.white,
+                          //     size: 3.h,
+                          //   ),
+                          // ),
+                          // SizedBox(width: 2.w),
                           textWidget(
                             "Chat",
                             color: Colors.white,

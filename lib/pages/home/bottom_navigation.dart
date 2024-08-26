@@ -112,7 +112,8 @@ class _NavScreenState extends State<NavScreen> {
             ),
           ),
           PersistentTabConfig(
-            screen: ProfilePage(isDrawer: true, updateParentState: updateState),
+            screen:
+                ProfilePage(isBackShow: false, updateParentState: updateState),
             item: ItemConfig(
               icon: current == 3
                   ? Image.asset(
