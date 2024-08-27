@@ -36,7 +36,7 @@ class PushNotificationServices {
   }
 
   Future<void> subscribe({required String forTopic}) async {
-    final String topic = '$forTopic${kDebugMode ? "-Rel" : "-Dev"}';
+    final String topic = '$forTopic${kDebugMode ? "-Dev" : "-Rel"}';
     await _fcm.subscribeToTopic(topic);
     debugPrint("Notification Subscribe topic: $topic");
     subscribedTopics.add(topic);

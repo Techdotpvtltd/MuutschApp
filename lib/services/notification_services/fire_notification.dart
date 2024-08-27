@@ -11,9 +11,6 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 /// Date:        15-02-24 16:51:20 -- Thursday
 /// Description:
 class FireNotification {
-  final String serverKey =
-      'AAAA47Au-sM:APA91bG4KYcpm0mab5ppugT8y6whJQhehm-nOqfIoFIUG1QCLEUMv0xAhuwpDEXmnm1udt5dj0PJk1Z4k3TAuJ4fI_xI_V0eYlJrtM_uSHIAouFPGvkMVHcF9Wifb-bV8W-h0Fi0_BNM';
-
   void sendNotification({
     required String title,
     required String description,
@@ -21,34 +18,38 @@ class FireNotification {
     required String type,
     Map<String, dynamic>? additionalData,
   }) async {
-    const String fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+    const String fcmUrl =
+        'https://7s912iqqhf.execute-api.eu-north-1.amazonaws.com/pro';
 
     // Payload for the notification
-    final String toTopic = '$topic${kDebugMode ? "-Rel" : "-Dev"}';
+    final String toTopic = '$topic${kDebugMode ? "-Dev" : "-Rel"}';
     final Map<String, dynamic> notification = {
-      'to': '/topics/$toTopic',
-      'notification': {'title': title, 'body': description},
-      'data': {
-        'type': type,
-        "additionalData": additionalData,
-      }
-    };
-    // Send the HTTP POST request to FCM endpoint
-    final http.Response response = await http.post(
-      Uri.parse(fcmUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'key=$serverKey',
+      "message": {
+        "topic": toTopic,
+        'notification': {
+          'title': title,
+          'body': description,
+        },
+        'data': {
+          'type': type,
+          "additionalData": jsonEncode(additionalData),
+        }
       },
-      body: jsonEncode(notification),
-    );
+    };
 
+    debugPrint(notification.toString());
+    // Send the HTTP POST request to FCM endpoint
+    final http.Response response =
+        await http.post(Uri.parse(fcmUrl), body: jsonEncode(notification));
+
+    final responseBoday = jsonDecode(response.body) as Map<String, dynamic>;
     // Check the response
-    if (response.statusCode == 200) {
+    if (responseBoday['status'] == 200) {
       debugPrint('Notification sent for topic; $toTopic');
+      debugPrint(responseBoday.toString());
     } else {
       debugPrint(
-          'Failed to send notification to topic: $toTopic\nError: ${response.body}');
+          'Failed to send notification to topic: $toTopic\nError: ${responseBoday}');
     }
   }
 }
