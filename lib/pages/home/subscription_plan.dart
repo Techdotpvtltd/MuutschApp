@@ -17,6 +17,7 @@ import '../../blocs/subscription/subscription_state.dart';
 import '../../manager/app_manager.dart';
 import '../../repos/subscription/subscription_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
+import 'dart:io' show Platform;
 
 class SubscriptionPlan extends StatefulWidget {
   const SubscriptionPlan({super.key});
@@ -53,6 +54,12 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
   @override
   void initState() {
     super.initState();
+
+    //TODO: REMOVE THIS BEFORE RELEASE FOR ANDROID
+    if (Platform.isAndroid) {
+      AppManager().isActiveSubscription = true;
+    }
+    ///////////////////////////////////////////
     _pageController = PageController(initialPage: 0, viewportFraction: 0.94);
     triggerGetProductsEvent();
   }

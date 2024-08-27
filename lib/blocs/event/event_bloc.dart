@@ -30,7 +30,7 @@ import 'event_state.dart';
 import 'events_event.dart';
 
 class EventBloc extends Bloc<EventsEvent, EventState> {
-  final List<EventModel> events = [];
+  List<EventModel> events = [];
   Position? position;
 
   EventBloc() : super(EventStateInitial()) {
@@ -253,10 +253,8 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
                   userLng: position?.longitude ?? 0,
                 );
 
+          events.clear();
           for (final event in fetchEvents) {
-            if (events.contains(event)) {
-              continue; // skip the process
-            }
             event.distance = calculateDistance(
                 aLat: position?.latitude ?? 0,
                 aLong: position?.longitude ?? 0,

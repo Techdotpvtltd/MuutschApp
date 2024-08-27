@@ -7,6 +7,7 @@
 
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -124,14 +125,15 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
             },
             onNotFoundIDs: (ids) {
               for (final String id in ids) {
-                emit(
-                  SubscriptionStatePurchaseFailure(
-                    exception: (DataExceptionSubscriptionFailure(
-                        message: "Product $id not found.",
-                        code: 'ids-not-found',
-                        source: "")),
-                  ),
-                );
+                debugPrint("Product $id not found.");
+                // emit(
+                //   SubscriptionStatePurchaseFailure(
+                //     exception: (DataExceptionSubscriptionFailure(
+                //         message: "Product $id not found.",
+                //         code: 'ids-not-found',
+                //         source: "")),
+                //   ),
+                // );
               }
             },
           );
