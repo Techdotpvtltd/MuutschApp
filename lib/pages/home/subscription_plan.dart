@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -55,10 +53,6 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
   void initState() {
     super.initState();
 
-    //TODO: REMOVE THIS BEFORE RELEASE FOR ANDROID
-    if (Platform.isAndroid) {
-      AppManager().isActiveSubscription = true;
-    }
     //////////////////////////////////////////////
     _pageController = PageController(initialPage: 0, viewportFraction: 0.94);
     triggerGetProductsEvent();
@@ -235,7 +229,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                                 product);
                                           },
                                           price:
-                                              "${product.currencySymbol} ${product.rawPrice / period}",
+                                              "${product.currencySymbol} ${(product.rawPrice / period).toStringAsFixed(2)}",
                                         );
                                       }),
                                     ),

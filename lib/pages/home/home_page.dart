@@ -25,7 +25,6 @@ import 'package:musch/utils/extensions/string_extension.dart';
 import 'package:musch/widgets/event_widget.dart';
 import 'package:musch/widgets/request_widget.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../blocs/event/event_bloc.dart';
@@ -185,7 +184,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     triggerSubscriptionListenerEvent(context.read<SubscriptionBloc>());
+
     triggerGetLastSubscriptionEvent(context.read<SubscriptionBloc>());
+
     super.initState();
   }
 
