@@ -3,14 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:musch/blocs/event/event_bloc.dart';
 import 'package:musch/config/colors.dart';
-import 'package:musch/pages/auth/change_password.dart';
-import 'package:musch/pages/home/my_eventss.dart';
+import 'package:musch/pages/auth/reset_password.dart';
 import 'package:musch/pages/home/all_friends.dart';
 import 'package:musch/pages/home/edit_profile.dart';
+import 'package:musch/pages/home/my_eventss.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -159,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       InkWell(
                         onTap: () {
-                          Get.to(ChangePassword(isDrawer: false));
+                          Get.to(ResetPassword());
                         },
                         child: Container(
                           decoration: BoxDecoration(

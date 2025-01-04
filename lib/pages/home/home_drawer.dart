@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/controller/nav_controller.dart';
-import 'package:musch/pages/auth/change_password.dart';
 import 'package:musch/pages/auth/reset_password.dart';
 import 'package:musch/pages/home/bottom_navigation.dart';
 import 'package:musch/pages/home/contact_us.dart';
@@ -14,7 +14,6 @@ import 'package:musch/pages/home/notification_screen.dart';
 import 'package:musch/pages/home/privacy_policy.dart';
 import 'package:musch/pages/home/profile_page.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../repos/user_repo.dart';
@@ -186,9 +185,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
           isDrawer: true,
         );
       case 3:
-        return ChangePassword(
-          isDrawer: true,
-        );
+        return ResetPassword();
       case 4:
         return PrivacyPolicyPage(
           isDrawer: true,

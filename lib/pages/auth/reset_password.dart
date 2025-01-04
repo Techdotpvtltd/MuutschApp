@@ -5,7 +5,7 @@ import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
-
+import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
@@ -87,6 +87,12 @@ class _ResetPasswordState extends State<ResetPassword> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      InkWell(
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: Icon(Remix.arrow_left_s_line,
+                              color: Colors.black, size: 4.h)),
                       SizedBox(height: 8.h),
                       Center(
                         child: Image.asset(
