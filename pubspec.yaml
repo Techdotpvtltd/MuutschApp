@@ -39,7 +39,7 @@ dependencies:
 
   responsive_sizer: ^3.3.1
   get :
-  google_fonts: ^4.0.4
+  google_fonts: ^6.2.1
 
   persistent_bottom_nav_bar_v2: ^5.2.3
   smooth_page_indicator: ^1.1.0
@@ -68,29 +68,32 @@ dependencies:
   # country_picker: 
   country_code_picker:
   flutter_switch :
-  firebase_core: ^2.32.0
-  firebase_auth: ^4.20.0
-  cloud_firestore: ^4.17.5
-  firebase_storage: ^11.7.7
-  sign_in_with_apple: ^6.1.0
-  google_sign_in: ^6.2.1
-  flutter_bloc: ^8.1.5
-  cached_network_image: ^3.3.1
-  image_picker: ^1.1.1
-  geolocator: ^12.0.0
-  flutter_svg: ^2.0.9
-  uuid: ^4.4.0
-  url_launcher: ^6.2.6
-  firebase_messaging: ^14.9.4
-  flutter_local_notifications: ^17.1.2
-  geoflutterfire2: ^2.3.15
-  shared_preferences: ^2.2.3
+  firebase_core: ^3.9.0
+  firebase_auth: ^5.3.4
+  cloud_firestore: ^5.6.0
+  firebase_storage: ^12.3.7
+  sign_in_with_apple:
+  google_sign_in:
+  flutter_bloc:
+  cached_network_image:
+  image_picker:
+  geolocator:
+  flutter_svg:
+  uuid:
+  url_launcher:
+  firebase_messaging:
+  flutter_local_notifications:
+  shared_preferences:
+  geoflutterfire2:
+    git:
+      url: https://github.com/pro-akbar/GeoFlutterFire2.git
+      ref: master
   place_picker:
     git:
       url: https://github.com/pro-akbar/locationpicker.git
       ref: master
-  in_app_purchase: ^3.2.0
-  ntp: ^2.0.0
+  in_app_purchase:
+  ntp:
 dev_dependencies:
   flutter_launcher_icons: 
 

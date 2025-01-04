@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/request_card.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -69,7 +68,8 @@ class _RequestPageState extends State<RequestPage> {
                                   fontSize: 15.sp,
                                   color: current == 0
                                       ? MyColors.primary
-                                      : Color(0xff000000).withOpacity(0.44)),
+                                      : Color(0xff000000)
+                                          .withValues(alpha: 0.44)),
                             ),
                             Spacer(),
                             InkWell(
@@ -82,7 +82,8 @@ class _RequestPageState extends State<RequestPage> {
                                   fontSize: 15.sp,
                                   color: current == 1
                                       ? MyColors.primary
-                                      : Color(0xff000000).withOpacity(0.44)),
+                                      : Color(0xff000000)
+                                          .withValues(alpha: 0.44)),
                             ),
                             SizedBox(width: 5.w),
                           ],

@@ -7,6 +7,7 @@
 
 import 'package:geolocator/geolocator.dart';
 import 'package:musch/repos/chat_repo.dart';
+import 'package:musch/repos/subscription/subscription_repo.dart';
 import 'package:musch/repos/user_repo.dart';
 
 class AppManager {
@@ -21,5 +22,6 @@ class AppManager {
   static void clearAll() {
     UserRepo().clearAll();
     ChatRepo().clearAll();
+    SubscriptionRepo().clearLastSubscription();
   }
 }

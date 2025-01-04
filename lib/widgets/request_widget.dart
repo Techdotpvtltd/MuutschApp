@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/pages/home/friend_view.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../models/friend_model.dart';
@@ -24,7 +23,7 @@ Widget requestWidget({required user, required FriendModel friend}) {
       decoration: BoxDecoration(
         image: DecorationImage(
           colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.07),
+            Colors.black.withValues(alpha: 0.07),
             BlendMode.srcOver,
           ),
           image: NetworkImage(user.avatar),

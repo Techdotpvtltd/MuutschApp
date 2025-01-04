@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:musch/pages/auth/login_page.dart';
 import 'package:musch/widgets/onTap.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -56,7 +55,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               // height: 15.h,
                               decoration: BoxDecoration(
                                   gradient: LinearGradient(colors: [
-                                    Color(0xffABA159).withOpacity(0.3),
+                                    Color(0xffABA159).withValues(alpha: 0.3),
                                     Color(0xff9C8D6E),
                                   ]),
                                   borderRadius: BorderRadius.circular(12)),
@@ -126,7 +125,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     effect: WormEffect(
                         dotHeight: 1.h,
                         dotWidth: 1.h,
-                        dotColor: Colors.white.withOpacity(0.4),
+                        dotColor: Colors.white.withValues(alpha: 0.4),
                         activeDotColor: Colors.white),
                   ),
                   Spacer(),

@@ -7,7 +7,6 @@ import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/range_slider.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:place_picker/place_picker.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -265,7 +264,7 @@ class DeleteService extends StatelessWidget {
                     SizedBox(height: 1.5.h),
                     textWidget("Are you sure to want delete this Event",
                         textAlign: TextAlign.center,
-                        color: Color(0xff2F3342).withOpacity(0.50),
+                        color: Color(0xff2F3342).withValues(alpha: 0.50),
                         fontWeight: FontWeight.w400,
                         fontSize: 14.sp),
                     SizedBox(height: 3.h),

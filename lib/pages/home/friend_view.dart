@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/pages/home/chat/chat_page.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:readmore/readmore.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -310,7 +308,7 @@ class _FriendViewState extends State<FriendView> {
                               //   onTap: () {
                               //     showDialog(
                               //       context: context,
-                              //       barrierColor: MyColors.primary.withOpacity(0.88),
+                              //       barrierColor: MyColors.primary.withValues(alpha: 0.88),
                               //       builder: (context) => ChildDetails(),
                               //     );
                               //   },
@@ -383,7 +381,8 @@ class _FriendViewState extends State<FriendView> {
                             user?.bio ?? "",
                             trimLines: 3,
                             style: GoogleFonts.poppins(
-                                color: Color(0xff000000).withOpacity(0.46),
+                                color:
+                                    Color(0xff000000).withValues(alpha: 0.46),
                                 fontWeight: FontWeight.w400),
                             colorClickableText: Colors.pink,
                             trimMode: TrimMode.Line,

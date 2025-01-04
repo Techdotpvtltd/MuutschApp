@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:ui' as ui;
+
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,9 +14,6 @@ import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:place_picker/place_picker.dart';
-
-import 'dart:ui' as ui;
-
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../blocs/event/event_bloc.dart';
@@ -26,7 +25,6 @@ import '../../blocs/user/user_state.dart';
 import '../../models/user_model.dart';
 import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
-
 import 'friend_view.dart';
 
 class MapSample extends StatefulWidget {
@@ -118,7 +116,7 @@ class MapSampleState extends State<MapSample> {
         onTap: () {
           showDialog(
               context: context,
-              barrierColor: MyColors.primary.withOpacity(0.8),
+              barrierColor: MyColors.primary.withValues(alpha: 0.8),
               builder: (context) => UserDetailDialog(user: user));
         },
         markerId: MarkerId(user.uid),
@@ -235,7 +233,8 @@ class MapSampleState extends State<MapSample> {
                                   child: Container(
                                     padding: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.6),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.6),
                                     ),
                                     child: Text(
                                       "In the free version you can just see people in the nearby area of 5km and you are not able to zoom or scroll the map in free version and in the premium version (subscription) you have the full functionilty.",
@@ -397,7 +396,7 @@ class NotAccess extends StatelessWidget {
                   textWidget(
                     " In the free version you can just see people in the nearby area of 5km or you are not able to filter and in the premium version (subscription) you have the full function",
                     textAlign: TextAlign.center,
-                    color: Color(0xff2F3342).withOpacity(0.50),
+                    color: Color(0xff2F3342).withValues(alpha: 0.50),
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
                   ),
@@ -472,7 +471,7 @@ class UserDetailDialog extends StatelessWidget {
                   textWidget(
                     user.location?.address ?? "",
                     textAlign: TextAlign.center,
-                    color: Color(0xff2F3342).withOpacity(0.50),
+                    color: Color(0xff2F3342).withValues(alpha: 0.50),
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
                   ),

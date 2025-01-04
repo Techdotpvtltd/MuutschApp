@@ -13,7 +13,6 @@ import 'package:musch/widgets/map_sample.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
 import 'package:place_picker/place_picker.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -198,7 +197,7 @@ class _AddEventState extends State<AddEvent> {
         }
       },
       child: Scaffold(
-        backgroundColor: Color(0xfff2f2f2).withOpacity(0.94),
+        backgroundColor: Color(0xfff2f2f2).withValues(alpha: 0.94),
         body: SingleChildScrollView(
           child: SafeArea(
             bottom: false,

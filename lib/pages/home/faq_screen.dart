@@ -5,7 +5,6 @@ import 'package:musch/controller/drawer_controller.dart';
 import 'package:musch/pages/home/home_drawer.dart';
 import 'package:musch/widgets/text_field.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -123,7 +122,7 @@ class _FaqScreenState extends State<FaqScreen> {
                 children: [
                   textWidget(
                       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled ",
-                      color: MyColors.white.withOpacity(0.9),
+                      color: MyColors.white.withValues(alpha: 0.9),
                       fontWeight: FontWeight.w400,
                       fontSize: 15.sp),
                   SizedBox(height: 2.h),

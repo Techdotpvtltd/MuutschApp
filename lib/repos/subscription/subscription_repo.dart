@@ -109,4 +109,6 @@ class SubscriptionRepo {
 
     log("${AppManager().isActiveSubscription}", name: "Active Subscription");
   }
+
+  void clearLastSubscription() => _subscription = null;
 }

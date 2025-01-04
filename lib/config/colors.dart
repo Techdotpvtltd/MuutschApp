@@ -10,7 +10,7 @@ class MyColors {
   static Color grey = Color(0xff262626);
   static Color txtclr1 = Color(0xff676767);
   static Color txtclr2 = Color(0xff929292);
-  static Color navColor = Color(0xffFA9A55).withOpacity(0.15);
+  static Color navColor = Color(0xffFA9A55).withValues(alpha: 0.15);
 }
 
 //global type of user

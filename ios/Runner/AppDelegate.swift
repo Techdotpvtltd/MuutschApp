@@ -4,7 +4,7 @@ import GoogleMaps
 
 import UserNotifications
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
@@ -19,17 +19,17 @@ import UserNotifications
   }
 }
 
-extension AppDelegate {
-    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+// extension AppDelegate {
+//     override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
-        // Check the notification content
-        
-//        let notificationType = notification.request.content.userInfo["type"] as? String ?? ""
-//            if(notificationType == "message") {
-//            completionHandler([])
-//            return;
-//    }
+//         // Check the notification content
+//         in
+// //        let notificationType = notification.request.content.userInfo["type"] as? String ?? ""
+// //            if(notificationType == "message") {
+// //            completionHandler([])
+// //            return;
+// //    }
     
-    completionHandler([.alert, .sound, .badge])
-}
-}
+//     completionHandler([.alert, .sound, .badge])
+// }
+// }

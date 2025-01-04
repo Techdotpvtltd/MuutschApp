@@ -251,7 +251,7 @@ class _EventViewState extends State<EventView> {
                                       i++)
                                     ColorFiltered(
                                       colorFilter: ColorFilter.mode(
-                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withValues(alpha: 0.1),
                                         BlendMode.srcOver,
                                       ),
                                       child: CustomNetworkImage(

@@ -162,7 +162,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 margin:
                     EdgeInsets.only(left: 30, right: 30, top: 30, bottom: 20),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 child: ListView.builder(

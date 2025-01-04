@@ -71,7 +71,7 @@ class MapCardState extends State<MapCard> {
               BorderRadius.circular(20), // Adjust the radius as needed
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               spreadRadius: 2,
               blurRadius: 5,
               offset: Offset(0, 3),

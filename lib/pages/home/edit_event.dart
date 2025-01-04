@@ -60,7 +60,7 @@ class _EditEventState extends State<EditEvent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff2f2f2).withOpacity(0.94),
+      backgroundColor: Color(0xfff2f2f2).withValues(alpha: 0.94),
       body: SingleChildScrollView(
         child: SafeArea(
             bottom: false,
@@ -130,7 +130,7 @@ class _EditEventState extends State<EditEvent> {
                                             showDialog(
                                                 context: context,
                                                 barrierColor: MyColors.primary
-                                                    .withOpacity(0.88),
+                                                    .withValues(alpha: 0.88),
                                                 builder: (context) =>
                                                     DeleteService());
                                           },

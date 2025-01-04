@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -6,7 +8,6 @@ import 'package:musch/config/colors.dart';
 import 'package:musch/pages/auth/splash_screen.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -17,7 +18,6 @@ import '../../blocs/subscription/subscription_state.dart';
 import '../../manager/app_manager.dart';
 import '../../repos/subscription/subscription_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
-import 'dart:io' show Platform;
 
 class SubscriptionPlan extends StatefulWidget {
   const SubscriptionPlan({super.key});
@@ -59,7 +59,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
     if (Platform.isAndroid) {
       AppManager().isActiveSubscription = true;
     }
-    ///////////////////////////////////////////
+    //////////////////////////////////////////////
     _pageController = PageController(initialPage: 0, viewportFraction: 0.94);
     triggerGetProductsEvent();
   }
@@ -253,7 +253,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                           effect: WormEffect(
                             dotHeight: 1.5.h,
                             dotWidth: 1.5.h,
-                            dotColor: Color(0xffFFAD85).withOpacity(0.4),
+                            dotColor: Color(0xffFFAD85).withValues(alpha: 0.4),
                             activeDotColor: Color(0xff9B8E6D),
                           ),
                         ),
@@ -315,7 +315,7 @@ class _CardFb1State extends State<CardFb1> {
                 offset: const Offset(10, 20),
                 blurRadius: 10,
                 spreadRadius: 0,
-                color: Colors.grey.withOpacity(.05)),
+                color: Colors.grey.withValues(alpha: .05)),
           ],
         ),
         child: Column(
@@ -365,7 +365,7 @@ class _CardFb1State extends State<CardFb1> {
             ),
             SizedBox(height: 2.h),
             Divider(
-              color: Color(0xff1E1E1E).withOpacity(0.27),
+              color: Color(0xff1E1E1E).withValues(alpha: 0.27),
             ),
             SizedBox(height: 3.h),
             ...List.generate(

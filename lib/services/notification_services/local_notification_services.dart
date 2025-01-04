@@ -1,6 +1,5 @@
 // ignore: dangling_library_doc_comments
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -40,11 +39,7 @@ class LocalNotificationServices {
     final AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings darwinInitializationSettings =
-        DarwinInitializationSettings(
-      onDidReceiveLocalNotification: (id, title, body, payload) {
-        debugPrint("$id $title $body");
-      },
-    );
+        DarwinInitializationSettings();
 
     _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -72,6 +67,7 @@ class LocalNotificationServices {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
+      androidScheduleMode: AndroidScheduleMode.exact,
     );
   }
 
