@@ -5,7 +5,7 @@
 // Date:        02-05-24 16:33:33 -- Thursday
 // Description:
 
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 abstract class SubscriptionEvent {}
 
@@ -15,19 +15,16 @@ class SubscriptionEventReady extends SubscriptionEvent {}
 class SubscriptionEventFetechProducts extends SubscriptionEvent {}
 
 class SubscriptionEventBuySubscription extends SubscriptionEvent {
-  final ProductDetails productDetails;
+  final Package package;
 
-  SubscriptionEventBuySubscription({required this.productDetails});
+  SubscriptionEventBuySubscription({required this.package});
 }
 
 class SubscriptionEventMarkPurchaseCompleted extends SubscriptionEvent {
-  final PurchaseDetails purchaseDetails;
+  final Package package;
 
-  SubscriptionEventMarkPurchaseCompleted({required this.purchaseDetails});
+  SubscriptionEventMarkPurchaseCompleted({required this.package});
 }
-
-// ===========================Listener Product ================================
-class SubscriptionEventListener extends SubscriptionEvent {}
 
 // ===========================Get Last Subscription Event================================
 

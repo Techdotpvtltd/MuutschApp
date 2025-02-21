@@ -5,7 +5,6 @@
 // Date:        17-05-24 13:50:16 -- Friday
 // Description:
 
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:musch/repos/chat_repo.dart';
 import 'package:musch/repos/subscription/subscription_repo.dart';
@@ -18,7 +17,6 @@ class AppManager {
   factory AppManager() => _instance;
 
   Position? currentLocationPosition;
-  bool isActiveSubscription = kDebugMode;
 
   static void clearAll() {
     UserRepo().clearAll();

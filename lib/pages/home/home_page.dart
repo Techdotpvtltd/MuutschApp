@@ -11,6 +11,7 @@ import 'package:musch/blocs/notification/notification_state.dart';
 import 'package:musch/blocs/subscription/subscription_state.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/controller/drawer_controller.dart';
+import 'package:musch/manager/store_manager.dart';
 import 'package:musch/models/chat_model.dart';
 import 'package:musch/models/other_user_model.dart';
 import 'package:musch/pages/home/all_events.dart';
@@ -64,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   List<FriendModel> friends = [];
   bool isNewNotifications = false;
   bool isFetchingEvents = false;
-  final bool isSubscribed = AppManager().isActiveSubscription;
+  final bool isSubscribed = storeManager.hasSubscription;
 
   void triggerFetchAllEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchAll());
@@ -96,8 +97,8 @@ class _HomePageState extends State<HomePage> {
     bloc.add(NotificationEventFetch());
   }
 
-  void triggerSubscriptionListenerEvent(SubscriptionBloc bloc) {
-    bloc.add(SubscriptionEventListener());
+  void initSubscription() async {
+    await storeManager.initialize();
   }
 
   void triggerGetLastSubscriptionEvent(SubscriptionBloc bloc) {
@@ -183,7 +184,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    triggerSubscriptionListenerEvent(context.read<SubscriptionBloc>());
+    initSubscription();
 
     triggerGetLastSubscriptionEvent(context.read<SubscriptionBloc>());
 

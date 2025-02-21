@@ -8,13 +8,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:ntp/ntp.dart';
-
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:musch/manager/store_manager.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../exceptions/exception_parsing.dart';
-import '../../manager/app_manager.dart';
 import '../../models/subscription_model.dart';
 import '../../utils/constants/firebase_collections.dart';
 import '../../web_services/firestore_services.dart';
@@ -32,9 +29,10 @@ class SubscriptionRepo {
 
   // ===========================API Methods================================
 
-  Future<void> saveSubscription({required PurchaseDetails purchase}) async {
+  Future<void> saveSubscription({required Package purchase}) async {
     try {
-      final String id = purchase.productID;
+      final String id = storeManager.active?.productIdentifier ?? "";
+
       final int period = id.contains("1")
           ? 1
           : id.contains("3")
@@ -43,25 +41,20 @@ class SubscriptionRepo {
                   ? 6
                   : 1;
       final DateTime startDate = DateTime.fromMillisecondsSinceEpoch(
-          int.tryParse(purchase.transactionDate ?? "0") ?? 0);
+          int.tryParse(storeManager.active?.latestPurchaseDate ?? "0") ?? 0);
 
-      final DateTime endDate = startDate.add(kReleaseMode
-          ? Duration(
-              days: period == 1
-                  ? 30
-                  : period == 3
-                      ? 90
-                      : 180)
-          : Duration(minutes: 5));
+      final DateTime endDate = DateTime.fromMillisecondsSinceEpoch(
+          int.tryParse(storeManager.active?.expirationDate ?? "0") ?? 0);
+
       final SubscriptionModel model = SubscriptionModel(
         id: "",
         periodDuration: period.toString(),
-        productId: purchase.productID,
+        productId: id,
         startTime: startDate,
         endTime: endDate,
         subscribedBy: UserRepo().currentUser.uid,
         title: "Premium for ${period} ${period > 1 ? "months" : "month"}",
-        purchaseId: purchase.purchaseID ?? "",
+        purchaseId: "",
       );
       final Map<String, dynamic> map = await FirestoreService()
           .saveWithSpecificIdFiled(
@@ -101,13 +94,7 @@ class SubscriptionRepo {
   }
 
   Future<void> _validateSubscription() async {
-    final DateTime now = await NTP.now();
-    if (_subscription!.endTime.millisecondsSinceEpoch >=
-        now.millisecondsSinceEpoch) {
-      AppManager().isActiveSubscription = true;
-    }
-
-    log("${AppManager().isActiveSubscription}", name: "Active Subscription");
+    log("${storeManager.hasSubscription}", name: "Active Subscription");
   }
 
   void clearLastSubscription() => _subscription = null;

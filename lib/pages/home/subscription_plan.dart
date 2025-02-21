@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:musch/config/colors.dart';
+import 'package:musch/manager/store_manager.dart';
 import 'package:musch/pages/auth/splash_screen.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -13,7 +14,6 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../blocs/subscription/subscription_bloc.dart';
 import '../../blocs/subscription/subscription_event.dart';
 import '../../blocs/subscription/subscription_state.dart';
-import '../../manager/app_manager.dart';
 import '../../repos/subscription/subscription_repo.dart';
 import '../../utils/dialogs/dialogs.dart';
 
@@ -27,16 +27,14 @@ class SubscriptionPlan extends StatefulWidget {
 int currentPage = 0;
 
 class _SubscriptionPlanState extends State<SubscriptionPlan> {
-  String activeSubscriptionId = AppManager().isActiveSubscription
-      ? SubscriptionRepo().lastSubscription?.productId ?? ""
-      : "";
-  List<ProductDetails> productDetails = [];
+  String activeSubscriptionId = storeManager.active?.identifier ?? "";
+  List<Package> productDetails = [];
   bool isLoading = false;
 
-  void triggerBuySubscriptionEvent(ProductDetails product) {
+  void triggerBuySubscriptionEvent(Package product) {
     context
         .read<SubscriptionBloc>()
-        .add(SubscriptionEventBuySubscription(productDetails: product));
+        .add(SubscriptionEventBuySubscription(package: product));
   }
 
   void triggerGetProductsEvent() {
@@ -72,9 +70,10 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
           });
 
           if (state is SubscriptionStateGotProducts) {
-            productDetails = state.products;
-            productDetails.sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
-            activeSubscriptionId = AppManager().isActiveSubscription
+            productDetails = List.from(state.products);
+            productDetails.sort(
+                (a, b) => a.storeProduct.price.compareTo(b.storeProduct.price));
+            activeSubscriptionId = storeManager.hasSubscription
                 ? SubscriptionRepo().lastSubscription?.productId ?? ""
                 : "";
             setState(() {});
@@ -102,12 +101,9 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
 
           if (state is SubscriptionStatePurchased) {
             setState(() {
-              activeSubscriptionId = AppManager().isActiveSubscription
-                  ? SubscriptionRepo().lastSubscription?.productId ?? ""
-                  : "";
+              activeSubscriptionId = storeManager.active?.identifier ?? "";
             });
 
-            AppManager().isActiveSubscription = true;
             CustomDialogs().successBox(
               message:
                   "Thank you for subscribing! Your subscription is now active. Enjoy all the benefits and features available to you.",
@@ -184,8 +180,7 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                     child: CardFb1(
                                       text: "Free",
                                       isLoading: false,
-                                      isActived:
-                                          !AppManager().isActiveSubscription,
+                                      isActived: !storeManager.hasSubscription,
                                       imageUrl: "",
                                       subtitle: "Limited Access",
                                       onPressed: () {},
@@ -205,7 +200,8 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                     },
                                     child: Container(
                                       child: Builder(builder: (context) {
-                                        final String id = product.id;
+                                        final String id =
+                                            product.storeProduct.identifier;
                                         final int period = id.contains("1")
                                             ? 1
                                             : id.contains("3")
@@ -215,21 +211,21 @@ class _SubscriptionPlanState extends State<SubscriptionPlan> {
                                                     : 1;
                                         debugPrint(period.toString());
                                         return CardFb1(
-                                          text: product.title,
+                                          text: product.storeProduct.title,
                                           isLoading: isSubscribing,
                                           isActived: activeSubscriptionId ==
-                                              product.id,
+                                              product.storeProduct.identifier,
                                           imageUrl: "",
                                           subtitle:
                                               "Access all the feature just in",
                                           subtitle2:
-                                              " ${product.price} for ${period} ${period > 1 ? "months" : "month"}",
+                                              " ${product.storeProduct.priceString} for ${period} ${period > 1 ? "months" : "month"}",
                                           onPressed: () {
                                             triggerBuySubscriptionEvent(
                                                 product);
                                           },
                                           price:
-                                              "${product.currencySymbol} ${(product.rawPrice / period).toStringAsFixed(2)}",
+                                              "${product.storeProduct.currencyCode} ${(product.storeProduct.price / period).toStringAsFixed(2)}",
                                         );
                                       }),
                                     ),
@@ -389,13 +385,13 @@ class _CardFb1State extends State<CardFb1> {
             if (widget.text == "Free")
               Center(
                 child: gradientButton(
-                  !AppManager().isActiveSubscription ? "Actived" : "Free",
+                  !storeManager.hasSubscription ? "Actived" : "Free",
                   ontap: () {},
                   height: 4.8,
                   font: 16.5,
                   width: 60,
                   isColor: true,
-                  clr: !AppManager().isActiveSubscription
+                  clr: !storeManager.hasSubscription
                       ? Colors.green
                       : MyColors.primary,
                 ),

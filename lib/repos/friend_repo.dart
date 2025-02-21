@@ -6,11 +6,12 @@
 // Description:
 
 import 'dart:developer';
+
 import 'package:musch/exceptions/data_exceptions.dart';
-import 'package:musch/manager/app_manager.dart';
 import 'package:musch/utils/extensions/date_extension.dart';
 
 import '../exceptions/exception_parsing.dart';
+import '../manager/store_manager.dart';
 import '../models/friend_model.dart';
 import '../utils/constants/firebase_collections.dart';
 import '../web_services/firestore_services.dart';
@@ -19,7 +20,7 @@ import 'user_repo.dart';
 
 class FriendRepo {
   final String userId = UserRepo().currentUser.uid;
-  final bool isSusbcribed = AppManager().isActiveSubscription;
+  final bool isSusbcribed = storeManager.hasSubscription;
   // ===========================API Methods================================
   Future<FriendModel> sendRequest({required String recieverId}) async {
     try {

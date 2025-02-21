@@ -92,8 +92,8 @@ dependencies:
     git:
       url: https://github.com/pro-akbar/locationpicker.git
       ref: master
-  in_app_purchase:
   ntp:
+  purchases_flutter:
 dev_dependencies:
   flutter_launcher_icons: 
 

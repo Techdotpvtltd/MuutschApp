@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:musch/config/colors.dart';
-import 'package:musch/manager/app_manager.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
@@ -22,6 +21,7 @@ import '../../blocs/event/events_event.dart';
 import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_event.dart';
 import '../../blocs/user/user_state.dart';
+import '../../manager/store_manager.dart';
 import '../../models/user_model.dart';
 import '../../widgets/avatar_widget.dart';
 import '../../widgets/text_field.dart';
@@ -128,7 +128,7 @@ class MapSampleState extends State<MapSample> {
     }
   }
 
-  final bool isSusbcribed = AppManager().isActiveSubscription;
+  final bool isSusbcribed = storeManager.hasSubscription;
 
   @override
   Widget build(BuildContext context) {

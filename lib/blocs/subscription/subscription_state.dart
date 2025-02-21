@@ -5,7 +5,7 @@
 // Date:        02-05-24 16:35:52 -- Thursday
 // Description:
 
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:purchases_flutter/object_wrappers.dart';
 
 import '../../exceptions/app_exceptions.dart';
 
@@ -24,7 +24,7 @@ class SubscriptionStateGettingProducts extends SubscriptionState {
 }
 
 class SubscriptionStateGotProducts extends SubscriptionState {
-  final List<ProductDetails> products;
+  final List<Package> products;
 
   SubscriptionStateGotProducts({required this.products});
 }

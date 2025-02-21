@@ -10,12 +10,12 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:musch/manager/app_manager.dart';
 import 'package:musch/models/other_user_model.dart';
 import 'package:musch/models/user_model.dart';
 import 'package:place_picker/uuid.dart';
 
 import '../../exceptions/app_exceptions.dart';
+import '../../manager/store_manager.dart';
 import '../../models/event_model.dart';
 import '../../models/notification_model.dart';
 import '../../repos/event_repo.dart';
@@ -243,7 +243,7 @@ class EventBloc extends Bloc<EventsEvent, EventState> {
     on<EventsEventFetchAll>(
       (event, emit) async {
         try {
-          final bool isActiveSubscription = AppManager().isActiveSubscription;
+          final bool isActiveSubscription = storeManager.hasSubscription;
 
           emit(EventStateFetching());
           final List<EventModel> fetchEvents = isActiveSubscription

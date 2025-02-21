@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musch/config/colors.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../blocs/event/event_bloc.dart';
 import '../blocs/event/event_state.dart';
-import '../manager/app_manager.dart';
+import '../manager/store_manager.dart';
 import 'custom_network_image.dart';
 
 Widget eventWidget({
@@ -21,7 +20,7 @@ Widget eventWidget({
   required String creator,
   bool isVisibleJoinButton = true,
 }) {
-  final bool isSubscribed = AppManager().isActiveSubscription;
+  final bool isSubscribed = storeManager.hasSubscription;
 
   return BlocListener<EventBloc, EventState>(
     listener: (context, state) {

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:musch/manager/app_manager.dart';
+import 'package:musch/manager/store_manager.dart';
 import 'package:musch/pages/home/add_event.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
 import 'package:musch/utils/extensions/navigation_service.dart';
 import 'package:musch/widgets/custom_button.dart';
 import 'package:musch/widgets/text_widget.dart';
-
 import 'package:remixicon/remixicon.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -34,7 +33,7 @@ class _MyEventsState extends State<MyEvents> {
   bool isLoading = true;
   List<EventModel> events = [];
   List<EventModel> filteredEvents = [];
-  final bool isSusbcribed = AppManager().isActiveSubscription;
+  final bool isSusbcribed = storeManager.hasSubscription;
 
   void triggerFetchOwnEvents(EventBloc bloc) {
     bloc.add(EventsEventFetchOwn());

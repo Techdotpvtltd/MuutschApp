@@ -9,7 +9,6 @@ import 'package:musch/blocs/chat/%20chat_bloc.dart';
 import 'package:musch/blocs/chat/chat_event.dart';
 import 'package:musch/blocs/chat/chat_state.dart';
 import 'package:musch/config/colors.dart';
-import 'package:musch/manager/app_manager.dart';
 import 'package:musch/models/chat_model.dart';
 import 'package:musch/models/other_user_model.dart';
 import 'package:musch/pages/home/subscription_plan.dart';
@@ -26,6 +25,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../blocs/event/event_bloc.dart';
 import '../../blocs/event/event_state.dart';
 import '../../blocs/event/events_event.dart';
+import '../../manager/store_manager.dart';
 import '../../models/event_model.dart';
 import '../../repos/user_repo.dart';
 import '../../utils/constants/constants.dart';
@@ -53,7 +53,7 @@ class EventView extends StatefulWidget {
 class _EventViewState extends State<EventView> {
   final PageController pageController = PageController();
   late EventModel event = widget.event;
-  final bool isSubscribed = AppManager().isActiveSubscription;
+  final bool isSubscribed = storeManager.hasSubscription;
 
   bool isDeleting = false;
   bool isJoiningEvent = false;
